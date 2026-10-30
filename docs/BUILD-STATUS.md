@@ -37,3 +37,12 @@ primeiro extração e layout estático ext4 e depois módulos Exynos 9820. Fixar
 firmwares reais, transitive dependencies e toolchain. Só executar make_rom
 quando existir uma árvore integrada e revisada; uma mistura mecânica não
 constitui port funcional.
+
+## Atualização: workspace candidata implementada
+
+O texto acima descreve o estado inicial. Agora `scripts/prepare_workspace.py`
+monta a base completa da ArtisanROM com adapter de doador UN1CA, sem trocar o
+pipeline S10. `buildenv.sh beyond2lte` foi executado com sucesso. Uma tentativa
+real de `make_rom.sh --no-rom-zip` retornou 1 por dependências de host ausentes,
+antes da compilação. Não houve build de imagens, flash ou teste de boot.
+Veja `docs/INTEGRATION.md` e `docs/validation/` para detalhes e limitações.

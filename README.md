@@ -48,3 +48,19 @@ python3 scripts/verify_reference.py
 A integração histórica usa ExtremeKernel; seu repositório e commit foram
 fixados no manifesto. Veja `docs/BUILD-STATUS.md` para os bloqueios reais.
 A GitHub Actions valida testes, integridade e sintaxe; **não compila ROM**.
+
+## Integração candidata implementada
+
+Agora há um preparador da árvore **completa** da ArtisanROM histórica com um
+adapter para o doador configurado na UN1CA seventeen. O build continua sendo o
+original do S10+. Veja [instruções e resultado real](docs/INTEGRATION.md).
+
+```bash
+python3 scripts/prepare_workspace.py /caminho/externo/beyoud-workspace
+python3 scripts/init_workspace_dependencies.py /caminho/externo/beyoud-workspace
+bash scripts/build_candidate.sh /caminho/externo/beyoud-workspace dependencies
+bash scripts/build_candidate.sh /caminho/externo/beyoud-workspace rom
+```
+
+Configuração gerada com sucesso; a tentativa de build parou nas dependências
+ausentes do host. Patches de framework e boot continuam sem validação.

@@ -15,5 +15,5 @@ jobs:
       - run: python3 -m unittest discover -s tests -v
       - run: python3 scripts/verify_reference.py
       - name: Check legacy shell syntax without executing it
-        run: find reference -name '*.sh' -print0 | xargs -0 -n1 bash -n
+        run: find reference integration scripts -name '*.sh' -print0 | xargs -0 -n1 bash -n
       - run: git diff --check

@@ -1,0 +1,42 @@
+[
+  {
+    "path": "external/android-tools",
+    "commit": "a7bca0f4d5ab744fb17270894e2cca2f553774f0",
+    "url": "https://github.com/ExtremeXT/android-tools"
+  },
+  {
+    "path": "external/apktool",
+    "commit": "1c1d15b070c2138d958fa8b685d430c49c4bb117",
+    "url": "https://github.com/iBotPeaches/Apktool.git"
+  },
+  {
+    "path": "external/erofs-utils",
+    "commit": "fa88a7abbcdfe01dc19258c9c2c82c3afb45c196",
+    "url": "https://github.com/sekaiacg/erofs-utils.git"
+  },
+  {
+    "path": "external/img2sdat",
+    "commit": "fc05bbf92bc0218d86145e85145a3fbdcbad0ce6",
+    "url": "https://github.com/salvogiangri/img2sdat.git"
+  },
+  {
+    "path": "external/omcdecoder",
+    "commit": "8d2da58407138fc27d39b6fa69756707aaa7b3e3",
+    "url": "https://github.com/soulr344/OMCDecoder"
+  },
+  {
+    "path": "external/samloader",
+    "commit": "69ce07a4c2eb7e1d96ca801d6359989c93a00adb",
+    "url": "https://github.com/ExtremeXT/samloader"
+  },
+  {
+    "path": "external/signapk",
+    "commit": "b85014d95bc87c82fa4f2c79bc43165e6ea8565f",
+    "url": "https://github.com/salvogiangri/signapk.git"
+  },
+  {
+    "path": "external/smali",
+    "commit": "8be50d709f10d384f2adc9a6e15bd525067d75a3",
+    "url": "https://github.com/google/smali.git"
+  }
+]
