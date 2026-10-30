@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "sources": {
+    "un1ca": {
+      "repository": "At30c/UN1CA_y2slte",
+      "branch": "seventeen",
+      "commit": "609fa7cc738e42dedcc31ffecbe4aefc0b34d6e2",
+      "role": "Framework e sistema doador experimental"
+    },
+    "artisan_current": {
+      "repository": "ArtisanROM/ArtisanROM",
+      "branch": "sixteen-qpr2",
+      "commit": "abeb2cac4ff80fdf6f0748b7422d6b4d4b307323",
+      "role": "Referência de organização atual; não suporta beyond2lte nesta revisão"
+    },
+    "artisan_s10": {
+      "repository": "ArtisanROM-archive/ArtisanROM_old",
+      "branch": "sixteen-old",
+      "commit": "5638a7f66cdf8bc9dd43f087a96f7dfa4f9e6954",
+      "role": "Referência histórica de target beyond2lte e plataforma exynos9820"
+    },
+    "extremekernel": {
+      "repository": "Android-Artisan/android_kernel_samsung_exynos9820",
+      "branch": "main",
+      "commit": "9a0a792d227c8ae6cddac0c9d68a8bb9782c44cb",
+      "role": "Kernel referenciado pela ArtisanROM histórica; compatibilidade com SDK 37 não validada"
+    }
+  }
+}

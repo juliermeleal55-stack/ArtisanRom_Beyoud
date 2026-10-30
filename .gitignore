@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+/out/
+/work/
+/downloads/
+/upstreams/
+*.img
+*.zip
+*.tar.md5

@@ -1,0 +1,16 @@
+{
+  "codename": "beyond2lte",
+  "platform": "exynos9820",
+  "candidate_models": [
+    "SM-G975F"
+  ],
+  "status": "research-only",
+  "flashable": false,
+  "hardware_confirmed": true,
+  "donor_firmware_verified": false,
+  "kernel_validated": false,
+  "partition_layout_verified": false,
+  "vendor_compatibility_validated": false,
+  "boot_validated": false,
+  "confirmation_source": "Modelo SM-G975F informado pelo usu\u00e1rio; demais propriedades ainda n\u00e3o coletadas"
+}
