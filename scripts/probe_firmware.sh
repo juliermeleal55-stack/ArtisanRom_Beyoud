@@ -6,10 +6,4 @@ cd "$workspace"
 # Legacy buildenv does not support nounset.
 source buildenv.sh beyond2lte
 mkdir -p "$OUT_DIR/beyoud-logs"
-{
-    for firmware in "$SOURCE_FIRMWARE" "$TARGET_FIRMWARE"; do
-        IFS=/ read -r model csc ignored <<< "$firmware"
-        # Deliberately discard the inherited third field: SmartDownload needs no IMEI.
-        timeout 180 "$TOOLS_DIR/bin/beyoud-firmware-probe" "$model" "$csc"
-    done
-} 2>&1 | tee "$OUT_DIR/beyoud-logs/firmware-metadata.log"
+python3 "$SRC_DIR/integration/samloader/metadata.py" resolve "$workspace" 2>&1 | tee "$OUT_DIR/beyoud-logs/firmware-metadata.log"

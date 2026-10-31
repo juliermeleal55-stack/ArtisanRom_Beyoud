@@ -128,3 +128,10 @@ bash scripts/build_candidate.sh /caminho/externo/beyoud-workspace alpha
 A ordem antiga sem construir o cliente Rust não é mais suficiente. O cliente
 Python permanece no inventário histórico das ferramentas, mas não é usado para
 baixar firmware na integração nova.
+
+## Lock compartilhado e auditoria do pipeline
+
+A consulta agora persiste as versões em `out/firmware-lock.json`. Download e
+extração leem exatamente esse arquivo, sem repetir a consulta FOTA antiga.
+O lock é incluído nos diagnósticos e no pacote coletado. Veja
+[BUILD-AUDIT.md](BUILD-AUDIT.md) para as demais correções e pendências reais.

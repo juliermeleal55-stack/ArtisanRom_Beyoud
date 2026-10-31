@@ -5,6 +5,7 @@ import subprocess
 import tarfile
 import tempfile
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location('prepare', ROOT / 'scripts/prepare_workspace.py')
@@ -32,7 +33,8 @@ class WorkspaceTests(unittest.TestCase):
             from test_smart_download import LEGACY
             (workspace / 'scripts').mkdir()
             (workspace / 'scripts/download_fw.sh').write_text(LEGACY)
-            prepare.apply_overlay(workspace)
+            with patch.object(prepare, 'patch_firmware_lookup'), patch.object(prepare, 'patch_parallel_builds'):
+                prepare.apply_overlay(workspace)
             self.assertIn('0.1.0-alpha1', (workspace / 'unica/configs/version.sh').read_text())
             self.assertIn('TARGET_ASSERT_MODEL=("SM-G975F")', target.read_text())
             self.assertIn('TARGET_SUPER_PARTITION_SIZE=0', target.read_text())

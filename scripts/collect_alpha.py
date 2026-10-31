@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import shutil
 import zipfile
@@ -39,7 +40,10 @@ def collect(workspace, destination):
     destination.mkdir(parents=True, exist_ok=False)
     filename = 'Beyoud-SM-G975F-0.1.0-alpha1-UNTESTED.zip'
     output = destination / filename
-    shutil.copyfile(source, output)
+    try:
+        os.link(source, output)  # Avoid doubling a multi-GB package on the same filesystem.
+    except OSError:
+        shutil.copyfile(source, output)
     digest = hashlib.sha256()
     with output.open('rb') as stream:
         for chunk in iter(lambda: stream.read(1024 * 1024), b''):
@@ -51,6 +55,9 @@ def collect(workspace, destination):
         'May erase data, fail to boot or break calls, camera, encryption and other features.\n'
         'Not for a primary phone. No hardware validation has been performed.\n'
         'Have an independently verified stock recovery procedure and backups before any test.\n')
+    lock = workspace / 'out/firmware-lock.json'
+    if lock.is_file():
+        shutil.copyfile(lock, destination / 'firmware-lock.json')
     (destination / 'provenance.json').write_text(json.dumps(marker, indent=2) + '\n')
 
 

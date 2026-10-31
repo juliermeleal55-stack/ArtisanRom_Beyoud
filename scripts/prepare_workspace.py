@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import json
+import re
 from pathlib import Path
 import shutil
 import subprocess
@@ -67,7 +68,57 @@ def patch_downloader(workspace):
         raise ValueError('Unexpected legacy download error handling')
     text = text.replace(end, '        ) || exit 1\n\n        ZIP_FILE=')
     text = text.replace('        STR=""\n        [ $MODEL == "SM-S731B" ] && STR=" -v S731BXXU1AYH9/S731BOXM1AYH9/S731BXXU1AYH9/S731BXXU1AYH9"\n', '')
+    mkdir = '    mkdir -p "$ODIN_DIR/${MODEL}_${CSC}"'
+    if mkdir in text:
+        text = text.replace(mkdir, mkdir + '\n    find "$ODIN_DIR/${MODEL}_${CSC}" -maxdepth 1 -type f -name "*.zip" -delete')
     path.write_text(text)
+
+def patch_firmware_lookup(workspace):
+    path = workspace / 'scripts/utils/firmware_utils.sh'
+    text = path.read_text()
+    replacement = '''GET_LATEST_FIRMWARE()
+{
+    python3 "$SRC_DIR/integration/samloader/metadata.py" get "$OUT_DIR/firmware-lock.json" "$1" "$2"
+}'''
+    text, count = re.subn(r'GET_LATEST_FIRMWARE\(\)\n\{.*?\n\}', lambda _: replacement, text, flags=re.S)
+    if count != 1:
+        raise ValueError('Unexpected firmware lookup helper')
+    path.write_text(text)
+
+
+def patch_parallel_builds(workspace):
+    # wait PID1 PID2 returns only the last status: a failed earlier worker was hidden.
+    for relative, count in [('scripts/make_rom.sh', 1), ('scripts/internal/build_flashable_zip.sh', 2)]:
+        path = workspace / relative
+        text = path.read_text()
+        old = 'wait $(jobs -p) || exit 1'
+        if text.count(old) != count:
+            raise ValueError(f'Unexpected parallel build schema: {relative}')
+        wait = '''BEYOUD_FAILED=0
+for BEYOUD_PID in "${BEYOUD_PIDS[@]}"; do
+    wait "$BEYOUD_PID" || BEYOUD_FAILED=1
+done
+[ "$BEYOUD_FAILED" -eq 0 ] || exit 1'''
+        text = text.replace(old, wait)
+        if relative.endswith('make_rom.sh'):
+            old_hash = 'find "$SRC_DIR/unica" "$SRC_DIR/target/$TARGET_CODENAME" -type f -print0'
+            new_hash = 'find "$SRC_DIR/unica" "$SRC_DIR/target/$TARGET_CODENAME" "$SRC_DIR/platform/$TARGET_PLATFORM" "$SRC_DIR/integration" "$OUT_DIR/firmware-lock.json" -type f -print0'
+            text = text.replace(old_hash, new_hash)
+        if relative.endswith('make_rom.sh'):
+            start = '        while IFS= read -r f; do'
+            end = '        done < <(find "$APKTOOL_DIR"'
+            if text.count(start) != 1 or text.count(end) != 1:
+                raise ValueError('Unexpected APK worker loop')
+            text = text.replace(start, '        BEYOUD_PIDS=()\n' + start)
+            text = text.replace(end, '            BEYOUD_PIDS+=("$!")\n' + end)
+        else:
+            if text.count('while IFS= read -r f; do') < 2 or text.count('    ) &\ndone') != 2:
+                raise ValueError('Unexpected partition worker loops')
+            # Only the two top-level build/compression loops, not loops in helper functions.
+            text = text.replace('\nwhile IFS= read -r f; do', '\nBEYOUD_PIDS=()\nwhile IFS= read -r f; do')
+            text = text.replace('    ) &\ndone', '    ) &\n    BEYOUD_PIDS+=("$!")\ndone')
+        path.write_text(text)
+
 
 def apply_overlay(workspace):
     shutil.copytree(ROOT / 'integration', workspace / 'integration')
@@ -77,6 +128,8 @@ def apply_overlay(workspace):
     kernel_module.parent.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(ROOT / 'integration/artisan/extremekrnl.sh', kernel_module)
     patch_downloader(workspace)
+    patch_firmware_lookup(workspace)
+    patch_parallel_builds(workspace)
     target = workspace / 'target/beyond2lte/config.sh'
     text = target.read_text()
     if 'TARGET_ASSERT_MODEL=("SM-G975F" "SM-G975N")' not in text:

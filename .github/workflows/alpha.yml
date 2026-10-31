@@ -40,6 +40,11 @@ jobs:
           protoc --version
           clang --version
           df -h
+      - name: Free unused SDK space on the disposable hosted runner
+        if: runner.environment == 'github-hosted'
+        run: |
+          sudo rm -rf -- /usr/local/lib/android /usr/share/dotnet /opt/ghc
+          df -h
       - name: Assemble Artisan S10 base with UN1CA donor
         run: |
           set -o pipefail
@@ -77,6 +82,7 @@ jobs:
             ${{ runner.temp }}/prepare.log
             ${{ runner.temp }}/submodules.log
             ${{ runner.temp }}/beyoud-workspace/BEYOUD-WORKSPACE.json
+            ${{ runner.temp }}/beyoud-workspace/out/firmware-lock.json
             ${{ runner.temp }}/beyoud-workspace/out/config.sh
             ${{ runner.temp }}/beyoud-workspace/out/beyoud-logs/*.log
           if-no-files-found: warn

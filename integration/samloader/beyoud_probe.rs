@@ -14,5 +14,6 @@ fn main() {
     client.fetch_binary_info(&args[1], &args[2], &history.latest);
     assert!(client.info.size > 0, "Empty firmware binary");
     assert!(!client.info.filename.is_empty(), "Firmware filename missing");
+    println!("BEYOUD_FIRMWARE\t{}\t{}\t{}\t{}", args[1], args[2], client.info.version, client.info.size);
     println!("SmartDownload metadata accepted: version={} size={} bytes", client.info.version, client.info.size);
 }
