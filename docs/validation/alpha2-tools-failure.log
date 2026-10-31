@@ -1,0 +1,45 @@
+[  1%] Building C object vendor/CMakeFiles/android_tools_libusb.dir/libusb/libusb/hotplug.c.o
+[  1%] Building C object vendor/CMakeFiles/android_tools_libusb.dir/libusb/libusb/io.c.o
+[  1%] Building C object vendor/CMakeFiles/android_tools_libusb.dir/libusb/libusb/sync.c.o
+[  1%] Building C object vendor/CMakeFiles/android_tools_libusb.dir/libusb/libusb/strerror.c.o
+[  1%] Building C object vendor/CMakeFiles/android_tools_libusb.dir/libusb/libusb/os/events_posix.c.o
+[  1%] Building C object vendor/CMakeFiles/android_tools_libusb.dir/libusb/libusb/os/linux_usbfs.c.o
+[  1%] Building C object vendor/CMakeFiles/android_tools_libusb.dir/libusb/libusb/os/threads_posix.c.o
+[  1%] Building C object vendor/CMakeFiles/android_tools_libusb.dir/libusb/libusb/os/linux_netlink.c.o
+[  1%] Linking C static library libandroid_tools_libusb.a
+make[2]: Leaving directory '/home/runner/work/_temp/beyoud-workspace/external/android-tools/build'
+[  1%] Built target android_tools_libusb
+make[2]: Entering directory '/home/runner/work/_temp/beyoud-workspace/external/android-tools/build'
+make[2]: Leaving directory '/home/runner/work/_temp/beyoud-workspace/external/android-tools/build'
+make[2]: Entering directory '/home/runner/work/_temp/beyoud-workspace/external/android-tools/build'
+[  1%] Building CXX object vendor/CMakeFiles/liblog.dir/logging/liblog/log_event_list.cpp.o
+[  1%] Building CXX object vendor/CMakeFiles/liblog.dir/logging/liblog/log_event_write.cpp.o
+[  1%] Building CXX object vendor/CMakeFiles/liblog.dir/logging/liblog/logger_name.cpp.o
+/home/runner/work/_temp/beyoud-workspace/external/android-tools/vendor/logging/liblog/logger_name.cpp:25:3: warning: array designators are a C99 extension [-Wc99-designator]
+  [LOG_ID_MAIN] = "main",
+  ^~~~~~~~~~~~~
+1 warning generated.
+[  1%] Building CXX object vendor/CMakeFiles/liblog.dir/logging/liblog/logger_read.cpp.o
+[  1%] Building CXX object vendor/CMakeFiles/liblog.dir/logging/liblog/logger_write.cpp.o
+[  2%] Building CXX object vendor/CMakeFiles/liblog.dir/logging/liblog/properties.cpp.o
+[  2%] Building CXX object vendor/CMakeFiles/liblog.dir/logging/liblog/logprint.cpp.o
+[  2%] Building CXX object vendor/fmtlib/CMakeFiles/fmt.dir/src/os.cc.o
+[  2%] Linking CXX static library libliblog.a
+make[2]: Leaving directory '/home/runner/work/_temp/beyoud-workspace/external/android-tools/build'
+[  2%] Built target liblog
+make[2]: Entering directory '/home/runner/work/_temp/beyoud-workspace/external/android-tools/build'
+[  2%] Running cpp protocol buffer compiler on adb/proto/pairing.proto
+[  2%] Running cpp protocol buffer compiler on adb/proto/adb_host.proto
+[  2%] Running cpp protocol buffer compiler on adb/proto/adb_known_hosts.proto
+[  2%] Running cpp protocol buffer compiler on adb/proto/app_processes.proto
+app_processes.proto: This file contains proto3 optional fields, but --experimental_allow_proto3_optional was not set.
+make[2]: *** [vendor/CMakeFiles/libadb.dir/build.make:75: vendor/app_processes.pb.h] Error 1
+make[2]: Leaving directory '/home/runner/work/_temp/beyoud-workspace/external/android-tools/build'
+make[1]: *** [CMakeFiles/Makefile2:501: vendor/CMakeFiles/libadb.dir/all] Error 2
+make[1]: *** Waiting for unfinished jobs....
+[  2%] Linking CXX static library libfmt.a
+make[2]: Leaving directory '/home/runner/work/_temp/beyoud-workspace/external/android-tools/build'
+[  2%] Built target fmt
+make[1]: Leaving directory '/home/runner/work/_temp/beyoud-workspace/external/android-tools/build'
+make: *** [Makefile:156: all] Error 2
+make: Leaving directory '/home/runner/work/_temp/beyoud-workspace/external/android-tools/build'

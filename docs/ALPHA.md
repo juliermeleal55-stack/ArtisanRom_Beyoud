@@ -1,6 +1,6 @@
 # Build experimental alpha1 — SM-G975F
 
-O pipeline `.github/workflows/alpha.yml` instala dependências em Ubuntu 22.04,
+O pipeline `.github/workflows/alpha.yml` instala dependências em Ubuntu 24.04,
 monta a base completa, inicializa submódulos fixados, compila ferramentas e
 chama o `make_rom.sh` original **com geração de ZIP**. Não são removidos patches
 para esconder erros de aplicação.
@@ -51,3 +51,12 @@ python3 scripts/collect_alpha.py /caminho/externo/beyoud-workspace /caminho/exte
 ```
 
 Não desative assertions nem ignore falhas de patches para obter um ZIP.
+
+## Correção da segunda tentativa
+
+A execução 41152973515 aplicou os patches de android-tools e iniciou a
+compilação C/C++. Parou em `adb/proto/app_processes.proto`: o protoc do Ubuntu
+22.04 não habilita campos opcionais proto3 sem flag experimental. O runner foi
+atualizado para Ubuntu 24.04, cujo protobuf suporta esses campos por padrão,
+em vez de remover campos ou ignorar o erro. Isso ainda é uma falha de ferramenta,
+não uma evidência de compatibilidade dos patches de framework da ROM.
