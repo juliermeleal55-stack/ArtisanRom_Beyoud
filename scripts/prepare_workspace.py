@@ -51,6 +51,24 @@ def extract(path, destination):
                 raise ValueError('Unsupported archive member type')
 
 
+
+def patch_downloader(workspace):
+    path = workspace / 'scripts/download_fw.sh'
+    text = path.read_text()
+    old = 'samloader -m "$MODEL" -r "$CSC" -i "$IMEI" -s "$SERIAL_NO" download$STR -O "$ODIN_DIR/${MODEL}_${CSC}"'
+    new = 'python3 "$SRC_DIR/integration/samloader/compat.py" -m "$MODEL" -r "$CSC" download -v "$LATEST_FIRMWARE" -O "$ODIN_DIR/${MODEL}_${CSC}"'
+    if text.count(old) != 1:
+        raise ValueError('Unexpected legacy downloader invocation')
+    text = text.replace(old, new)
+    text = text.replace('        #exit 1', '        exit 1')
+    # Fail immediately on a rejected package, rather than retrying it eleven times.
+    end = '        )\n\n        ZIP_FILE='
+    if text.count(end) != 1:
+        raise ValueError('Unexpected legacy download error handling')
+    text = text.replace(end, '        ) || exit 1\n\n        ZIP_FILE=')
+    text = text.replace('        STR=""\n        [ $MODEL == "SM-S731B" ] && STR=" -v S731BXXU1AYH9/S731BOXM1AYH9/S731BXXU1AYH9/S731BXXU1AYH9"\n', '')
+    path.write_text(text)
+
 def apply_overlay(workspace):
     shutil.copytree(ROOT / 'integration', workspace / 'integration')
     shutil.copyfile(ROOT / 'integration/artisan/essi_64.sh',
@@ -58,6 +76,7 @@ def apply_overlay(workspace):
     kernel_module = workspace / 'platform/exynos9820/patches/extremekrnl/customize.sh'
     kernel_module.parent.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(ROOT / 'integration/artisan/extremekrnl.sh', kernel_module)
+    patch_downloader(workspace)
     target = workspace / 'target/beyond2lte/config.sh'
     text = target.read_text()
     if 'TARGET_ASSERT_MODEL=("SM-G975F" "SM-G975N")' not in text:

@@ -38,5 +38,10 @@
     "path": "external/smali",
     "commit": "8be50d709f10d384f2adc9a6e15bd525067d75a3",
     "url": "https://github.com/google/smali.git"
+  },
+  {
+    "path": "external/samloader-rs",
+    "url": "https://github.com/topjohnwu/samloader-rs.git",
+    "commit": "714d22edad16038f852cfd15903e387d1cd76d9b"
   }
 ]

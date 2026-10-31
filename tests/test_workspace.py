@@ -29,6 +29,9 @@ class WorkspaceTests(unittest.TestCase):
             target.write_text(original)
             (workspace / 'unica/configs').mkdir(parents=True)
             (workspace / 'unica/configs/version.sh').write_text('ROM_VERSION="3.1.1"\n')
+            from test_smart_download import LEGACY
+            (workspace / 'scripts').mkdir()
+            (workspace / 'scripts/download_fw.sh').write_text(LEGACY)
             prepare.apply_overlay(workspace)
             self.assertIn('0.1.0-alpha1', (workspace / 'unica/configs/version.sh').read_text())
             self.assertIn('TARGET_ASSERT_MODEL=("SM-G975F")', target.read_text())

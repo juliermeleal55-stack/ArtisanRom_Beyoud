@@ -80,3 +80,51 @@ O workflow agora testa esse vetor e solicita um nonce real antes de tentar
 baixar firmware, com limite de 120 segundos e log. Essa inicialização não
 transmite IMEI nem baixa firmware. Ela não garante que o download completo,
 a versão solicitada ou o restante do port funcionem.
+
+## Status 408 na consulta do pacote — rota SmartDownload
+
+A captura do usuário mostra `DownloadBinaryInform returned 408`: o handshake
+passou, mas a API antiga `NF_DownloadBinaryInform.do` recusou a consulta do
+pacote. Isso não é prova de timeout HTTP nem falha de patches. Sem a resposta
+completa não se pode atribuir o status exclusivamente ao identificador, à versão
+ou ao servidor.
+
+A nova integração usa **samloader-rs**, fixado no mesmo commit selecionado pela
+UN1CA seventeen (`714d22edad16038f852cfd15903e387d1cd76d9b`). Essa implementação
+usa `NF_SmartDownloadGenerateNonce.do` / `NF_SmartDownloadBinaryInform.do`, com
+requisição por modelo, CSC e versão, sem campo IMEI/serial. Não são gerados
+identificadores e não é necessário enviar dados pessoais do aparelho.
+
+- `build_smart_downloader.sh` compila o cliente e um exemplo de consulta de
+  metadados; `--locked` mantém as dependências Cargo do upstream.
+- `probe_firmware.sh` verifica **os dois** modelos/CSCs configurados antes de
+  compilar as ferramentas Android. A consulta não baixa o pacote inteiro.
+- `integration/samloader/compat.py` traduz a chamada do build antigo para o
+  cliente novo, normalizando a versão para quatro partes. Identificadores são
+  aceitos apenas por compatibilidade da CLI e nunca encaminhados.
+- O patch do downloader exige versão disponível, passa a versão explicitamente,
+  remove o caso especial S731B e propaga imediatamente uma falha de download.
+  Continua usando a extração e verificação MD5 dos pacotes Odin originais.
+- O coletor agora publica a cauda de todos os logs, inclusive `alpha-*.log`,
+  em vez de omiti-lo quando existem três arquivos.
+
+Testes locais verificam tradução de argumentos, ausência de identificadores,
+normalização/rejeição de versões, falha imediata e cobertura dos logs. O patch
+foi aplicado com sucesso ao arquivo real do upstream e passou em `bash -n`.
+O resultado com os servidores Samsung deve ser conferido na nova execução;
+os testes locais não provam disponibilidade do pacote nem boot da ROM.
+
+Para reproduzir a ordem nova em um host com Rust/Cargo e dependências de build:
+
+```bash
+python3 scripts/prepare_workspace.py /caminho/externo/beyoud-workspace
+python3 scripts/init_workspace_dependencies.py /caminho/externo/beyoud-workspace
+bash scripts/build_smart_downloader.sh /caminho/externo/beyoud-workspace
+bash scripts/probe_firmware.sh /caminho/externo/beyoud-workspace
+bash scripts/build_candidate.sh /caminho/externo/beyoud-workspace dependencies
+bash scripts/build_candidate.sh /caminho/externo/beyoud-workspace alpha
+```
+
+A ordem antiga sem construir o cliente Rust não é mais suficiente. O cliente
+Python permanece no inventário histórico das ferramentas, mas não é usado para
+baixar firmware na integração nova.

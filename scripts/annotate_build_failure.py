@@ -6,7 +6,7 @@ import sys
 
 workspace = Path(sys.argv[1])
 paths = sorted((workspace / 'out/beyoud-logs').glob('*.log'))
-for path in paths[-2:]:
+for path in paths:
     text = re.sub(r'\x1b\[[0-9;]*m', '', path.read_text(errors='replace'))
     # Build logs contain public source URLs; suppress any credential-looking values.
     text = re.sub(r'(?i)(token|password|authorization)([=: ]+)\S+', r'\1\2[REDACTED]', text)

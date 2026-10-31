@@ -71,3 +71,8 @@ O pipeline de [alpha experimental](docs/ALPHA.md) instala dependências no
 GitHub Actions e tenta gerar o instalador original com versão `0.1.0-alpha1`.
 Logs são preservados em falha; um ZIP só é coletado após sucesso do build e
 checagens estruturais. Isso **não equivale a teste de boot no aparelho**.
+
+O download de firmware agora usa o **samloader-rs fixado pela UN1CA**, sem
+transmitir IMEI/serial. Antes das ferramentas Android, o pipeline consulta os
+pacotes de origem e destino. Para compilar localmente, siga a ordem atualizada
+em [ALPHA.md](docs/ALPHA.md), incluindo o build do cliente Rust.
