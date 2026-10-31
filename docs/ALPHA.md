@@ -12,8 +12,14 @@ da configuração upstream e ainda precisa ser confrontado com o firmware real.
 
 ## Como acompanhar
 
-Tentativa iniciada nesta etapa:
-https://github.com/juliermeleal55-stack/ArtisanRom_Beyoud/actions/runs/41152256479
+Tentativa atual:
+https://github.com/juliermeleal55-stack/ArtisanRom_Beyoud/actions/runs/41152973515
+
+A tentativa anterior (41152256479) chegou à compilação das ferramentas e
+falhou nesse estágio, antes dos patches/firmwares da ROM. A coleta de logs
+também rejeitou caminhos contendo `..`; esse problema foi corrigido. A nova
+execução configura identidade Git para os `git am` de android-tools e instala
+`pcre2-utils`, sem desativar patches nem suas verificações.
 
 Não confundir execução iniciada com build concluído. O artefato de ROM só é
 coletado se a compilação, montagem e verificações estruturais passarem.
