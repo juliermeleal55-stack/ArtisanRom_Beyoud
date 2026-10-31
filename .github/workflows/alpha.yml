@@ -1,0 +1,69 @@
+name: G975F experimental alpha build
+on:
+  workflow_dispatch:
+  push:
+    branches: [arena/0d47b1d6-artisanrom-beyoud]
+    paths: [.github/workflows/alpha.yml]
+permissions:
+  contents: read
+concurrency:
+  group: g975f-alpha-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  alpha:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 180
+    env:
+      WORKSPACE: ${{ runner.temp }}/beyoud-workspace
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Validate integration
+        run: |
+          python3 -m unittest discover -s tests -v
+          python3 scripts/verify_reference.py
+      - name: Install host build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y bc brotli clang cmake zstd file attr golang-go openjdk-17-jdk lz4 libpcre2-dev protobuf-compiler xxd p7zip-full rsync build-essential autoconf automake libtool pkg-config libssl-dev zlib1g-dev liblz4-dev libzstd-dev liblzma-dev libselinux1-dev libsepol-dev libpcre2-dev libunwind-dev libprotobuf-dev libusb-1.0-0-dev libgtest-dev libfmt-dev libbrotli-dev python3-venv python3-pip unzip zip curl wget git flex bison libncurses-dev libelf-dev ccache ninja-build uuid-dev libfuse-dev libfuse3-dev libdeflate-dev linux-libc-dev
+          df -h
+      - name: Assemble Artisan S10 base with UN1CA donor
+        run: |
+          set -o pipefail
+          python3 scripts/prepare_workspace.py "$WORKSPACE" 2>&1 | tee "$RUNNER_TEMP/prepare.log"
+      - name: Initialize pinned build dependencies
+        run: |
+          set -o pipefail
+          python3 scripts/init_workspace_dependencies.py "$WORKSPACE" 2>&1 | tee "$RUNNER_TEMP/submodules.log"
+      - name: Compile build tools
+        run: bash scripts/build_candidate.sh "$WORKSPACE" dependencies
+      - name: Build alpha images and original installer
+        run: bash scripts/build_candidate.sh "$WORKSPACE" alpha
+      - name: Validate and collect alpha package
+        run: python3 scripts/collect_alpha.py "$WORKSPACE" "$RUNNER_TEMP/alpha-output"
+      - name: Upload alpha only after successful build and structural checks
+        uses: actions/upload-artifact@v4
+        with:
+          name: Beyoud-G975F-alpha1-UNTESTED
+          path: ${{ runner.temp }}/alpha-output/
+          if-no-files-found: error
+          retention-days: 7
+      - name: Preserve diagnostics even when build fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: G975F-alpha-build-diagnostics
+          path: |
+            ${{ runner.temp }}/prepare.log
+            ${{ runner.temp }}/submodules.log
+            ${{ runner.temp }}/beyoud-workspace/BEYOUD-WORKSPACE.json
+            ${{ runner.temp }}/beyoud-workspace/out/config.sh
+            ${{ runner.temp }}/beyoud-workspace/out/beyoud-logs/*.log
+          if-no-files-found: warn
+          retention-days: 7

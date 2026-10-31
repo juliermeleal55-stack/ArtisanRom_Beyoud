@@ -66,6 +66,10 @@ def apply_overlay(workspace):
                         'TARGET_ASSERT_MODEL=("SM-G975F")')
     text = text.replace('TARGET_EXTRA_FIRMWARES=("")', 'TARGET_EXTRA_FIRMWARES=()')
     target.write_text(text)
+    version = workspace / 'unica/configs/version.sh'
+    if version.exists():
+        with version.open('a') as stream:
+            stream.write('\n# Unofficial test candidate, not an ArtisanROM release.\nROM_VERSION="0.1.0-alpha1"\nROM_CODENAME="Beyoud"\n')
     (workspace / 'BEYOUD-WORKSPACE.json').write_text(json.dumps({
         'base_commit': BASE_COMMIT, 'status': 'unvalidated-candidate',
         'target': 'SM-G975F', 'flashable_release': False,
