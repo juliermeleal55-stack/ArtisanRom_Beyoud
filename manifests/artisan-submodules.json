@@ -26,8 +26,8 @@
   },
   {
     "path": "external/samloader",
-    "commit": "69ce07a4c2eb7e1d96ca801d6359989c93a00adb",
-    "url": "https://github.com/ExtremeXT/samloader"
+    "commit": "3c372007945d4f3f165433a1d5ae40523d7f68bf",
+    "url": "https://github.com/ananjaser1211/samloader.git"
   },
   {
     "path": "external/signapk",

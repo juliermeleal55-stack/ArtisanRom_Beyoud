@@ -48,6 +48,10 @@ jobs:
           python3 scripts/init_workspace_dependencies.py "$WORKSPACE" 2>&1 | tee "$RUNNER_TEMP/submodules.log"
       - name: Compile build tools
         run: bash scripts/build_candidate.sh "$WORKSPACE" dependencies
+      - name: Check firmware authentication before downloading
+        run: |
+          set -o pipefail
+          timeout 120 "$WORKSPACE/out/tools/venv/bin/python3" scripts/check_fus_auth.py --live 2>&1 | tee "$WORKSPACE/out/beyoud-logs/firmware-auth.log"
       - name: Build alpha images and original installer
         run: bash scripts/build_candidate.sh "$WORKSPACE" alpha
       - name: Validate and collect alpha package

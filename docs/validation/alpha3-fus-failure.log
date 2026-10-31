@@ -1,0 +1,45 @@
+    download(args)
+  File "/home/runner/work/_temp/beyoud-workspace/out/tools/venv/lib/python3.11/site-packages/samloader/main.py", line 59, in download
+    client = fusclient.FUSClient()
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/_temp/beyoud-workspace/out/tools/venv/lib/python3.11/site-packages/samloader/fusclient.py", line 17, in __init__
+    self.makereq("NF_DownloadGenerateNonce.do") # initialize nonce
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/_temp/beyoud-workspace/out/tools/venv/lib/python3.11/site-packages/samloader/fusclient.py", line 30, in makereq
+    self.auth = auth.getauth(self.nonce)
+                ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/_temp/beyoud-workspace/out/tools/venv/lib/python3.11/site-packages/samloader/auth.py", line 41, in getauth
+    nkey = derive_key(nonce)
+           ^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/_temp/beyoud-workspace/out/tools/venv/lib/python3.11/site-packages/samloader/auth.py", line 34, in derive_key
+    key += KEY_1[ord(nonce[i]) % 16]
+                     ~~~~~^^^
+IndexError: string index out of range
+(scripts/download_fw.sh:188) ! [Attempt: 10] Download failed, retrying in 5 seconds...
+IMEI is provided: 350330051234562
+Traceback (most recent call last):
+  File "/home/runner/work/_temp/beyoud-workspace/out/tools/venv/bin/samloader", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/runner/work/_temp/beyoud-workspace/out/tools/venv/lib/python3.11/site-packages/samloader/main.py", line 46, in main
+    download(args)
+  File "/home/runner/work/_temp/beyoud-workspace/out/tools/venv/lib/python3.11/site-packages/samloader/main.py", line 59, in download
+    client = fusclient.FUSClient()
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/_temp/beyoud-workspace/out/tools/venv/lib/python3.11/site-packages/samloader/fusclient.py", line 17, in __init__
+    self.makereq("NF_DownloadGenerateNonce.do") # initialize nonce
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/_temp/beyoud-workspace/out/tools/venv/lib/python3.11/site-packages/samloader/fusclient.py", line 30, in makereq
+    self.auth = auth.getauth(self.nonce)
+                ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/_temp/beyoud-workspace/out/tools/venv/lib/python3.11/site-packages/samloader/auth.py", line 41, in getauth
+    nkey = derive_key(nonce)
+           ^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/_temp/beyoud-workspace/out/tools/venv/lib/python3.11/site-packages/samloader/auth.py", line 34, in derive_key
+    key += KEY_1[ord(nonce[i]) % 16]
+                     ~~~~~^^^
+IndexError: string index out of range
+(scripts/download_fw.sh:184) ! Download failed, check your network connection or device IMEI!
+
+Build failed in 0hrs 0min 57sec.
+

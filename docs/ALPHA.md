@@ -60,3 +60,23 @@ compilação C/C++. Parou em `adb/proto/app_processes.proto`: o protoc do Ubuntu
 atualizado para Ubuntu 24.04, cujo protobuf suporta esses campos por padrão,
 em vez de remover campos ou ignorar o erro. Isso ainda é uma falha de ferramenta,
 não uma evidência de compatibilidade dos patches de framework da ROM.
+
+## Falha de download e correção do cliente FUS
+
+A execução 41153543455 concluiu **todas as ferramentas** e parou antes da
+extração/aplicação dos patches da ROM. O cliente histórico
+`ExtremeXT/samloader@69ce07a4…` falhou ao calcular a assinatura do nonce Samsung
+(`auth.derive_key`, `IndexError: string index out of range`). Repetir o download
+onze vezes não corrigiu a incompatibilidade de autenticação.
+
+A dependência `external/samloader` foi substituída por
+`ananjaser1211/samloader@3c372007945d4f3f165433a1d5ae40523d7f68bf`, **a mesma
+revisão do submódulo da UN1CA seventeen fornecida**. Ela atualiza parâmetros de
+autenticação, usa sessão HTTP persistente e envia `X-FUS-Protocol-Ver: 2.0`.
+Mantém a CLI `-m/-r/-i/-s download -O`, usada pelo build antigo.
+
+O teste offline usa nonce sintético: o cliente antigo falha e o novo passa.
+O workflow agora testa esse vetor e solicita um nonce real antes de tentar
+baixar firmware, com limite de 120 segundos e log. Essa inicialização não
+transmite IMEI nem baixa firmware. Ela não garante que o download completo,
+a versão solicitada ou o restante do port funcionem.
