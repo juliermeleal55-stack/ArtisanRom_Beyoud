@@ -28,7 +28,9 @@ class WorkspaceTests(unittest.TestCase):
             original = 'TARGET_ASSERT_MODEL=("SM-G975F" "SM-G975N")\nTARGET_EXTRA_FIRMWARES=("")\nTARGET_OS_FILE_SYSTEM="ext4"\nTARGET_SUPER_PARTITION_SIZE=0\n'
             target.write_text(original)
             (workspace / 'unica/configs').mkdir(parents=True)
+            (workspace / 'unica/configs/version.sh').write_text('ROM_VERSION="3.1.1"\n')
             prepare.apply_overlay(workspace)
+            self.assertIn('0.1.0-alpha1', (workspace / 'unica/configs/version.sh').read_text())
             self.assertIn('TARGET_ASSERT_MODEL=("SM-G975F")', target.read_text())
             self.assertIn('TARGET_SUPER_PARTITION_SIZE=0', target.read_text())
             self.assertIn('TARGET_OS_FILE_SYSTEM="ext4"', target.read_text())

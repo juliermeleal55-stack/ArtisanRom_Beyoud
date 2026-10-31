@@ -18,9 +18,11 @@ def main():
         path = workspace / entry['path']
         if path.exists() and any(path.iterdir()):
             parser.error(f'{path} is not empty; refusing to overwrite')
-        subprocess.run(['git', 'clone', '--no-checkout', entry['url'], str(path)], check=True)
+        subprocess.run(['git', 'init', str(path)], check=True)
+        subprocess.run(['git', '-C', str(path), 'remote', 'add', 'origin', entry['url']], check=True)
+        subprocess.run(['git', '-C', str(path), 'fetch', '--depth=1', 'origin', entry['commit']], check=True)
         subprocess.run(['git', '-C', str(path), 'checkout', '--detach', entry['commit']], check=True)
-        subprocess.run(['git', '-C', str(path), 'submodule', 'update', '--init', '--recursive'], check=True)
+        subprocess.run(['git', '-C', str(path), 'submodule', 'update', '--init', '--recursive', '--depth=1'], check=True)
 
 
 if __name__ == '__main__':

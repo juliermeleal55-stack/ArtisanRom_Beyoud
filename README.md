@@ -64,3 +64,10 @@ bash scripts/build_candidate.sh /caminho/externo/beyoud-workspace rom
 
 Configuração gerada com sucesso; a tentativa de build parou nas dependências
 ausentes do host. Patches de framework e boot continuam sem validação.
+
+## Build alpha1
+
+O pipeline de [alpha experimental](docs/ALPHA.md) instala dependências no
+GitHub Actions e tenta gerar o instalador original com versão `0.1.0-alpha1`.
+Logs são preservados em falha; um ZIP só é coletado após sucesso do build e
+checagens estruturais. Isso **não equivale a teste de boot no aparelho**.
