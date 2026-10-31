@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 180
     env:
-      WORKSPACE: ${{ runner.temp }}/beyoud-workspace
+      WORKSPACE: ${{ github.workspace }}/../beyoud-workspace
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -62,8 +62,8 @@ jobs:
           path: |
             ${{ runner.temp }}/prepare.log
             ${{ runner.temp }}/submodules.log
-            ${{ runner.temp }}/beyoud-workspace/BEYOUD-WORKSPACE.json
-            ${{ runner.temp }}/beyoud-workspace/out/config.sh
-            ${{ runner.temp }}/beyoud-workspace/out/beyoud-logs/*.log
+            ${{ github.workspace }}/../beyoud-workspace/BEYOUD-WORKSPACE.json
+            ${{ github.workspace }}/../beyoud-workspace/out/config.sh
+            ${{ github.workspace }}/../beyoud-workspace/out/beyoud-logs/*.log
           if-no-files-found: warn
           retention-days: 7
