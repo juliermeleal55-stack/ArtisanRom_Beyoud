@@ -40,15 +40,20 @@ jobs:
           protoc --version
           clang --version
           df -h
-      - name: Free unused SDK space on the disposable hosted runner
+      - name: Reclaim storage only on the disposable hosted runner
         if: runner.environment == 'github-hosted'
+        env:
+          BEYOUD_HOSTED_RUNNER: '1'
         run: |
-          sudo rm -rf -- /usr/local/lib/android /usr/share/dotnet /opt/ghc
-          df -h
+          set -o pipefail
+          bash scripts/prepare_hosted_storage.sh 2>&1 | tee "$RUNNER_TEMP/storage.log"
+          sudo install -d -o "$(id -u)" -g "$(id -g)" "/mnt/beyoud-$GITHUB_RUN_ID"
+      - name: Select the filesystem with most available space
+        run: python3 scripts/select_workspace_volume.py
       - name: Assemble Artisan S10 base with UN1CA donor
         run: |
           set -o pipefail
-          python3 scripts/prepare_workspace.py "$WORKSPACE" 2>&1 | tee "$RUNNER_TEMP/prepare.log"
+          python3 scripts/prepare_workspace.py "$WORKSPACE" --discard-archive 2>&1 | tee "$RUNNER_TEMP/prepare.log"
       - name: Initialize pinned build dependencies
         run: |
           set -o pipefail
@@ -79,11 +84,12 @@ jobs:
         with:
           name: G975F-alpha-build-diagnostics
           path: |
+            ${{ runner.temp }}/storage.log
             ${{ runner.temp }}/prepare.log
             ${{ runner.temp }}/submodules.log
-            ${{ runner.temp }}/beyoud-workspace/BEYOUD-WORKSPACE.json
-            ${{ runner.temp }}/beyoud-workspace/out/firmware-lock.json
-            ${{ runner.temp }}/beyoud-workspace/out/config.sh
-            ${{ runner.temp }}/beyoud-workspace/out/beyoud-logs/*.log
+            ${{ env.WORKSPACE }}/BEYOUD-WORKSPACE.json
+            ${{ env.WORKSPACE }}/out/firmware-lock.json
+            ${{ env.WORKSPACE }}/out/config.sh
+            ${{ env.WORKSPACE }}/out/beyoud-logs/*.log
           if-no-files-found: warn
           retention-days: 7

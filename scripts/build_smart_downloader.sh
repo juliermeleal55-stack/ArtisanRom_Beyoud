@@ -11,4 +11,7 @@ set -o pipefail
     cargo build --locked --release --manifest-path "$repo/Cargo.toml" -p samloader --bin samloader --example beyoud_probe
     cp "$repo/target/release/samloader" "$workspace/out/tools/bin/samloader-rs"
     cp "$repo/target/release/examples/beyoud_probe" "$workspace/out/tools/bin/beyoud-firmware-probe"
+    # The installed executables are independent of Cargo's multi-GB intermediate tree.
+    cargo clean --release --manifest-path "$repo/Cargo.toml"
+    df -h "$workspace"
 } 2>&1 | tee "$workspace/out/beyoud-logs/smart-downloader-build.log"

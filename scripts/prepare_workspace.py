@@ -154,7 +154,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('destination', type=Path)
     parser.add_argument('--archive', type=Path, help='Previously downloaded pinned archive')
+    parser.add_argument('--discard-archive', action='store_true', help='Delete only the automatically managed archive after successful assembly')
     args = parser.parse_args()
+    if args.discard_archive and args.archive is not None:
+        parser.error('--discard-archive cannot delete a user-supplied --archive')
     destination = args.destination.resolve()
     if destination.exists():
         parser.error('Destination must not exist; existing work is never overwritten')
@@ -170,6 +173,8 @@ def main():
     destination.mkdir(parents=True)
     extract(archive, destination)
     apply_overlay(destination)
+    if args.discard_archive:
+        archive.unlink()
     print(f'Candidate assembled: {destination}')
     print('External submodules are NOT included in the archive. See docs/INTEGRATION.md.')
 

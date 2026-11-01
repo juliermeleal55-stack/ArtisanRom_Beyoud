@@ -58,3 +58,29 @@
 
 Não se declara "base toda OK" a partir desta auditoria estática. As correções
 acima removem inconsistências específicas e tornam novas falhas observáveis.
+
+## Tentativa de caber no runner Linux sem novos dados pessoais
+
+O bloqueio observado foi 24.651.677.696 bytes livres contra mínimo calculado de
+45.823.434.144 bytes. O IMEI não interfere nesse problema: as consultas Samsung
+já passaram sem ele.
+
+A limpeza ampliada é limitada ao runner **descartável hospedado pelo GitHub**,
+com opt-in explícito. Remove SDKs, CodeQL, navegadores e imagens/cache Docker
+não usados pelo pipeline; preserva Java, Python, Go, Rust e compiladores.
+O script recusa execução local sem as duas condições de segurança. Ele não
+formata, não une discos nem apaga a árvore do projeto.
+
+O workflow compara o espaço disponível em RUNNER_TEMP e /mnt, escolhendo a
+workspace em um volume maior quando existir. Todos os artefatos e diagnósticos
+seguem a localização escolhida. Se os dois caminhos estiverem no mesmo volume,
+isso não cria capacidade extra.
+
+Depois da montagem, a CI descarta somente o arquivo-fonte baixado automaticamente
+(cerca de 1,4 GiB), já verificado e extraído. A opção recusa apagar um arquivo
+fornecido via --archive. Depois de instalar os dois executáveis Rust, remove
+os intermediários Cargo release; as ferramentas instaladas permanecem no lugar.
+
+A verificação de espaço continua ativa. São otimizações a medir na nova execução,
+não garantia de que o runner comporte extração, workdir e ZIP final. O log de
+armazenamento registra o antes/depois, e nenhum IMEI/serial precisa ser enviado.
