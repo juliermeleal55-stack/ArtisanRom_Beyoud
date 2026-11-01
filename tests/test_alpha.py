@@ -68,7 +68,7 @@ class AlphaTests(unittest.TestCase):
     def test_wrapper_propagates_build_failure(self):
         with tempfile.TemporaryDirectory() as tmp:
             workspace = Path(tmp)
-            (workspace / 'BEYOUD-WORKSPACE.json').write_text('{}')
+            (workspace / 'BEYOUD-WORKSPACE.json').write_text('{"target":"SM-G975F"}')
             (workspace / 'buildenv.sh').write_text('return 0\n')
             scripts = workspace / 'scripts'
             scripts.mkdir()

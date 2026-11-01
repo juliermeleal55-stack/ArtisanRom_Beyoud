@@ -59,7 +59,8 @@ def inspect(destination):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
-    commands.add_parser("doctor", help="Report readiness; nonzero means NOT flashable")
+    check = commands.add_parser("doctor", help="Report readiness; nonzero means NOT flashable")
+    check.add_argument("--target", choices=["beyond1lte", "beyond2lte"], default="beyond2lte")
     audit = commands.add_parser("inspect", help="Fetch pinned reference text using gh")
     audit.add_argument("destination", type=Path)
     args = parser.parse_args()
@@ -67,7 +68,7 @@ def main():
     if args.command == "inspect":
         inspect(args.destination)
         return 0
-    profile = json.loads((ROOT / "devices/beyond2lte/port.json").read_text())
+    profile = json.loads((ROOT / "devices" / args.target / "port.json").read_text())
     missing = doctor(profile)
     print(f'{profile["codename"]}: ' + ("BLOQUEADO — não instalar" if missing else "Checklist preenchido; requer revisão humana"))
     for item in missing:

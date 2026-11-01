@@ -76,3 +76,12 @@ O download de firmware agora usa o **samloader-rs fixado pela UN1CA**, sem
 transmitir IMEI/serial. Antes das ferramentas Android, o pipeline consulta os
 pacotes de origem e destino. Para compilar localmente, siga a ordem atualizada
 em [ALPHA.md](docs/ALPHA.md), incluindo o build do cliente Rust.
+
+## S10 normal (Exynos) — novo alvo candidato
+
+Adicionado `beyond1lte` para **SM-G973F**, separado de `beyond2lte`/SM-G975F.
+Use `prepare_workspace.py ... --target beyond1lte`; o alvo padrão continua S10+.
+Wrappers, firmware, kernel e nome do pacote seguem o alvo da workspace.
+Veja [S10-SUPPORT.md](docs/S10-SUPPORT.md). **Sem build completo ou boot validado.**
+O workflow alpha agora é manual, com seleção do aparelho; os testes continuam
+rodando automaticamente em pushes.

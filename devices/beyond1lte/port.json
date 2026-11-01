@@ -1,0 +1,16 @@
+{
+  "codename": "beyond1lte",
+  "platform": "exynos9820",
+  "candidate_models": [
+    "SM-G973F"
+  ],
+  "status": "research-only",
+  "flashable": false,
+  "hardware_confirmed": false,
+  "donor_firmware_verified": false,
+  "kernel_validated": false,
+  "partition_layout_verified": false,
+  "vendor_compatibility_validated": false,
+  "boot_validated": false,
+  "confirmation_source": "Alvo candidato Exynos histórico; modelo do usuário ainda não confirmado."
+}

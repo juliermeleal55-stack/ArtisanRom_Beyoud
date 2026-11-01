@@ -9,13 +9,14 @@ workspace=$(realpath "$1")
 stage=${2:-rom}
 [[ "$stage" == dependencies || "$stage" == rom || "$stage" == alpha ]] || { echo 'Invalid stage' >&2; exit 64; }
 [[ -f "$workspace/BEYOUD-WORKSPACE.json" ]] || { echo 'Not a generated Beyoud workspace' >&2; exit 1; }
+codename=$(python3 "$(dirname "$0")/workspace_target.py" "$workspace")
 mkdir -p "$workspace/out/beyoud-logs"
 log="$workspace/out/beyoud-logs/$stage-$(date +%Y%m%d-%H%M%S).log"
 (
     cd "$workspace"
     # Legacy envsetup reads unset variables: do not impose nounset on upstream.
     set +u
-    source buildenv.sh beyond2lte
+    source buildenv.sh "$codename"
     if [[ "$stage" == dependencies ]]; then
         ./scripts/build_dependencies.sh
     elif [[ "$stage" == alpha ]]; then

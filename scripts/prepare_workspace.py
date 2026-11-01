@@ -8,6 +8,9 @@ from pathlib import Path
 import shutil
 import subprocess
 import tarfile
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from integration.targets import TARGETS, select
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE_COMMIT = '5638a7f66cdf8bc9dd43f087a96f7dfa4f9e6954'
@@ -140,7 +143,9 @@ done
         path.write_text(text)
 
 
-def apply_overlay(workspace):
+def apply_overlay(workspace, codename="beyond2lte"):
+    device = select(codename)
+    model = device["model"]
     shutil.copytree(ROOT / 'integration', workspace / 'integration')
     shutil.copyfile(ROOT / 'integration/artisan/essi_64.sh',
                     workspace / 'unica/configs/essi_64.sh')
@@ -151,12 +156,12 @@ def apply_overlay(workspace):
     patch_firmware_lookup(workspace)
     patch_parallel_builds(workspace)
     patch_sequential_firmwares(workspace)
-    target = workspace / 'target/beyond2lte/config.sh'
+    target = workspace / 'target' / codename / 'config.sh'
     text = target.read_text()
-    if 'TARGET_ASSERT_MODEL=("SM-G975F" "SM-G975N")' not in text:
+    expected = f'TARGET_ASSERT_MODEL=("{model}" "{device["legacy_model"]}")'
+    if expected not in text or f'TARGET_CODENAME="{codename}"' not in text:
         raise ValueError('Unexpected base device configuration')
-    text = text.replace('TARGET_ASSERT_MODEL=("SM-G975F" "SM-G975N")',
-                        'TARGET_ASSERT_MODEL=("SM-G975F")')
+    text = text.replace(expected, f'TARGET_ASSERT_MODEL=("{model}")')
     text = text.replace('TARGET_EXTRA_FIRMWARES=("")', 'TARGET_EXTRA_FIRMWARES=()')
     target.write_text(text)
     version = workspace / 'unica/configs/version.sh'
@@ -165,7 +170,7 @@ def apply_overlay(workspace):
             stream.write('\n# Unofficial test candidate, not an ArtisanROM release.\nROM_VERSION="0.1.0-alpha1"\nROM_CODENAME="Beyoud"\n')
     (workspace / 'BEYOUD-WORKSPACE.json').write_text(json.dumps({
         'base_commit': BASE_COMMIT, 'status': 'unvalidated-candidate',
-        'target': 'SM-G975F', 'flashable_release': False,
+        'target': model, 'codename': codename, 'flashable_release': False,
         'donor_commit': '609fa7cc738e42dedcc31ffecbe4aefc0b34d6e2',
         'note': 'Legacy framework patches retained for compatibility investigation; not migrated.'
     }, indent=2) + '\n')
@@ -174,6 +179,7 @@ def apply_overlay(workspace):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('destination', type=Path)
+    parser.add_argument('--target', choices=sorted(TARGETS), default='beyond2lte')
     parser.add_argument('--archive', type=Path, help='Previously downloaded pinned archive')
     parser.add_argument('--discard-archive', action='store_true', help='Delete only the automatically managed archive after successful assembly')
     args = parser.parse_args()
@@ -193,7 +199,7 @@ def main():
     check_archive(archive)
     destination.mkdir(parents=True)
     extract(archive, destination)
-    apply_overlay(destination)
+    apply_overlay(destination, args.target)
     if args.discard_archive:
         archive.unlink()
     print(f'Candidate assembled: {destination}')

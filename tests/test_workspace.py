@@ -26,7 +26,7 @@ class WorkspaceTests(unittest.TestCase):
             workspace = Path(tmp)
             target = workspace / 'target/beyond2lte/config.sh'
             target.parent.mkdir(parents=True)
-            original = 'TARGET_ASSERT_MODEL=("SM-G975F" "SM-G975N")\nTARGET_EXTRA_FIRMWARES=("")\nTARGET_OS_FILE_SYSTEM="ext4"\nTARGET_SUPER_PARTITION_SIZE=0\n'
+            original = 'TARGET_CODENAME="beyond2lte"\nTARGET_ASSERT_MODEL=("SM-G975F" "SM-G975N")\nTARGET_EXTRA_FIRMWARES=("")\nTARGET_OS_FILE_SYSTEM="ext4"\nTARGET_SUPER_PARTITION_SIZE=0\n'
             target.write_text(original)
             (workspace / 'unica/configs').mkdir(parents=True)
             (workspace / 'unica/configs/version.sh').write_text('ROM_VERSION="3.1.1"\n')

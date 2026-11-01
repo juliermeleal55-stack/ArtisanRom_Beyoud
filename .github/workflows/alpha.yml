@@ -1,18 +1,26 @@
-name: G975F experimental alpha build
+name: Galaxy S10 Exynos experimental alpha build
 on:
   workflow_dispatch:
-  push:
-    branches: [arena/0d47b1d6-artisanrom-beyoud]
-    paths: [.github/workflows/alpha.yml]
+    inputs:
+      target:
+        description: Exynos candidate (no boot validation)
+        type: choice
+        required: true
+        default: beyond2lte
+        options:
+          - beyond2lte
+          - beyond1lte
 permissions:
   contents: read
 concurrency:
-  group: g975f-alpha-${{ github.ref }}
+  group: s10-alpha-${{ github.ref }}-${{ inputs.target }}
   cancel-in-progress: false
 jobs:
   alpha:
     runs-on: ubuntu-24.04
     timeout-minutes: 180
+    env:
+      BEYOUD_TARGET: ${{ inputs.target }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -53,7 +61,7 @@ jobs:
       - name: Assemble Artisan S10 base with UN1CA donor
         run: |
           set -o pipefail
-          python3 scripts/prepare_workspace.py "$WORKSPACE" --discard-archive 2>&1 | tee "$RUNNER_TEMP/prepare.log"
+          python3 scripts/prepare_workspace.py "$WORKSPACE" --target "$BEYOUD_TARGET" --discard-archive 2>&1 | tee "$RUNNER_TEMP/prepare.log"
       - name: Initialize pinned build dependencies
         run: |
           set -o pipefail
@@ -71,7 +79,7 @@ jobs:
       - name: Upload alpha only after successful build and structural checks
         uses: actions/upload-artifact@v4
         with:
-          name: Beyoud-G975F-alpha1-UNTESTED
+          name: Beyoud-${{ inputs.target }}-alpha1-UNTESTED
           path: ${{ runner.temp }}/alpha-output/
           if-no-files-found: error
           retention-days: 7
@@ -82,7 +90,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: G975F-alpha-build-diagnostics
+          name: ${{ inputs.target }}-alpha-build-diagnostics
           path: |
             ${{ runner.temp }}/storage.log
             ${{ runner.temp }}/prepare.log

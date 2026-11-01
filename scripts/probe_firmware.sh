@@ -2,8 +2,9 @@
 set -eo pipefail
 workspace=$(realpath "$1")
 [[ -f "$workspace/BEYOUD-WORKSPACE.json" ]] || { echo 'Invalid workspace' >&2; exit 1; }
+codename=$(python3 "$(dirname "$0")/workspace_target.py" "$workspace")
 cd "$workspace"
 # Legacy buildenv does not support nounset.
-source buildenv.sh beyond2lte
+source buildenv.sh "$codename"
 mkdir -p "$OUT_DIR/beyoud-logs"
 python3 "$SRC_DIR/integration/samloader/metadata.py" resolve "$workspace" 2>&1 | tee "$OUT_DIR/beyoud-logs/firmware-metadata.log"
