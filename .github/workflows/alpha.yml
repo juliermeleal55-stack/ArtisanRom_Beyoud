@@ -64,7 +64,7 @@ jobs:
         run: bash scripts/probe_firmware.sh "$WORKSPACE"
       - name: Compile build tools
         run: bash scripts/build_candidate.sh "$WORKSPACE" dependencies
-      - name: Build alpha images and original installer
+      - name: Prepare firmwares sequentially and build alpha installer
         run: bash scripts/build_candidate.sh "$WORKSPACE" alpha
       - name: Validate and collect alpha package
         run: python3 scripts/collect_alpha.py "$WORKSPACE" "$RUNNER_TEMP/alpha-output"

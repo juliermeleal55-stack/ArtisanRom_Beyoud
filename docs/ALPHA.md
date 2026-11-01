@@ -135,3 +135,11 @@ A consulta agora persiste as versões em `out/firmware-lock.json`. Download e
 extração leem exatamente esse arquivo, sem repetir a consulta FOTA antiga.
 O lock é incluído nos diagnósticos e no pacote coletado. Veja
 [BUILD-AUDIT.md](BUILD-AUDIT.md) para as demais correções e pendências reais.
+
+## Novo preparo sequencial
+
+O make_rom gerado agora chama o orquestrador de firmware sequencial e usa
+extração ZIP com recuperação progressiva de blocos no Linux. O comando de build
+continua o mesmo. Consulte BUILD-AUDIT.md antes de usar a ferramenta de extração:
+o ZIP de download é descartável e não pode ser reutilizado se a extração falhar.
+A integridade CRC/MD5 e os marcadores de sucesso continuam exigidos.

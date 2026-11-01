@@ -73,6 +73,26 @@ def patch_downloader(workspace):
         text = text.replace(mkdir, mkdir + '\n    find "$ODIN_DIR/${MODEL}_${CSC}" -maxdepth 1 -type f -name "*.zip" -delete')
     path.write_text(text)
 
+def patch_sequential_firmwares(workspace):
+    path = workspace / 'scripts/make_rom.sh'
+    text = path.read_text()
+    start = '    if [ ! -f "$FW_DIR/$SOURCE_FIRMWARE_PATH/.extracted" ] || [ ! -f "$FW_DIR/$TARGET_FIRMWARE_PATH/.extracted" ]; then'
+    end = '    LOG_STEP_IN true "Creating work dir"'
+    if text.count(start) != 1 or text.count(end) != 1:
+        raise ValueError('Unexpected firmware preparation block')
+    begin, finish = text.index(start), text.index(end)
+    text = text[:begin] + '    python3 "$SRC_DIR/integration/samloader/stage.py" "$SRC_DIR" || exit 1\n\n' + text[finish:]
+    path.write_text(text)
+    path = workspace / 'scripts/download_fw.sh'
+    text = path.read_text()
+    # Match the exact pinned upstream command, preserving Odin MD5 validation after it.
+    line = next((line for line in text.splitlines() if 'EVAL "unzip -o' in line), None)
+    if line is None or text.count(line) != 1:
+        raise ValueError('Unexpected ZIP expansion command')
+    text = text.replace(line, '    python3 "$SRC_DIR/integration/samloader/unpack_reclaim.py" "$ZIP_FILE" "$ODIN_DIR/${MODEL}_${CSC}" || exit 1')
+    path.write_text(text)
+
+
 def patch_firmware_lookup(workspace):
     path = workspace / 'scripts/utils/firmware_utils.sh'
     text = path.read_text()
@@ -130,6 +150,7 @@ def apply_overlay(workspace):
     patch_downloader(workspace)
     patch_firmware_lookup(workspace)
     patch_parallel_builds(workspace)
+    patch_sequential_firmwares(workspace)
     target = workspace / 'target/beyond2lte/config.sh'
     text = target.read_text()
     if 'TARGET_ASSERT_MODEL=("SM-G975F" "SM-G975N")' not in text:

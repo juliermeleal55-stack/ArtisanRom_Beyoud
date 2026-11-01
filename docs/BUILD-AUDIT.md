@@ -84,3 +84,46 @@ os intermediários Cargo release; as ferramentas instaladas permanecem no lugar.
 A verificação de espaço continua ativa. São otimizações a medir na nova execução,
 não garantia de que o runner comporte extração, workdir e ZIP final. O log de
 armazenamento registra o antes/depois, e nenhum IMEI/serial precisa ser enviado.
+
+## Preparação sequencial e liberação progressiva do ZIP
+
+O fluxo antigo baixava os dois firmwares antes de extrair qualquer um. O novo
+`integration/samloader/stage.py` processa fonte, destino e extras um por vez:
+
+1. Verifica versão no lock e espaço para o próximo download.
+2. Executa download e extração apenas daquele descritor, com as flags originais
+   `--ignore-source --ignore-target <descritor>`.
+3. Confirma a versão em `.extracted` e presença de conteúdo extraído.
+4. Só então remove o diretório Odin daquele firmware, preservando `out/fw`.
+5. Inicia o próximo. Em falha, não limpa o material diagnóstico nem começa outro.
+
+Somente sequenciar não elimina o pico do ZIP de 18,6 GB coexistindo com os tar
+Odin completos. Por isso, em Linux, `unpack_reclaim.py` substitui o unzip nessa
+workspace descartável: extrai todos os membros, liberando com **hole punching**
+os blocos comprimidos que já foram lidos. Não depende de atributos privados de
+zipfile nem muda o tamanho lógico da fonte enquanto a leitura está em curso.
+Todos os arquivos/partições são preservados; zipfile verifica os CRCs dos membros
+e a verificação MD5 Odin original continua depois da extração ZIP.
+
+O ZIP passa a ser **descartável a partir da primeira liberação de bloco**. Se
+houver erro, ele não deve ser reutilizado: será necessário baixar novamente.
+Arquivos parciais não viram saídas concluídas, o marcador `.downloaded` não é
+escrito, e a falha é propagada. O fonte só é apagado após todos os CRCs passarem.
+O script primeiro testa o suporte do filesystem e recusa fallback que dobre o
+consumo de disco. Não é um substituto genérico para unzip de arquivos pessoais.
+
+O cálculo inicial passa de `2 * maior pacote + 8 GiB` para `maior pacote + 8 GiB`
+**porque o fluxo real foi alterado**, não porque a proteção foi desativada.
+Antes da expansão, a tabela ZIP fornece o tamanho descompactado; o script
+confere capacidade disponível mais blocos recuperáveis e mantém reserva de
+2 GiB durante cada escrita. Há nova verificação antes de cada firmware. O lock
+registra `storage_mode=sequential-linux-reclaim` para identificar essa política.
+
+Testes executam cópia real com ZIP armazenado e deflate, incluindo membro de
+18 MiB, múltiplos arquivos, CRC inválido, caminho inseguro, filesystem sem suporte
+e ordem/limpeza de firmware. Os patches foram aplicados aos scripts reais da
+revisão upstream e passaram em bash -n.
+
+Ainda pode faltar espaço dentro da extração de super.img, na criação do workdir,
+no kernel ou nas imagens finais; esses estágios não foram declarados resolvidos.
+Não foram removidas partições nem reduzidas imagens artificialmente para caber.

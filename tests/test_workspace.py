@@ -33,7 +33,7 @@ class WorkspaceTests(unittest.TestCase):
             from test_smart_download import LEGACY
             (workspace / 'scripts').mkdir()
             (workspace / 'scripts/download_fw.sh').write_text(LEGACY)
-            with patch.object(prepare, 'patch_firmware_lookup'), patch.object(prepare, 'patch_parallel_builds'):
+            with patch.object(prepare, 'patch_firmware_lookup'), patch.object(prepare, 'patch_parallel_builds'), patch.object(prepare, 'patch_sequential_firmwares'):
                 prepare.apply_overlay(workspace)
             self.assertIn('0.1.0-alpha1', (workspace / 'unica/configs/version.sh').read_text())
             self.assertIn('TARGET_ASSERT_MODEL=("SM-G975F")', target.read_text())
