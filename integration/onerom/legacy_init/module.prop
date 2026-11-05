@@ -1,0 +1,5 @@
+name=Beyoud legacy vendor initialization guards
+version=1
+versionCode=1
+author=Beyoud contributors (adapted from OneROM)
+description=Import legacy vendor ueventd rules and guard RIL property-context formatting

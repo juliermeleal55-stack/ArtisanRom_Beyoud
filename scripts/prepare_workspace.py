@@ -11,6 +11,7 @@ import tarfile
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from integration.targets import TARGETS, select
+from integration.onerom.install import install as install_onerom
 
 ROOT = Path(__file__).resolve().parents[1]
 BASE_COMMIT = '5638a7f66cdf8bc9dd43f087a96f7dfa4f9e6954'
@@ -156,6 +157,7 @@ def apply_overlay(workspace, codename="beyond2lte"):
     patch_firmware_lookup(workspace)
     patch_parallel_builds(workspace)
     patch_sequential_firmwares(workspace)
+    onerom = install_onerom(workspace, codename)
     target = workspace / 'target' / codename / 'config.sh'
     text = target.read_text()
     expected = f'TARGET_ASSERT_MODEL=("{model}" "{device["legacy_model"]}")'
@@ -171,6 +173,7 @@ def apply_overlay(workspace, codename="beyond2lte"):
     (workspace / 'BEYOUD-WORKSPACE.json').write_text(json.dumps({
         'base_commit': BASE_COMMIT, 'status': 'unvalidated-candidate',
         'target': model, 'codename': codename, 'flashable_release': False,
+        'onerom_compatibility': onerom,
         'donor_commit': '609fa7cc738e42dedcc31ffecbe4aefc0b34d6e2',
         'note': 'Legacy framework patches retained for compatibility investigation; not migrated.'
     }, indent=2) + '\n')

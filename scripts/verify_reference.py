@@ -2,6 +2,7 @@
 """Verify imported legacy text against Git blob IDs; never execute it."""
 import hashlib
 import json
+import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -23,4 +24,7 @@ def verify():
 
 
 if __name__ == '__main__':
-    print(f'{verify()} reference files verified')
+    print(f'{verify()} Artisan reference files verified')
+    sys.path.insert(0, str(ROOT))
+    from integration.onerom.install import verify as verify_onerom
+    print(f'{len(verify_onerom()["files"])} OneROM reference files verified')

@@ -1,0 +1,237 @@
+{
+  "repository": "DaDevMikey/OneROM",
+  "commit": "644f0aacc49ad2410e566de8deb05e6c8211d83d",
+  "license": "GPL-3.0-or-later (retain upstream LICENSE)",
+  "inventory_truncated": false,
+  "scope_statistics": {
+    "platform/exynos9820/": {
+      "files": 241,
+      "bytes": 183284240,
+      "unchanged_from_artisan": 233,
+      "changed": 6,
+      "new": 2
+    },
+    "target/beyond1lte/": {
+      "files": 233,
+      "bytes": 142724629,
+      "unchanged_from_artisan": 8,
+      "changed": 4,
+      "new": 221
+    },
+    "target/beyond2lte/": {
+      "files": 0,
+      "bytes": 0,
+      "unchanged_from_artisan": 0,
+      "changed": 0,
+      "new": 0
+    },
+    "scripts/": {
+      "files": 20,
+      "bytes": 164005,
+      "unchanged_from_artisan": 9,
+      "changed": 10,
+      "new": 1
+    },
+    "unica/": {
+      "files": 2590,
+      "bytes": 91464423,
+      "unchanged_from_artisan": 2554,
+      "changed": 28,
+      "new": 8
+    },
+    "prebuilts/": {
+      "files": 1345,
+      "bytes": 1748452919,
+      "unchanged_from_artisan": 1279,
+      "changed": 60,
+      "new": 6
+    }
+  },
+  "files": [
+    {
+      "path": "LICENSE",
+      "sha": "94a9ed024d3859793618152ea559a168bbcbb5e2",
+      "size": 35147
+    },
+    {
+      "path": "README.md",
+      "sha": "013c42588b5ad886f1f7933d3221867fda1d97fd",
+      "size": 5582
+    },
+    {
+      "path": "build.sh",
+      "sha": "03433ac29a4d3d3c35cb35d329a145df4eddfabf",
+      "size": 574
+    },
+    {
+      "path": "platform/exynos9820/patches/camera/customize.sh",
+      "sha": "8a7487d3dc45a65731b05a2292901265d6a71e2a",
+      "size": 5550
+    },
+    {
+      "path": "platform/exynos9820/patches/extradim/disable",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0
+    },
+    {
+      "path": "platform/exynos9820/patches/extradim/smali/system/priv-app/SecSettings/SecSettings.apk/0001-Remove-device-specific-checks.patch",
+      "sha": "2f4bf2b9b3ae31583386b5fce6c868a9662e63ed",
+      "size": 1616
+    },
+    {
+      "path": "platform/exynos9820/patches/extradim/smali/system_ext/priv-app/SystemUI/SystemUI.apk/0001-Remove-device-specific-checks.patch",
+      "sha": "ce72aaa9529fe2ac3c6ffcca29ca8b6e1cacda9b",
+      "size": 1525
+    },
+    {
+      "path": "platform/exynos9820/patches/extremekrnl/customize.sh",
+      "sha": "a8909f347d2011f9ad7b1fce23fc285ec3b34923",
+      "size": 1906
+    },
+    {
+      "path": "platform/exynos9820/patches/extremekrnl/disable",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0
+    },
+    {
+      "path": "platform/exynos9820/patches/miscs/customize.sh",
+      "sha": "d6c788ad9b6540de4191a8d3f802c5de9eb95de6",
+      "size": 5256
+    },
+    {
+      "path": "platform/exynos9820/patches/vendor/customize.sh",
+      "sha": "e7f3a457fd1b1f62fbad573ff72869267c18f869",
+      "size": 2628
+    },
+    {
+      "path": "scripts/extract_fw.sh",
+      "sha": "cf32cce93dac7b360e40ffc47735bb0c6978fc43",
+      "size": 17977
+    },
+    {
+      "path": "scripts/internal/build_flashable_zip.sh",
+      "sha": "8b8d7859e069063037f6a2944665c88c18b63cee",
+      "size": 32777
+    },
+    {
+      "path": "scripts/internal/create_work_dir.sh",
+      "sha": "36bed119054f550d7883572f761b4ba0c315e3bd",
+      "size": 9202
+    },
+    {
+      "path": "target/beyond1lte/config.sh",
+      "sha": "1db634401b7d32ba0b0e9024713a4c1e62085427",
+      "size": 2197
+    },
+    {
+      "path": "target/beyond1lte/kernel/README.md",
+      "sha": "b888971569680ccefdd8a0c0af1f6f0aec9f433a",
+      "size": 1044
+    },
+    {
+      "path": "target/beyond1lte/patches/product_abilist/customize.sh",
+      "sha": "2060bad7d724a06ce5860101648aee4b5337e922",
+      "size": 15422
+    },
+    {
+      "path": "target/beyond1lte/patches/search_indexing/README.md",
+      "sha": "7145a6d453739246dcb3be053df18d205e27a03b",
+      "size": 752
+    },
+    {
+      "path": "target/beyond1lte/patches/search_indexing/disable",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0
+    },
+    {
+      "path": "target/beyond1lte/patches/search_indexing/module.prop",
+      "sha": "a56ad0d21319df871648a1ddcbeba45690ea840e",
+      "size": 169
+    },
+    {
+      "path": "target/beyond1lte/patches/search_indexing/smali/system/priv-app/SecSettingsIntelligence/SecSettingsIntelligence.apk/0001-Skip-absent-policy-resource-IDs.patch",
+      "sha": "7add52275f17c126d019029809fcd82d13a073a1",
+      "size": 718
+    },
+    {
+      "path": "target/beyond1lte/patches/usb_initialization/README.md",
+      "sha": "fd00451f15f9cf9c37ec5555488d2930020e0c2a",
+      "size": 1431
+    },
+    {
+      "path": "target/beyond1lte/patches/usb_initialization/disable",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0
+    },
+    {
+      "path": "target/beyond1lte/patches/usb_initialization/module.prop",
+      "sha": "801f85acdc5f19c39fd14487be8e7e950cb8e4c0",
+      "size": 182
+    },
+    {
+      "path": "target/beyond1lte/patches/usb_initialization/smali/system/framework/services.jar/0001-Reapply-initial-charging-after-MTP-is-ready.patch",
+      "sha": "2a7a260d3abd92331ff90e0c50b27b5dae1c0d02",
+      "size": 1290
+    },
+    {
+      "path": "target/beyond1lte/patches/user_defaults/customize.sh",
+      "sha": "157d80b18f292b46b5b6801883ea0cd8c1fe13ff",
+      "size": 882
+    },
+    {
+      "path": "target/beyond1lte/patches/user_defaults/disable",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0
+    },
+    {
+      "path": "target/beyond1lte/patches/user_defaults/module.prop",
+      "sha": "f1989f546d84b093e27b5a5f3f658a1b9c214949",
+      "size": 176
+    },
+    {
+      "path": "target/beyond1lte/patches/user_defaults/smali/system/priv-app/SecSettings/SecSettings.apk/0001-Keep-S10-A2DP-on-software.patch",
+      "sha": "064fb7d0703378f5e90739eee5bb11fe2914b3e1",
+      "size": 2473
+    },
+    {
+      "path": "target/beyond1lte/patches/user_defaults/system/system/etc/init/s10-user-defaults.rc",
+      "sha": "9be4b42874e9dfd29311f9781ff6808fa527181c",
+      "size": 550
+    },
+    {
+      "path": "target/beyond1lte/patches/user_defaults/system/system/etc/s10-user-defaults.sh",
+      "sha": "990027097c1479987a7c5b66b50cbb8955552808",
+      "size": 641
+    },
+    {
+      "path": "target/beyond1lte/patches/wallpaper_capture/README.md",
+      "sha": "03c0ae4b3d02fab0f9ae9066840d78d8b60b620d",
+      "size": 1089
+    },
+    {
+      "path": "target/beyond1lte/patches/wallpaper_capture/disable",
+      "sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "size": 0
+    },
+    {
+      "path": "target/beyond1lte/patches/wallpaper_capture/module.prop",
+      "sha": "f8dbc67c75cf97d494f968271c329f89bb6b53e8",
+      "size": 172
+    },
+    {
+      "path": "target/beyond1lte/patches/wallpaper_capture/smali/system/priv-app/DressRoom/DressRoom.apk/0001-Complete-wallpaper-loading-on-capture-failure.patch",
+      "sha": "ef9d9de40e2be966068b985651d35b655b01ac91",
+      "size": 786
+    },
+    {
+      "path": "unica/configs/r12s_native.sh",
+      "sha": "904d1420eefb2099da05e3757d0253c6a7563d21",
+      "size": 1269
+    },
+    {
+      "path": "unica/patches/vndk/customize.sh",
+      "sha": "c711c746290db4cb7e451f607ea0df0269b19ee9",
+      "size": 1801
+    }
+  ]
+}

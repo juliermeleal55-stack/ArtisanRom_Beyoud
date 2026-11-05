@@ -40,6 +40,9 @@ class TargetTests(unittest.TestCase):
             config.parent.mkdir(parents=True)
             shutil.copyfile(ROOT / 'reference/artisan-s10/target/beyond1lte/config.sh', config)
             (root / 'unica/configs').mkdir(parents=True)
+            misc = root / 'platform/exynos9820/patches/miscs/customize.sh'
+            misc.parent.mkdir(parents=True, exist_ok=True)
+            misc.write_text((ROOT / 'reference/artisan-s10/platform/exynos9820/patches/miscs/customize.sh').read_text())
             with patch.object(prepare, 'patch_downloader'), patch.object(prepare, 'patch_firmware_lookup'), patch.object(prepare, 'patch_parallel_builds'), patch.object(prepare, 'patch_sequential_firmwares'):
                 prepare.apply_overlay(root, 'beyond1lte')
             text = config.read_text()

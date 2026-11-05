@@ -85,3 +85,12 @@ Wrappers, firmware, kernel e nome do pacote seguem o alvo da workspace.
 Veja [S10-SUPPORT.md](docs/S10-SUPPORT.md). **Sem build completo ou boot validado.**
 O workflow alpha agora é manual, com seleção do aparelho; os testes continuam
 rodando automaticamente em pushes.
+
+## Integração auditada da OneROM
+
+Fonte fixada em `DaDevMikey/OneROM@644f0aacc49ad2410e566de8deb05e6c8211d83d`.
+Foram adaptadas verificações de SDK real para o Bluetooth legado e inicialização
+do vendor, sem trocar a base Artisan, o doador ou o kernel. Quatro módulos
+específicos do S10 foram importados **desativados, como no upstream**, pois ainda
+precisam ser confrontados com nosso doador. Consulte a análise e os bloqueios
+em [ONEROM-AUDIT.md](docs/ONEROM-AUDIT.md). Isso não é validação de boot.
