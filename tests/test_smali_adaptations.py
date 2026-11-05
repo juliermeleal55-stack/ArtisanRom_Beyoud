@@ -170,3 +170,10 @@ class SmaliAdaptationsTests(unittest.TestCase):
             self.assertNotEqual(apply(root,decoded,patch)[0].returncode,0)
             self.assertEqual(file.read_bytes(),before)
 
+    def test_source_only_capture_does_not_request_target_patch_or_rom_stages(self):
+        text=(ROOT/'.github/workflows/collect-donor-repair-inputs.yml').read_text()
+        self.assertIn('build_candidate.sh "$WORKSPACE" source',text)
+        for stage in ('target','patch','retire','package'):
+            self.assertNotIn('build_candidate.sh "$WORKSPACE" '+stage,text)
+        self.assertNotIn('collect_alpha.py',text)
+        self.assertIn('not a ROM or installer',text)
