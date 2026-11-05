@@ -1,6 +1,13 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # Replacement for the historical floating-branch ExtremeKernel module.
 # Retains the original build command and image destinations.
+# Preflight inspects port patches only. Never compile a kernel for a tree that
+# has known patch mismatches; the real pass below still builds the pinned kernel.
+if [[ "${BEYOUD_PATCH_PREFLIGHT:-0}" == "1" ]]; then
+    echo "Patch preflight: deferring pinned kernel compilation"
+    return 0
+fi
+
 REPLACE_PINNED_KERNEL_BINARIES()
 {
     local kernel_dir="$KERNEL_TMP_DIR-$TARGET_PLATFORM"

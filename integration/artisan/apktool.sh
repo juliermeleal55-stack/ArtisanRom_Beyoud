@@ -44,6 +44,17 @@ elif [ -n "$GITHUB_ACTIONS" ]; then
 fi
 
 
+# Track every worker explicitly: wait PID1 PID2 only returns PID2's status.
+WAIT_FOR_DEX_WORKERS()
+{
+    local failed=0 pid
+    for pid in "${BEYOUD_DEX_PIDS[@]}"; do
+        wait "$pid" || failed=1
+    done
+    BEYOUD_DEX_PIDS=()
+    [ "$failed" -eq 0 ]
+}
+
 BUILD()
 {
     if [ ! -d "$OUTPUT_PATH" ]; then
@@ -59,6 +70,7 @@ BUILD()
     if [ -d "$OUTPUT_PATH/smali" ]; then
         local DEX_API_LEVEL
         local DEX_FILENAME
+        local -a BEYOUD_DEX_PIDS=()
 
         while IFS= read -r d; do
             local DEX_DIR
@@ -84,10 +96,14 @@ BUILD()
             fi
 
             EVAL "smali a -a \"$DEX_API_LEVEL\" -j \"$THREAD_COUNT\" -o \"$OUTPUT_PATH/$DEX_FILENAME\" \"$d\"" &
+            BEYOUD_DEX_PIDS+=("$!")
+            if (( ${#BEYOUD_DEX_PIDS[@]} >= THREAD_COUNT )); then
+                WAIT_FOR_DEX_WORKERS || exit 1
+            fi
         done < <(find "$OUTPUT_PATH" -maxdepth 1 -type d -name "smali*")
 
         # shellcheck disable=SC2046
-        wait $(jobs -p) || exit 1
+        WAIT_FOR_DEX_WORKERS || exit 1
         rm -f "$OUTPUT_PATH/dex_api_versions.tsv" "$OUTPUT_PATH/dex_api_version"
     fi
 
@@ -164,6 +180,7 @@ DECODE()
     if [ -f "$OUTPUT_PATH/classes.dex" ]; then
         local DEX_API_LEVEL
         local SMALI_OUT
+        local -a BEYOUD_DEX_PIDS=()
         : > "$OUTPUT_PATH/dex_api_versions.tsv"
 
         while IFS= read -r f; do
@@ -188,10 +205,14 @@ DECODE()
             # - Use .locals directive instead of the .registers one
             # - Use a sequential numbering scheme for labels
             EVAL "baksmali d -a \"$DEX_API_LEVEL\" --ac false --di false -j \"$THREAD_COUNT\" -l -o \"$OUTPUT_PATH/$SMALI_OUT\" --sl \"$f\"" &
+            BEYOUD_DEX_PIDS+=("$!")
+            if (( ${#BEYOUD_DEX_PIDS[@]} >= THREAD_COUNT )); then
+                WAIT_FOR_DEX_WORKERS || exit 1
+            fi
         done < <(find "$OUTPUT_PATH" -maxdepth 1 -type f -name "*.dex")
 
         # shellcheck disable=SC2046
-        wait $(jobs -p) || exit 1
+        WAIT_FOR_DEX_WORKERS || exit 1
 
         find "$OUTPUT_PATH" -maxdepth 1 -type f -name "*.dex" -delete
     fi

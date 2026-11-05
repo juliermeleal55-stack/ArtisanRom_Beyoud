@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from integration.targets import TARGETS, select
 from integration.build_policy import apply as apply_build_policy
 from integration.framework_policy import install as install_framework
+from integration.preflight_policy import install as install_preflight
 from integration.onerom.install import install as install_onerom
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -160,6 +161,7 @@ def apply_overlay(workspace, codename="beyond2lte"):
     patch_parallel_builds(workspace)
     patch_sequential_firmwares(workspace)
     install_framework(workspace)
+    install_preflight(workspace)
     apply_build_policy(workspace)
     onerom = install_onerom(workspace, codename)
     target = workspace / 'target' / codename / 'config.sh'

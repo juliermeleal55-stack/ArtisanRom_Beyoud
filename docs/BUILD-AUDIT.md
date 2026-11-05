@@ -208,3 +208,57 @@ simulados: validam classes.dex e classes2.dex com APIs distintas, associação d
 pastas, execução única por DEX e override services.jar. Também reproduzem a
 montagem a partir do arquivo upstream intacto e verificam que a workspace
 recebe o overlay, não uma referência modificada. Não são testes dos APKs reais.
+
+## Falha HFR em 42102368559 e revisão do restante da cadeia
+
+O doador real aceitou Freecess e CoreRune. O bloqueio seguinte foi o patch
+`Remove-brightness-threshold-values`, que esperava `SEAMLESS_BRT: 89,91` e
+`SEAMLESS_LUX: 260,2500`. Esses números de outro firmware não são uma interface
+estável. A substituição guardada em integration/refresh_rate.py identifica
+getMainInstance e o construtor BrightnessThreshold de quatro strings. Valida os
+registradores das propriedades de brilho/lux e as constantes numéricas, esvazia
+somente os dois defaults e os textos diagnósticos correspondentes. Não altera
+.locals, desvios, strings iguais em outros métodos ou o restante da lógica.
+Rejeita fluxos ambíguos/alterados e não grava parcialmente. O legado só é
+removido depois de instalada a substituição, na mesma condição de execução.
+A adaptação ainda precisa passar contra o doador real; os testes são sintéticos.
+
+Foram obtidos e conferidos pelo Git blob ID 170 arquivos de texto upstream para
+esta revisão (scripts, módulos e patches), incluindo os 66 patches da base
+relevantes às árvores unica/exynos9820/beyond1lte. O inventário completo por
+patch está em manifests/legacy-patch-review.json, incluindo diretórios dex fixos,
+registradores, lambdas sintéticas e dependências de desvios/catch. Inclui patches
+condicionais: estar no inventário NÃO significa estar ativo nesse doador.
+Isso expõe, por exemplo, a fragilidade de deknox/assinatura/cutout/telecom sem
+converter cegamente alterações complexas ou desativar módulos para passar.
+Os scripts HEX nativos também estão inventariados; padrões binários, toolchain,
+montagem de imagens e comportamento em hardware não foram certificados.
+
+A verificação agora não depende de reenviar um build completo para descobrir
+somente o próximo hunk. Antes da passagem de produção, integration/build.py
+executa uma passagem DIAGNÓSTICA dos módulos na ordem e condições originais:
+
+* mantém --check + aplicação atômica dos patches válidos, respeitando a sequência;
+* acumula hunks incompatíveis e continua a inspeção dos demais patches/módulos;
+* cada módulo roda em um processo separado com errexit: falha de customize/HEX
+  não é escondida e não impede inspecionar os módulos posteriores;
+* módulos que falham cedo ficam explicitamente com cobertura incompleta;
+* registra conclusão das quatro árvores existentes e recusa travessia vazia,
+  incompleta ou duplicada; o escopo é dos caminhos condicionais executados;
+* adia o kernel e termina antes de montar APKs/JARs/imagens ou criar ZIP;
+* qualquer falha bloqueia a passagem real, retirement e empacotamento;
+* se tudo passar, --force reconstrói work_dir a partir das firmwares ainda
+  retidas, limpa os APKs decodificados e reaplica os patches com os erros fatais
+  originais. Alterações de diagnóstico não viram ROM por engano.
+
+Relatórios: out/beyoud-logs/patch-preflight.{json,jsonl}, logs por módulo e até
+16 MiB de smali real dos alvos incompatíveis no artefato de diagnóstico. Uma
+falha anterior pode causar rejeições dependentes; não tratar a contagem como
+número de bugs independentes. Falhas na preparação da árvore, anteriores aos
+módulos, continuam fatais e não permitem afirmar cobertura completa.
+
+Também corrigido o wait múltiplo no overlay APKTool: cada PID é aguardado e os
+DEX ficam limitados a THREAD_COUNT/BEYOUD_JOBS, em vez de lançar todos juntos e
+aceitar só o resultado do último. Esta revisão não promete boot nem ausência de
+outros erros. A workspace do runner encerrado continua irrecuperável e uma nova
+verificação do doador ainda exige preparar as firmwares outra vez.

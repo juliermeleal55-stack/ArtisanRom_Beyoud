@@ -16,6 +16,7 @@ import time
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from integration.targets import from_marker
 from integration.patch_inventory import inventory
+from integration.patch_preflight import start as start_preflight
 from integration.samloader.metadata import configured_firmwares
 from integration.firmware_check import inspect as inspect_firmware
 from integration.package_inputs import atomic_json, retire
@@ -254,6 +255,15 @@ def execute(workspace, stage, jobs=1):
                     'package': ['./scripts/internal/build_flashable_zip.sh'],
                 }[stage]
                 with (logs / f'resources-{stage}-{time.time_ns()}.jsonl').open('w') as telemetry:
+                    if stage == 'patch':
+                        env = dict(env)
+                        env.pop('BEYOUD_PATCH_PREFLIGHT', None)
+                        start_preflight(workspace)
+                        run_command(command, workspace, dict(env, BEYOUD_PATCH_PREFLIGHT='1'), telemetry)
+                        if json.loads((logs / 'patch-preflight.json').read_text()).get('status') != 'passed':
+                            raise ValueError('No successful donor patch preflight; real build blocked')
+                        # --force reconstructs work_dir from retained firmware and
+                        # clears decoded APKs. Diagnostic edits are never packaged.
                     receipt['minimum_observed_free'] = run_command(command, workspace, env, telemetry)
                 if stage == 'target':
                     inspect_firmware(workspace)

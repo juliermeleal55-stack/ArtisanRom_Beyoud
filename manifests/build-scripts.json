@@ -76,6 +76,26 @@
       "path": "unica/mods/settings/smali/system/priv-app/SecSettings/SecSettings.apk/0003-Show-real-device-model-number.patch",
       "sha": "77052927b8bf2df87a11a24d6c33d1ae0c9fd164",
       "size": 1000
+    },
+    {
+      "path": "unica/patches/product_feature/customize.sh",
+      "sha": "9038b9c41c6d4f3eeddaaac5e7c444d4e0a10323",
+      "size": 19039
+    },
+    {
+      "path": "unica/patches/product_feature/hfr/framework.jar/0001-Remove-brightness-threshold-values.patch",
+      "sha": "9a9c4e7cdb5cf61d7214575427bd52345eed1ba0",
+      "size": 2374
+    },
+    {
+      "path": "scripts/utils/module_utils.sh",
+      "sha": "6ae527e302265547da9cfd76a9b0df9181bc63e3",
+      "size": 10514
+    },
+    {
+      "path": "scripts/internal/apply_modules.sh",
+      "sha": "d554aa71013d9068174cbc4079e1bc0e2971a2de",
+      "size": 4507
     }
   ]
 }

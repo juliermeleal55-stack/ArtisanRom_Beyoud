@@ -32,7 +32,8 @@ class ApktoolOverlayTests(unittest.TestCase):
 
     def test_decode_executes_correct_per_dex_mapping_and_single_pass(self):
         text = OVERLAY.read_text()
-        decode = text[text.index('DECODE()\n'):text.index('DEX_TO_API()\n')]
+        worker = text[text.index('WAIT_FOR_DEX_WORKERS()\n'):text.index('BUILD()\n')]
+        decode = worker + text[text.index('DECODE()\n'):text.index('DEX_TO_API()\n')]
         for name, expected in [('other.jar', {'smali': '35', 'smali_classes2': '36'}),
                                ('services.jar', {'smali': '36', 'smali_classes2': '36'})]:
             with tempfile.TemporaryDirectory() as tmp:
@@ -50,8 +51,11 @@ baksmali() {
  while [ "$#" -gt 0 ]; do
   case "$1" in -o) output="$2"; shift 2 ;; -a) api="$2"; shift 2 ;; *) shift ;; esac
  done
+ mkdir "$OUTPUT_PATH/inflight" || return 1
+ sleep 0.02
  mkdir -p "$output"
  echo "$api" >> "$output/invocations"
+ rmdir "$OUTPUT_PATH/inflight"
 }
 '''
                 script = root / 'test.sh'
@@ -64,7 +68,7 @@ baksmali() {
                 for folder, api in expected.items():
                     self.assertEqual((output / folder / 'invocations').read_text().splitlines(), [api])
                 # Execute the real assembly loop against the metadata just emitted.
-                build = text[text.index('BUILD()\n'):text.index('    # Copy original META-INF')] + '}\n'
+                build = worker + text[text.index('BUILD()\n'):text.index('    # Copy original META-INF')] + '}\n'
                 mock = r'''
 smali() {
  local output="" api=""
@@ -80,3 +84,9 @@ smali() {
                 self.assertEqual((output / 'classes.dex').read_text(), expected['smali'])
                 self.assertEqual((output / 'classes2.dex').read_text(), expected['smali_classes2'])
 
+
+    def test_failed_earlier_dex_worker_cannot_be_hidden_by_last_success(self):
+        text = OVERLAY.read_text()
+        worker = text[text.index('WAIT_FOR_DEX_WORKERS()\n'):text.index('BUILD()\n')]
+        script = worker + '\nBEYOUD_DEX_PIDS=(); (exit 7) & BEYOUD_DEX_PIDS+=("$!"); (exit 0) & BEYOUD_DEX_PIDS+=("$!"); WAIT_FOR_DEX_WORKERS\n'
+        self.assertNotEqual(subprocess.run(['bash','-c',script]).returncode,0)

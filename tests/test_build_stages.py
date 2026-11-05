@@ -215,6 +215,9 @@ EXTRACT_OS_PARTITIONS
                 elif 'stage.py' in str(cmd):
                     firmware(root)
                 elif 'make_rom.sh' in str(cmd):
+                    if env.get('BEYOUD_PATCH_PREFLIGHT') == '1':
+                        (root / 'out/beyoud-logs/patch-preflight.json').write_text(json.dumps(dict(status='passed')))
+                        return 100
                     work = root / 'out/target/beyond2lte/work_dir'
                     work.mkdir(parents=True)
                     (work / '.completed').write_text('complete')

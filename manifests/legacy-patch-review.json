@@ -1,0 +1,1061 @@
+{
+  "schema_version": 1,
+  "repository": "ArtisanROM-archive/ArtisanROM_old",
+  "commit": "5638a7f66cdf8bc9dd43f087a96f7dfa4f9e6954",
+  "scope": "All 66 patch files in unica, platform/exynos9820 and target/beyond1lte of the pinned base; conditional files are NOT all active.",
+  "status": "static-risk-inventory-not-donor-certification",
+  "patches": [
+    {
+      "path": "platform/exynos9820/patches/extradim/smali/system/priv-app/SecSettings/SecSettings.apk/0001-Remove-device-specific-checks.patch",
+      "sha": "21f9677dd364afb66e36fb55da9ae1a323c485bd",
+      "module": "platform/exynos9820/patches/extradim",
+      "targets": [
+        "smali_classes4/com/samsung/android/settings/accessibility/SecAccessibilityUtils.smali"
+      ],
+      "hunks": 2,
+      "risks": [
+        "fixed-dex-directory",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "platform/exynos9820/patches/extradim/smali/system_ext/priv-app/SystemUI/SystemUI.apk/0001-Remove-device-specific-checks.patch",
+      "sha": "194b4a6a4b19db66354ac7a279878db9c4025dbd",
+      "module": "platform/exynos9820/patches/extradim",
+      "targets": [
+        "smali_classes2/com/android/systemui/qs/tiles/ReduceBrightColorsTile.smali"
+      ],
+      "hunks": 2,
+      "risks": [
+        "fixed-dex-directory",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/applock/smali/system/framework/framework.jar/0001-Force-AppLock-support.patch",
+      "sha": "f5dbdc8a80fbe6892482c4245c3f7666c5de7af9",
+      "module": "unica/mods/applock",
+      "targets": [
+        "smali_classes6/com/samsung/android/rune/CoreRune.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-dex-directory",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/applock/smali/system/priv-app/SecSettings/SecSettings.apk/0001-Force-AppLock-support.patch",
+      "sha": "7965eaabccee2df5ddb8cdabd536fdcc638435c9",
+      "module": "unica/mods/applock",
+      "targets": [
+        "smali_classes3/com/samsung/android/settings/usefulfeature/applock/AppLockPreferenceController.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-dex-directory",
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/deknox/smali/system/framework/framework.jar/0001-Disable-SemService.patch",
+      "sha": "acb4c40304dfec17002cc3902ff84c116556bb73",
+      "module": "unica/mods/deknox",
+      "targets": [
+        "smali_classes6/com/samsung/android/service/SemService/SemServiceManager.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-dex-directory",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/deknox/smali/system/framework/framework.jar/0002-Disable-MDF.patch",
+      "sha": "c9b4c00632bc9532b0ec29eb435b28803141aa11",
+      "module": "unica/mods/deknox",
+      "targets": [
+        "smali_classes6/com/samsung/android/security/mdf/MdfUtils.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-dex-directory",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/deknox/smali/system/framework/knoxsdk.jar/0001-Nuke-Knox-DualDAR-and-HDM-version.patch",
+      "sha": "9e953ed8e32ad66533104909c74d1dd06957040a",
+      "module": "unica/mods/deknox",
+      "targets": [
+        "smali/com/samsung/android/knox/ddar/DualDARPolicy.smali",
+        "smali/com/samsung/android/knox/hdm/HdmManager.smali"
+      ],
+      "hunks": 3,
+      "risks": [
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/deknox/smali/system/framework/services.jar/0001-Nuke-BlockchainTZService.patch",
+      "sha": "683e178435e277fc06e0dfb5b786fc32ca137cd0",
+      "module": "unica/mods/deknox",
+      "targets": [
+        "smali/com/android/server/SystemServer$$ExternalSyntheticLambda10.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "compiler-generated-class-name",
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/deknox/smali/system/framework/services.jar/0002-Nuke-KnoxGuardService.patch",
+      "sha": "ea368df996bd44e2135ab29612857cfc62a01ce9",
+      "module": "unica/mods/deknox",
+      "targets": [
+        "smali/com/android/server/SystemServer.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/deknox/smali/system/framework/services.jar/0003-Nuke-MPOS-Service.patch",
+      "sha": "1a2b8a058a71e368b7fe334bb6bb12bb2cabf2ea",
+      "module": "unica/mods/deknox",
+      "targets": [
+        "smali/com/android/server/SystemServer$$ExternalSyntheticLambda10.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "compiler-generated-class-name",
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/deknox/smali/system/framework/services.jar/0004-Nuke-SemService.patch",
+      "sha": "0f8e94e70df7425dda0a0c1b228a198fbf589a91",
+      "module": "unica/mods/deknox",
+      "targets": [
+        "smali/com/android/server/SystemServer$$ExternalSyntheticLambda10.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "compiler-generated-class-name",
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/deknox/smali/system/framework/services.jar/0005-Nuke-HDMService.patch",
+      "sha": "8bc98f4faf65127b0514edbf2f96d8712ea794ce",
+      "module": "unica/mods/deknox",
+      "targets": [
+        "smali/com/android/server/enterprise/EnterpriseDeviceManagerServiceImpl.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/deknox/smali/system/priv-app/SecSettings/SecSettings.apk/0001-Nuke-Knox-DualDAR-version.patch",
+      "sha": "47c691f78526d95b8ab767994096dafefa138068",
+      "module": "unica/mods/deknox",
+      "targets": [
+        "smali_classes4/com/samsung/android/knox/ddar/DualDARPolicy.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-dex-directory",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/deknox/smali/system/priv-app/SecSettings/SecSettings.apk/0002-Nuke-Knox-HDM-version.patch",
+      "sha": "581aac8b328625c05a76fbe7615f43eed413fe82",
+      "module": "unica/mods/deknox",
+      "targets": [
+        "smali_classes4/com/samsung/android/knox/hdm/HdmManager.smali"
+      ],
+      "hunks": 2,
+      "risks": [
+        "fixed-dex-directory",
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/deknox/smali/system/priv-app/SecSettings/SecSettings.apk/0003-Nuke-eSE-COS-version.patch",
+      "sha": "c6f2669d6699515de21fb681f66d6c5c60ab78b7",
+      "module": "unica/mods/deknox",
+      "targets": [
+        "smali_classes4/com/samsung/android/settings/deviceinfo/softwareinfo/SecuritySoftwareVersionPreferenceController.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-dex-directory",
+        "control-flow-or-exception-layout"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/deknox/smali/system/priv-app/SecSettingsIntelligence/SecSettingsIntelligence.apk/0001-Nuke-Knox-DualDAR-and-HDM-version.patch",
+      "sha": "02ce8f36b70d15260baaba5a189fb6343c6a74df",
+      "module": "unica/mods/deknox",
+      "targets": [
+        "smali_classes2/com/samsung/android/knox/ddar/DualDARPolicy.smali",
+        "smali_classes2/com/samsung/android/knox/hdm/HdmManager.smali"
+      ],
+      "hunks": 3,
+      "risks": [
+        "fixed-dex-directory",
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/deknox/smali/system_ext/priv-app/StorageManager/StorageManager.apk/0001-Nuke-Knox-DualDAR-and-HDM-version.patch",
+      "sha": "53c3c20b2f05bf9a670150977e7d65d6ff14efc9",
+      "module": "unica/mods/deknox",
+      "targets": [
+        "smali/com/samsung/android/knox/ddar/DualDARPolicy.smali",
+        "smali/com/samsung/android/knox/hdm/HdmManager.smali"
+      ],
+      "hunks": 3,
+      "risks": [
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/knoxpatch/smali/system/framework/framework.jar/0001-Introduce-SamsungPropsHooks.patch",
+      "sha": "f91e0d17f9983755fd02c6f280cc7f9f34c65ac3",
+      "module": "unica/mods/knoxpatch",
+      "targets": [
+        "smali/android/app/Instrumentation.smali",
+        "smali_classes3/android/os/SystemProperties.smali",
+        "smali_classes3/android/provider/Settings$Global.smali",
+        "smali_classes6/com/ocin4ever/spoof/SamsungPropsHooks.smali"
+      ],
+      "hunks": 5,
+      "risks": [
+        "fixed-dex-directory",
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/knoxpatch/smali/system/framework/knoxsdk.jar/0001-Introduce-SamsungPropsHooks.patch",
+      "sha": "2529515b5e8573b28fb27198d6fa547ebe56af99",
+      "module": "unica/mods/knoxpatch",
+      "targets": [
+        "smali/com/samsung/android/knox/EnterpriseDeviceManager.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/knoxpatch/smali/system/framework/samsungkeystoreutils.jar/0001-Bypass-ICD-verification.patch",
+      "sha": "f5a8421a546265eefd26304b6055f147658f272d",
+      "module": "unica/mods/knoxpatch",
+      "targets": [
+        "smali/com/samsung/android/security/keystore/AttestParameterSpec.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/knoxpatch/smali/system/framework/services.jar/0001-Bypass-ICD-verification.patch",
+      "sha": "0bfba53095ff0f9950beb597da1facc73066afdc",
+      "module": "unica/mods/knoxpatch",
+      "targets": [
+        "smali_classes2/com/samsung/android/security/keystore/AttestParameterSpec.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-dex-directory",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/knoxpatch/smali/system/framework/services.jar/0002-Disable-SAK-in-DarManagerService.patch",
+      "sha": "9039d4620865293a1814fa1ac4725ecb9c64b747",
+      "module": "unica/mods/knoxpatch",
+      "targets": [
+        "smali/com/android/server/knox/dar/DarManagerService.smali"
+      ],
+      "hunks": 3,
+      "risks": [
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/multiuser/smali/system/framework/framework.jar/0001-Enable-multi-user-support.patch",
+      "sha": "29ff1ea4c56ff4eefbf93cfed940f0745b1623f1",
+      "module": "unica/mods/multiuser",
+      "targets": [
+        "smali_classes6/com/samsung/android/core/pm/multiuser/MultiUserSupportsHelper.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-dex-directory",
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/settings/smali/system/framework/framework.jar/0001-Allow-unlimited-storage-for-Google-Photos.patch",
+      "sha": "c197b6cc0d5d45c657737033839f786180bec120",
+      "module": "unica/mods/settings",
+      "targets": [
+        "smali/android/app/ApplicationPackageManager.smali"
+      ],
+      "hunks": 7,
+      "risks": [
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/settings/smali/system/framework/framework.jar/0002-Introduce-SamsungPropsHooks.patch",
+      "sha": "49da53cccac1c898960dc8a60457cb14c33bc0cc",
+      "module": "unica/mods/settings",
+      "targets": [
+        "smali_classes6/io/mesalabs/unica/SamsungPropsHooks.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-dex-directory",
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/settings/smali/system/framework/semwifi-service.jar/0001-Disable-5GHz-Hotspot-Country-Check.patch",
+      "sha": "3b7ff156e3a9cc890f75271e69e6d731a629d8b0",
+      "module": "unica/mods/settings",
+      "targets": [
+        "smali/com/samsung/android/server/wifi/ap/SemWifiApServiceImpl.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/settings/smali/system/framework/services.jar/0001-Allow-secure-screenshot.patch",
+      "sha": "2a0818b3005caea11792c602d0d49af476bf6c96",
+      "module": "unica/mods/settings",
+      "targets": [
+        "smali_classes2/com/android/server/wm/WindowState.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-dex-directory",
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/settings/smali/system/framework/services.jar/0002-Allow-app-downgrade.patch",
+      "sha": "4c6c68539d862c93c4ede24896cbfa761ef69278",
+      "module": "unica/mods/settings",
+      "targets": [
+        "smali_classes2/com/android/server/pm/PackageManagerServiceUtils.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-dex-directory",
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/settings/smali/system/framework/services.jar/0003-Set-auto-confirm-PIN-min-digits-to-4.patch",
+      "sha": "d9012faca89a2703797cfcfb95d4036c8bbffc6c",
+      "module": "unica/mods/settings",
+      "targets": [
+        "smali/com/android/server/locksettings/SyntheticPasswordManager.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/settings/smali/system/framework/services.jar/0004-Allow-Zipped-Overlay-APKs.patch",
+      "sha": "08dac71ab7c88adf58c916b27fb735784eafee30",
+      "module": "unica/mods/settings",
+      "targets": [
+        "smali_classes2/com/android/server/pm/InstallPackageHelper.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-dex-directory",
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/settings/smali/system/priv-app/SecSettings/SecSettings.apk/0001-Enable-Outdoor-mode-support.patch",
+      "sha": "02a436da217a935b39ff6113614ce33639286603",
+      "module": "unica/mods/settings",
+      "targets": [
+        "smali_classes4/com/samsung/android/settings/display/controller/SecOutDoorModePreferenceController.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-dex-directory",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/settings/smali/system/priv-app/SecSettings/SecSettings.apk/0002-Set-auto-confirm-PIN-min-digits-to-4.patch",
+      "sha": "dce39978d8a07b2cd1327890b426b96ea81b6306",
+      "module": "unica/mods/settings",
+      "targets": [
+        "smali/com/android/settings/password/ChooseLockPassword$ChooseLockPasswordFragment.smali"
+      ],
+      "hunks": 2,
+      "risks": [
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/settings/smali/system/priv-app/SecSettings/SecSettings.apk/0003-Show-real-device-model-number.patch",
+      "sha": "77052927b8bf2df87a11a24d6c33d1ae0c9fd164",
+      "module": "unica/mods/settings",
+      "targets": [
+        "smali_classes4/com/samsung/android/settings/deviceinfo/aboutphone/ModelNameGetter.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-dex-directory",
+        "fixed-registers"
+      ],
+      "adaptation": "integration/settings_model.py",
+      "donor_status": "guarded-semantic-adapter; real-donor-validation-not-implied"
+    },
+    {
+      "path": "unica/mods/settings/smali/system/priv-app/SecSettings/SecSettings.apk/0004-Enable-gestures-by-default.patch",
+      "sha": "ef67b1703053de803972879621c66fb464915fc0",
+      "module": "unica/mods/settings",
+      "targets": [
+        "smali_classes4/com/samsung/android/settings/navigationbar/NavigationBarSettingsUtil.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-dex-directory",
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/settings/smali/system/priv-app/SecSettings/SecSettings.apk/0005-Add-ExtremeROM-Logo.patch",
+      "sha": "86ba09aa3be86e832ddfb5e684bda282386b09d3",
+      "module": "unica/mods/settings",
+      "targets": [
+        "res/layout/logo.xml",
+        "res/xml/sec_software_info_settings.xml"
+      ],
+      "hunks": 2,
+      "risks": [],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/mods/settings/smali/system/priv-app/SettingsProvider/SettingsProvider.apk/0001-Enable-gestures-by-default.patch",
+      "sha": "03092ed764ad3f9b60523c1f415a3a08adfb5b8d",
+      "module": "unica/mods/settings",
+      "targets": [
+        "smali/com/android/providers/settings/SecUpgradeController.smali"
+      ],
+      "hunks": 2,
+      "risks": [
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/miscs/smali/system/framework/framework.jar/0001-Better-device-model-detection-in-CoreRune.patch",
+      "sha": "7d58f9cec27aae0bbe319ca551e4b6ed6dbe8852",
+      "module": "unica/patches/miscs",
+      "targets": [
+        "smali_classes6/com/samsung/android/rune/CoreRune.smali"
+      ],
+      "hunks": 2,
+      "risks": [
+        "fixed-dex-directory",
+        "fixed-registers"
+      ],
+      "adaptation": "integration/corerune.py",
+      "donor_status": "guarded-semantic-adapter; real-donor-validation-not-implied"
+    },
+    {
+      "path": "unica/patches/miscs/smali/system/framework/services.jar/0001-Better-model-detection-in-FreecessController.patch",
+      "sha": "a9431aa9465d0ed85fec4cc950b0d2ed4f1e2cac",
+      "module": "unica/patches/miscs",
+      "targets": [
+        "smali/com/android/server/am/FreecessController.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-registers"
+      ],
+      "adaptation": "integration/freecess.py",
+      "donor_status": "guarded-semantic-adapter; real-donor-validation-not-implied"
+    },
+    {
+      "path": "unica/patches/product_feature/audio/SecSettings.apk/0001-Disable-Virtual-Vibration-support.patch",
+      "sha": "86b56d76f9c425acbd65ce5a08d14da435e47aa6",
+      "module": "unica/patches/product_feature",
+      "targets": [
+        "smali_classes4/com/samsung/android/settings/asbase/utils/VibUtils.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-dex-directory",
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/product_feature/audio/SecSoundPicker.apk/0001-Disable-Virtual-Vibration-support.patch",
+      "sha": "ec7c48fa04bd3d827e9db89f7678b2ccdf091758",
+      "module": "unica/patches/product_feature",
+      "targets": [
+        "smali/com/samsung/android/secsoundpicker/util/Utils.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/product_feature/audio/framework.jar/0001-Enable-ACH-ringtone-support.patch",
+      "sha": "e7cc0e88845d9dbd11230dab02742208adf1ef79",
+      "module": "unica/patches/product_feature",
+      "targets": [
+        "smali_classes6/com/samsung/android/audio/Rune.smali",
+        "smali_classes6/com/samsung/android/vibrator/VibRune.smali"
+      ],
+      "hunks": 2,
+      "risks": [
+        "fixed-dex-directory",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/product_feature/cutout/SystemUI.apk/0001-Add-right-cutout-support.patch",
+      "sha": "9767e3709de22bd7bc200f970c0054d07af97c1b",
+      "module": "unica/patches/product_feature",
+      "targets": [
+        "smali_classes2/com/android/systemui/dagger/DaggerReferenceGlobalRootComponent$ReferenceSysUIComponentImpl$SwitchingProvider.smali",
+        "smali_classes2/com/android/systemui/dagger/DaggerReferenceGlobalRootComponent$ReferenceSysUIComponentImpl.smali",
+        "smali_classes3/com/android/systemui/statusbar/phone/IndicatorGardenAlgorithm.smali",
+        "smali_classes3/com/android/systemui/statusbar/phone/IndicatorGardenAlgorithmFactory.smali",
+        "smali_classes3/com/android/systemui/statusbar/phone/IndicatorGardenAlgorithmRightCutout.smali"
+      ],
+      "hunks": 12,
+      "risks": [
+        "fixed-dex-directory",
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/product_feature/fingerprint/BiometricSetting.apk/0001-Set-FP_FEATURE_SENSOR_IS_OPTICAL-to-false.patch",
+      "sha": "484283d5f45f3156e5505132338f90c47004b036",
+      "module": "unica/patches/product_feature",
+      "targets": [
+        "smali/com/samsung/android/biometrics/app/setting/Utils$Config.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/product_feature/fingerprint/SystemUI.apk/0001-Set-SECURITY_FINGERPRINT_IN_DISPLAY_OPTICAL-to-false.patch",
+      "sha": "05273c69c3fa9ed21089d61cc5de2adc7054bdfc",
+      "module": "unica/patches/product_feature",
+      "targets": [
+        "smali/com/android/systemui/LsRune.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/product_feature/fingerprint/SystemUI.apk/0002-Set-SECURITY_FINGERPRINT_IN_DISPLAY-to-false.patch",
+      "sha": "2d9772be4ace7fd0dc163ea6f3e50c9e5f0f31a4",
+      "module": "unica/patches/product_feature",
+      "targets": [
+        "smali/com/android/systemui/LsRune.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/product_feature/fingerprint/framework.jar/0001-Set-mSensorType-to-SENSOR_TYPE_ULTRASONIC.patch",
+      "sha": "6e5d39963bf5c96be6ab24b06681cc9d1526c8bd",
+      "module": "unica/patches/product_feature",
+      "targets": [
+        "smali_classes6/com/samsung/android/bio/fingerprint/SemFingerprintManager$Characteristics.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-dex-directory",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/product_feature/fingerprint/services.jar/0001-Set-FP_FEATURE_SENSOR_IS_OPTICAL-to-false.patch",
+      "sha": "e988b78970678ec9b03feebf6a6b294b2e967307",
+      "module": "unica/patches/product_feature",
+      "targets": [
+        "smali/com/android/server/biometrics/SemBiometricFeature.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/product_feature/fingerprint/services.jar/0002-Set-FP_FEATURE_SENSOR_IS_IN_DISPLAY_TYPE-to-false.patch",
+      "sha": "778720295afcb2ce96920ab918e5740ac29cdfd0",
+      "module": "unica/patches/product_feature",
+      "targets": [
+        "smali/com/android/server/biometrics/SemBiometricFeature.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/product_feature/hfr/framework.jar/0001-Remove-brightness-threshold-values.patch",
+      "sha": "9a9c4e7cdb5cf61d7214575427bd52345eed1ba0",
+      "module": "unica/patches/product_feature",
+      "targets": [
+        "smali_classes6/com/samsung/android/hardware/display/RefreshRateConfig.smali"
+      ],
+      "hunks": 4,
+      "risks": [
+        "fixed-dex-directory",
+        "fixed-registers"
+      ],
+      "adaptation": "integration/refresh_rate.py",
+      "donor_status": "guarded-semantic-adapter; real-donor-validation-not-implied"
+    },
+    {
+      "path": "unica/patches/product_feature/mdnie/hdr/SecSettings.apk/0001-Enable-HDR-Settings.patch",
+      "sha": "71fec5279865952e57d5feb379bfbed8d0217efa",
+      "module": "unica/patches/product_feature",
+      "targets": [
+        "smali_classes3/com/samsung/android/settings/usefulfeature/UsefulfeatureReset$1.smali",
+        "smali_classes3/com/samsung/android/settings/usefulfeature/UsefulfeatureUtils.smali",
+        "smali_classes3/com/samsung/android/settings/usefulfeature/videoenhancer/SecBrightenUpVideoPreferenceController.smali",
+        "smali_classes3/com/samsung/android/settings/usefulfeature/videoenhancer/VideoEnhancerPreferenceController.smali",
+        "smali_classes4/com/samsung/android/settings/eternal/provider/items/AdvancedFeatureItem$$ExternalSyntheticOutline0.smali",
+        "smali_classes4/com/samsung/android/settings/eternal/provider/items/AdvancedFeatureItem.smali"
+      ],
+      "hunks": 148,
+      "risks": [
+        "fixed-dex-directory",
+        "compiler-generated-class-name",
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/product_feature/mdnie/hdr/SettingsProvider.apk/0001-Enable-HDR-And-EAD-Settings.patch",
+      "sha": "8310b67b8082a624f7636f1b68b49f802a30512f",
+      "module": "unica/patches/product_feature",
+      "targets": [
+        "smali/com/android/providers/settings/SecUpgradeController.smali"
+      ],
+      "hunks": 82,
+      "risks": [
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/product_feature/mdnie/hw/SecSettings.apk/0001-Enable-EAD-Settings.patch",
+      "sha": "6de1c61316ec964c13ac3d8d0f6e2df7ec5ee541",
+      "module": "unica/patches/product_feature",
+      "targets": [
+        "smali_classes4/com/samsung/android/settings/bixby/target/DisplayColorResetAction.smali",
+        "smali_classes4/com/samsung/android/settings/bixby/target/WhiteBalanceAction.smali",
+        "smali_classes4/com/samsung/android/settings/bixbyroutinehandler/BixbyRoutineActionHandler.smali",
+        "smali_classes4/com/samsung/android/settings/display/NewModePreview$3.smali",
+        "smali_classes4/com/samsung/android/settings/display/NewModePreview$6.smali",
+        "smali_classes4/com/samsung/android/settings/display/NewModePreview.smali",
+        "smali_classes4/com/samsung/android/settings/display/SecAdaptiveDisplaySettings$21.smali",
+        "smali_classes4/com/samsung/android/settings/display/SecAdaptiveDisplaySettings.smali",
+        "smali_classes4/com/samsung/android/settings/display/controller/SecEADPreferenceController.smali"
+      ],
+      "hunks": 22,
+      "risks": [
+        "fixed-dex-directory",
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/product_feature/mdnie/hw/SystemUI.apk/0001-Add-EAD-APK-Support.patch",
+      "sha": "f314391f89294360b450ae99f44fb5290d6ea2ae",
+      "module": "unica/patches/product_feature",
+      "targets": [
+        "smali/com/android/systemui/appops/AppOpsControllerImpl.smali"
+      ],
+      "hunks": 5,
+      "risks": [
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/product_feature/mdnie/hw/framework.jar/0001-Enable-HW-mDNIe.patch",
+      "sha": "e1ade4fc6a57bd764e009d1d792e218ef4af63cf",
+      "module": "unica/patches/product_feature",
+      "targets": [
+        "smali_classes4/android/view/accessibility/A11yRune.smali"
+      ],
+      "hunks": 2,
+      "risks": [
+        "fixed-dex-directory",
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/product_feature/mdnie/hw/services.jar/0001-Enable-HW-mDNIe.patch",
+      "sha": "2f77c6a12340cc38dc8d514b961c66569f0fa02c",
+      "module": "unica/patches/product_feature",
+      "targets": [
+        "smali/com/android/server/accessibility/AccessibilityManagerService$2.smali",
+        "smali/com/android/server/accessibility/AccessibilityManagerService.smali",
+        "smali_classes2/com/samsung/android/displaysolution/EyeComfortSolutionService.smali",
+        "smali_classes2/com/samsung/android/displaysolution/MdnieScenarioControlService.smali",
+        "smali_classes2/com/samsung/android/hardware/display/SemMdnieManagerService$SettingsObserver.smali",
+        "smali_classes2/com/samsung/android/hardware/display/SemMdnieManagerService.smali",
+        "smali_classes2/com/samsung/android/knox/custom/KnoxCustomManagerService.smali"
+      ],
+      "hunks": 71,
+      "risks": [
+        "fixed-dex-directory",
+        "compiler-generated-class-name",
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/product_feature/resolution/framework.jar/0001-Enable-FW_DYNAMIC_RESOLUTION_CONTROL.patch",
+      "sha": "ef775eb2c787af38e750269e8770901467173bf9",
+      "module": "unica/patches/product_feature",
+      "targets": [
+        "smali_classes6/com/samsung/android/rune/CoreRune.smali"
+      ],
+      "hunks": 2,
+      "risks": [
+        "fixed-dex-directory",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/product_feature/resolution/gamemanager.jar/0001-Enable-dynamic-resolution-control.patch",
+      "sha": "43ba5a012874116a2ebe97121dc6313eea181539",
+      "module": "unica/patches/product_feature",
+      "targets": [
+        "smali/com/samsung/android/game/GameManagerService$DisplayListener.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/product_feature/strongbox/framework.jar/0001-Disable-StrongBox-in-DevRootKeyATCmd.patch",
+      "sha": "c699a71e24e673e1d55e1d6f3846bcc1b985ed8b",
+      "module": "unica/patches/product_feature",
+      "targets": [
+        "smali_classes6/com/android/server/DevRootKeyATCmd.smali"
+      ],
+      "hunks": 2,
+      "risks": [
+        "fixed-dex-directory",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/product_feature/wifi/SecSettings.apk/0001-Disable-DualAP-support.patch",
+      "sha": "a912e67997eb96dcb103d636d1467c0b58a1fbbd",
+      "module": "unica/patches/product_feature",
+      "targets": [
+        "smali_classes2/com/android/settings/Utils.smali",
+        "smali_classes3/com/samsung/android/settings/wifi/mobileap/utils/WifiApFrameworkUtils.smali"
+      ],
+      "hunks": 2,
+      "risks": [
+        "fixed-dex-directory",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/product_feature/wifi/SecSettings.apk/0002-Disable-Hotspot-Wi-Fi-6.patch",
+      "sha": "6a2dffb58d0d936319b760c47585bdf965e86de3",
+      "module": "unica/patches/product_feature",
+      "targets": [
+        "smali_classes3/com/samsung/android/settings/wifi/mobileap/configure/WifiApConfigureSupportWifi6Controller.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-dex-directory",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/product_feature/wifi/SecSettings.apk/0003-Disable-Hotspot-Enhanced-Open.patch",
+      "sha": "f98af2e13524455108ab618d1eacc659b2140608",
+      "module": "unica/patches/product_feature",
+      "targets": [
+        "res/values/arrays.xml\t2026-01-15 15:39:39.275643554 +0100"
+      ],
+      "hunks": 2,
+      "risks": [],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/product_feature/wifi/semwifi-service.jar/0001-Disable-DualAP-support.patch",
+      "sha": "cea0ea29a6bda671b63d30c2d61c3f9252a4eb7a",
+      "module": "unica/patches/product_feature",
+      "targets": [
+        "smali/com/samsung/android/server/wifi/ap/SemSoftApConfiguration.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "compiler-generated-class-name",
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/product_feature/wifi/semwifi-service.jar/0002-Disable-Hotspot-WPA3-support.patch",
+      "sha": "549c22ef677071b2ecccc67e30eb7eebdb34b827",
+      "module": "unica/patches/product_feature",
+      "targets": [
+        "smali/com/samsung/android/server/wifi/ap/SemWifiApServiceImpl.smali"
+      ],
+      "hunks": 1,
+      "risks": [
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/product_feature/wifi/semwifi-service.jar/0003-Disable-Hotspot-6GHz-support.patch",
+      "sha": "4deb618746740f516c839bd13b9c94f009b2a4e7",
+      "module": "unica/patches/product_feature",
+      "targets": [
+        "smali/com/samsung/android/server/wifi/SemFrameworkFacade.smali"
+      ],
+      "hunks": 2,
+      "risks": [
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/signature/0001-Allow-custom-platform-signature.patch",
+      "sha": "ffbe361238cf605ebcc890ac63659f998d273e18",
+      "module": "unica/patches/signature",
+      "targets": [
+        "smali_classes2/com/android/server/pm/InstallPackageHelper.smali",
+        "smali_classes2/com/android/server/pm/PackageManagerServiceUtils.smali",
+        "smali_classes2/com/android/server/pm/ScanPackageUtils.smali"
+      ],
+      "hunks": 14,
+      "risks": [
+        "fixed-dex-directory",
+        "control-flow-or-exception-layout",
+        "fixed-registers"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    },
+    {
+      "path": "unica/patches/telecom/0001-Modify-SamsungBluetoothRouteManager.patch",
+      "sha": "b043baa4ec796945182f6209d0a5c9cc6e480867",
+      "module": "unica/patches/telecom",
+      "targets": [
+        "smali/com/samsung/server/telecom/device/bluetooth/SamsungBluetoothRouteManager.smali"
+      ],
+      "hunks": 49,
+      "risks": [
+        "control-flow-or-exception-layout",
+        "fixed-registers",
+        "debug-line-layout-noise"
+      ],
+      "adaptation": null,
+      "donor_status": "requires-runtime-preflight"
+    }
+  ],
+  "native_hex_call_sites": [
+    {
+      "path": "platform/exynos9820/patches/camera/customize.sh",
+      "line": 45
+    },
+    {
+      "path": "platform/exynos9820/patches/camera/customize.sh",
+      "line": 50
+    },
+    {
+      "path": "platform/exynos9820/patches/miscs/customize.sh",
+      "line": 118
+    },
+    {
+      "path": "unica/patches/product_feature/customize.sh",
+      "line": 58
+    }
+  ],
+  "limitations": [
+    "Smali hunks require actual donor decode; static scans cannot certify them.",
+    "Native HEX sites retain their original checks and need actual binaries; runtime/native behavior is not proven.",
+    "Kernel/toolchain/image/signature/boot compatibility remains outside patch preflight.",
+    "A module failing before its end has incomplete coverage; later mismatches may depend on earlier failures."
+  ]
+}
