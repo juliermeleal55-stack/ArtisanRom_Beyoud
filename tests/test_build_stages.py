@@ -74,6 +74,15 @@ class StageTests(unittest.TestCase):
             self.assertIn('BEYOUD_COMPRESS_PARTITION "$TMP_DIR/$PARTITION.img"', (root / 'scripts/internal/build_flashable_zip.sh').read_text())
             self.assertIn('set -o pipefail', (root / 'scripts/utils/firmware_utils.sh').read_text())
 
+    def test_apktool_uses_one_decode_pass_and_per_dex_api_metadata(self):
+        script = ROOT / 'reference/build/scripts/apktool.sh'
+        text = script.read_text()
+        subprocess.run(['bash', '-n', str(script)], check=True)
+        self.assertIn('dex_api_versions.tsv', text)
+        self.assertIn('DEX_API_LEVEL=36', text)
+        self.assertIn('BEYOUD_JOBS', text)
+        self.assertNotIn('baksmali d -a 36 --ac false --di false', text)
+
     def test_super_partitions_are_unpacked_and_released_before_next_image(self):
         text = partition_policy((ROOT / 'reference/build/scripts/extract_fw.sh').read_text())
         functions = text[text.index('BEYOUD_UNPACK_PARTITION()'):text.index('GET_IMAGE_FILE_SYSTEM()')]
