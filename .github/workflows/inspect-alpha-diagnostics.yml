@@ -28,14 +28,14 @@ jobs:
           root=Path(os.environ['DIAG_ROOT'])
           def emit(title,text):
               text=re.sub(r'\x1b\[[0-9;]*m','',text)
-              for i in range(0,len(text),10000):
-                  chunk=text[i:i+10000].replace('%','%25').replace('\r','%0D').replace('\n','%0A')
-                  print(f'::notice title={title}-{i//10000}::{chunk}')
+              for i in range(0,len(text),3000):
+                  chunk=text[i:i+3000].replace('%','%25').replace('\r','%0D').replace('\n','%0A')
+                  print(f'::notice title={title}-{i//3000}::{chunk}')
           reports=list(root.rglob('patch-preflight.json'))
           if len(reports)!=1:raise SystemExit('Expected exactly one previous preflight report')
           d=json.loads(reports[0].read_text())
           summary={k:d[k] for k in ('status','modules','patches')}
-          summary['failures']=[{k:v for k,v in e.items() if k!='detail'} | {'detail':e.get('detail','')[-2000:]} for e in d['failures']]
+          summary['failures']=[{k:v for k,v in e.items() if k!='detail'} | {'detail':e.get('detail','')[-900:]} for e in d['failures']]
           emit('Prior actual failures',json.dumps(summary,indent=2)[:80000])
           PY
       - name: Read bounded relevant donor code excerpts
@@ -56,7 +56,7 @@ jobs:
               if indexes:
                   parts.append('\nFILE '+str(p.relative_to(root))+'\n'+next((l for l in lines if l.startswith('.class ')),'')+'\n'+'\n'.join(f'{i+1}: {lines[i]}' for i in sorted(indexes))[:12000])
           text='\n'.join(parts)[:80000]
-          for i in range(0,len(text),10000):
-              chunk=text[i:i+10000].replace('%','%25').replace('\r','%0D').replace('\n','%0A')
-              print(f'::notice title=Actual donor code-{i//10000}::{chunk}')
+          for i in range(0,len(text),3000):
+              chunk=text[i:i+3000].replace('%','%25').replace('\r','%0D').replace('\n','%0A')
+              print(f'::notice title=Actual donor code-{i//3000}::{chunk}')
           PY
