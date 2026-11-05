@@ -309,3 +309,33 @@ O snapshot privado por smali foi ampliado de 1 MiB para 8 MiB (total 64 MiB) par
 não perder classes grandes, como lambdas SystemServer com código inline.
 Nenhuma nova execução pesada deve ser descrita como necessária apenas para
 rever um getter já preservado no artefato, e esta revisão não certifica a ROM.
+
+### Resultados reais do replay e rebases estritos de serviços
+
+Em 42128188304 os seis casos com snapshots completos retidos passaram: Telecom,
+AppLock, versões DeKnox em knoxsdk/SettingsIntelligence/StorageManager e SAK.
+Os dois patches de versão em SecSettings ficaram unavailable porque seus inputs
+não estavam no artefato. O replay inicial detectou dois detalhes reais que os
+fixtures não cobriam: o modificador hidden-API no <clinit> e a ausência completa
+do método Telecom obsoleto. Foram corrigidos com guards e testes específicos.
+Telecom só é considerado já atendido se o nome da operação não aparece na
+classe alvo; a ausência não vira uma exceção genérica para outros patches.
+
+Foram revisados quatro patches de serviço no mesmo pin OneROM já auditado
+644f0aacc49ad2410e566de8deb05e6c8211d83d. Eles tratam a migração da lambda
+SystemServer para Lambda11 e o corpo HDM inline observado no doador real.
+As referências e hashes estão em manifests/donor-patch-rebases.json. Os três
+headers diff --git inconsistentes foram alinhados a ---/+++; as instruções não
+foram alteradas. Só são tentados quando o patch legado exato rejeita, com SHA
+validado para ambos e git apply --check integral antes de qualquer gravação.
+Esses rebases não importam configurações, kernel ou firmware da OneROM.
+As regras nativas OneROM `|| LOGW ... skipping` foram explicitamente REJEITADAS.
+
+Para o libstagefright ausente do artefato, há uma coleta source-only separada:
+.github/workflows/collect-donor-repair-inputs.yml. Precisa preparar o doador de
+novo porque a máquina antiga foi destruída, mas NÃO baixa o firmware stock do
+S10 e NÃO executa patch/kernel/imagens/ZIP. Preserva libstagefright e até quatro
+JARs/APKs originais em um artefato PRIVADO, máximo 256 MiB, permitindo rever
+correções sem repetir a preparação. Esses arquivos não vão para o Git nem são
+partes de instalação. A correção nativa continua pendente até análise desses
+inputs; a coleta não é uma tentativa de build completo.

@@ -19,6 +19,8 @@ def replay(artifacts):
     if len(reports)!=1:raise ValueError('Expected exactly one previous preflight report')
     report=json.loads(reports[0].read_text())
     specs=json.loads((ROOT/'integration/semantic_smali.json').read_text())
+    rebases=json.loads((ROOT/'integration/rebased_smali.json').read_text())
+    specs={**specs,**rebases}
     sources={hashlib.sha256(p.read_bytes()).hexdigest():p for p in artifacts.rglob('*.smali') if p.is_file() and not p.is_symlink()}
     results=[]
     for event in report['events']:
@@ -41,6 +43,15 @@ def replay(artifacts):
             if len(prefixes)!=1:raise ValueError('Patch inputs must belong to one decoded APK')
             patch=workspace/name;patch.parent.mkdir(parents=True,exist_ok=True)
             shutil.copyfile(ROOT/'reference/build'/name,patch)
+            if name in rebases:
+                raw=(ROOT/'integration'/rebases[name]['file']).read_text()
+                required=re.findall(r'(?m)^\+\+\+ b/(.+)$',raw)
+                from smali_paths import resolve
+                try:
+                    for target in required:resolve(workspace/next(iter(prefixes)),target)
+                except ValueError:
+                    item.update(status='unavailable',reason='Rebased class input was not retained in this partial snapshot')
+                    results.append(item);continue
             result,_=apply(workspace,workspace/next(iter(prefixes)),patch)
             item.update(status='passed' if not result.returncode else 'failed',detail=result.stderr[-1200:])
             results.append(item)

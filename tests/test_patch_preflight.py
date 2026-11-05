@@ -105,7 +105,7 @@ class PatchPreflightTests(unittest.TestCase):
             shutil.copytree(ROOT/'reference/build',root,dirs_exist_ok=True)
             install(root)
             (root/'integration').mkdir()
-            for name in ('patch_preflight.py','smali_patch.py','smali_paths.py','semantic_smali.py','semantic_smali.json'):
+            for name in ('patch_preflight.py','smali_patch.py','smali_paths.py','semantic_smali.py','semantic_smali.json','rebased_smali.json'):
                 shutil.copyfile(ROOT/'integration'/name,root/'integration'/name)
             # Isolate the actual module runner from external Android tools.
             (root/'scripts/utils/module_utils.sh').write_text('LOG_STEP_IN() { :; }; LOG_STEP_OUT() { :; }; LOGE() { :; }; IS_VALID_PARTITION_NAME() { return 1; }\n')

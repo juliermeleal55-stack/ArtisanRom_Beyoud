@@ -1,0 +1,55 @@
+{
+  "repository": "DaDevMikey/OneROM",
+  "commit": "644f0aacc49ad2410e566de8deb05e6c8211d83d",
+  "scope": "Four legacy service patches only; no native skip rules, firmware or kernel imported",
+  "files": [
+    {
+      "path": "unica/mods/deknox/smali/system/framework/services.jar/0001-Nuke-BlockchainTZService.patch",
+      "reference": "reference/onerom-repair/unica/mods/deknox/smali/system/framework/services.jar/0001-Nuke-BlockchainTZService.patch",
+      "size": 1984,
+      "sha": "5fc50e37e623de90eaebe0bbe2abb314ec8a8184",
+      "installed": "integration/rebased-patches/0001-Nuke-BlockchainTZService.patch",
+      "installed_evidence": {
+        "size": 1984,
+        "sha": "b6396ea60529d273dece32e550c4a4850574ed26"
+      },
+      "adaptation": "diff --git header corrected to match ---/+++ Lambda11 paths; instructions unchanged"
+    },
+    {
+      "path": "unica/mods/deknox/smali/system/framework/services.jar/0003-Nuke-MPOS-Service.patch",
+      "reference": "reference/onerom-repair/unica/mods/deknox/smali/system/framework/services.jar/0003-Nuke-MPOS-Service.patch",
+      "size": 1957,
+      "sha": "3513e519ffd991102b4ef76c29a4f428ac0872b0",
+      "installed": "integration/rebased-patches/0003-Nuke-MPOS-Service.patch",
+      "installed_evidence": {
+        "size": 1957,
+        "sha": "08e7ef69445458473540540a60ed5647c0fbe60e"
+      },
+      "adaptation": "diff --git header corrected to match ---/+++ Lambda11 paths; instructions unchanged"
+    },
+    {
+      "path": "unica/mods/deknox/smali/system/framework/services.jar/0004-Nuke-SemService.patch",
+      "reference": "reference/onerom-repair/unica/mods/deknox/smali/system/framework/services.jar/0004-Nuke-SemService.patch",
+      "size": 1809,
+      "sha": "a549e76777ee730847515db9c16232546d3f22e8",
+      "installed": "integration/rebased-patches/0004-Nuke-SemService.patch",
+      "installed_evidence": {
+        "size": 1809,
+        "sha": "4df6b8f6337a78f388baa46064c92fb9001ba69c"
+      },
+      "adaptation": "diff --git header corrected to match ---/+++ Lambda11 paths; instructions unchanged"
+    },
+    {
+      "path": "unica/mods/deknox/smali/system/framework/services.jar/0005-Nuke-HDMService.patch",
+      "reference": "reference/onerom-repair/unica/mods/deknox/smali/system/framework/services.jar/0005-Nuke-HDMService.patch",
+      "size": 1483,
+      "sha": "fe7245f497b309e8d374af310184c6c66ffea32e",
+      "installed": "integration/rebased-patches/0005-Nuke-HDMService.patch",
+      "installed_evidence": {
+        "size": 1483,
+        "sha": "fe7245f497b309e8d374af310184c6c66ffea32e"
+      },
+      "adaptation": "unchanged pinned upstream patch"
+    }
+  ]
+}

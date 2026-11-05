@@ -4,6 +4,7 @@
 from pathlib import Path
 import re
 import hashlib
+import json
 import subprocess
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -44,6 +45,18 @@ def normalize(decoded, text):
     return ''.join(lines), targets, mapping
 
 
+def apply_text(workspace, decoded, text):
+    text,targets,mapping=normalize(decoded,text)
+    inputs={str(p.relative_to(workspace)):hashlib.sha256(p.read_bytes()).hexdigest() for p in targets if p.is_file()}
+    command=['git','apply','--directory='+str(decoded),'--unsafe-paths','--verbose']
+    checked=subprocess.run(command+['--check','-'],input=text,cwd=workspace,capture_output=True,text=True)
+    result=checked if checked.returncode else subprocess.run(command+['-'],input=text,cwd=workspace,capture_output=True,text=True)
+    moves='\n'.join(old+' -> '+new for old,new in mapping.items() if old!=new)
+    if moves:result.stdout='Verified DEX relocation:\n'+moves+'\n'+result.stdout
+    result.input_hashes=inputs
+    return result,targets
+
+
 def apply(workspace, decoded, patch):
     try:
         semantic=plan(workspace,decoded,patch)
@@ -54,14 +67,23 @@ def apply(workspace, decoded, patch):
             result=subprocess.CompletedProcess(['semantic_smali'],0,'Verified pinned semantic equivalent: '+str(patch)+'\n','')
             result.input_hashes=inputs
             return result,list(semantic)
-        text,targets,mapping = normalize(decoded,patch.read_text())
-        inputs={str(p.relative_to(workspace)):hashlib.sha256(p.read_bytes()).hexdigest() for p in targets if p.is_file()}
-        command=['git','apply','--directory='+str(decoded),'--unsafe-paths','--verbose']
-        checked=subprocess.run(command+['--check','-'],input=text,cwd=workspace,capture_output=True,text=True)
-        result=checked if checked.returncode else subprocess.run(command+['-'],input=text,cwd=workspace,capture_output=True,text=True)
-        moves='\n'.join(old+' -> '+new for old,new in mapping.items() if old!=new)
-        if moves:result.stdout='Verified DEX relocation:\n'+moves+'\n'+result.stdout
-        result.input_hashes=inputs
+        try:
+            result,targets=apply_text(workspace,decoded,patch.read_text())
+        except (OSError,ValueError) as exc:
+            result,targets=subprocess.CompletedProcess(['smali_patch'],1,'',str(exc)),[]
+        if result.returncode:
+            registry=json.loads(Path(__file__).with_name('rebased_smali.json').read_text())
+            key=str(patch.resolve().relative_to(workspace.resolve()))
+            spec=registry.get(key)
+            if spec:
+                raw=patch.read_bytes()
+                digest=lambda b:hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+                if digest(raw)!=spec['legacy_sha']:raise ValueError('Legacy service patch hash changed')
+                alternative=Path(__file__).parent/spec['file']
+                data=alternative.read_bytes()
+                if digest(data)!=spec['sha']:raise ValueError('Rebased service patch hash changed')
+                result,targets=apply_text(workspace,decoded,data.decode())
+                result.stdout='Strict pinned service rebase: '+key+'\n'+result.stdout
         return result,targets
     except (OSError,ValueError) as exc:
         return subprocess.CompletedProcess(['smali_patch'],1,'',str(exc)),[]

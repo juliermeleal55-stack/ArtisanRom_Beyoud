@@ -1,0 +1,22 @@
+{
+  "unica/mods/deknox/smali/system/framework/services.jar/0001-Nuke-BlockchainTZService.patch": {
+    "legacy_sha": "683e178435e277fc06e0dfb5b786fc32ca137cd0",
+    "file": "rebased-patches/0001-Nuke-BlockchainTZService.patch",
+    "sha": "b6396ea60529d273dece32e550c4a4850574ed26"
+  },
+  "unica/mods/deknox/smali/system/framework/services.jar/0003-Nuke-MPOS-Service.patch": {
+    "legacy_sha": "1a2b8a058a71e368b7fe334bb6bb12bb2cabf2ea",
+    "file": "rebased-patches/0003-Nuke-MPOS-Service.patch",
+    "sha": "08e7ef69445458473540540a60ed5647c0fbe60e"
+  },
+  "unica/mods/deknox/smali/system/framework/services.jar/0004-Nuke-SemService.patch": {
+    "legacy_sha": "0f8e94e70df7425dda0a0c1b228a198fbf589a91",
+    "file": "rebased-patches/0004-Nuke-SemService.patch",
+    "sha": "4df6b8f6337a78f388baa46064c92fb9001ba69c"
+  },
+  "unica/mods/deknox/smali/system/framework/services.jar/0005-Nuke-HDMService.patch": {
+    "legacy_sha": "8bc98f4faf65127b0514edbf2f96d8712ea794ce",
+    "file": "rebased-patches/0005-Nuke-HDMService.patch",
+    "sha": "fe7245f497b309e8d374af310184c6c66ffea32e"
+  }
+}

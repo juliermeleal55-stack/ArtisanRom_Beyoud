@@ -154,3 +154,19 @@ class SmaliAdaptationsTests(unittest.TestCase):
         self.assertEqual(method_return(text,signature,'void',False,True),text)
         with self.assertRaises(ValueError):method_return(text+'# setCallEndTonePlayStatus\n',signature,'void',False,True)
         with self.assertRaises(ValueError):method_return(text,'other()V','void',False,True)
+
+    def test_hdm_rebase_is_strict_and_hash_pinned(self):
+        name='unica/mods/deknox/smali/system/framework/services.jar/0005-Nuke-HDMService.patch'
+        with tempfile.TemporaryDirectory() as t:
+            root=Path(t);decoded=root/'decoded';decoded.mkdir()
+            patch=root/name;patch.parent.mkdir(parents=True);shutil.copyfile(ROOT/'reference/build'/name,patch)
+            body='.method public init()V\n.locals 16\ninvoke-static {v0, v3}, Landroid/os/ServiceManager;->addService(Ljava/lang/String;Landroid/os/IBinder;)V\n\nconst-string/jumbo v3, "hdm_service"\n\nnew-instance v4, Lcom/android/server/enterprise/hdm/HdmService;\n\n'+'# inline initialization\n'*270+'invoke-static {v4, v3}, Lcom/android/server/enterprise/EnterpriseDeviceManagerServiceImpl$Injector;->addLazySystemService(Lcom/android/server/enterprise/EnterpriseServiceCallback;Ljava/lang/String;)V\n\niget-object v0, v1, Lcom/android/server/enterprise/EnterpriseDeviceManagerServiceImpl;->mContext:Landroid/content/Context;\n\nsget v2, Lcom/android/server/enterprise/appconfig/ApplicationRestrictionsService;->$r8$clinit:I\n\nreturn-void\n.end method\n'
+            body=''.join(('    '+line if line.strip() and not line.startswith(('.', '#')) else line) for line in body.splitlines(keepends=True))
+            file=write_class(decoded,'smali/com/android/server/enterprise/EnterpriseDeviceManagerServiceImpl.smali',body)
+            result,_=apply(root,decoded,patch)
+            self.assertEqual(result.returncode,0,result.stderr)
+            self.assertIn('goto/16 :s10_hdm_skipped',file.read_text())
+            before=file.read_bytes();patch.write_text(patch.read_text()+'\n')
+            self.assertNotEqual(apply(root,decoded,patch)[0].returncode,0)
+            self.assertEqual(file.read_bytes(),before)
+

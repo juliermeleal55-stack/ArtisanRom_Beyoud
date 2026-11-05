@@ -32,6 +32,16 @@ def verify():
     for entry in fixtures['files']:
         blob(ROOT / 'reference/build' / entry['path'], entry)
         count += 1
+    rebases = json.loads((ROOT / 'manifests/donor-patch-rebases.json').read_text())
+    if rebases['commit'] != json.loads((ROOT / 'manifests/onerom.json').read_text())['commit']:
+        raise ValueError('Rebases differ from audited OneROM revision')
+    for entry in rebases['files']:
+        for key in ('reference', 'installed'):
+            path = ROOT / entry[key]
+            if not path.resolve().is_relative_to(ROOT):
+                raise ValueError('Unsafe service rebase evidence path')
+            blob(path, entry if key == 'reference' else entry['installed_evidence'])
+            count += 1
     return count
 
 

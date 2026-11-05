@@ -151,6 +151,26 @@
       "path": "unica/patches/telecom/0001-Modify-SamsungBluetoothRouteManager.patch",
       "size": 19233,
       "sha": "b043baa4ec796945182f6209d0a5c9cc6e480867"
+    },
+    {
+      "path": "unica/mods/deknox/smali/system/framework/services.jar/0001-Nuke-BlockchainTZService.patch",
+      "size": 1984,
+      "sha": "683e178435e277fc06e0dfb5b786fc32ca137cd0"
+    },
+    {
+      "path": "unica/mods/deknox/smali/system/framework/services.jar/0003-Nuke-MPOS-Service.patch",
+      "size": 1957,
+      "sha": "1a2b8a058a71e368b7fe334bb6bb12bb2cabf2ea"
+    },
+    {
+      "path": "unica/mods/deknox/smali/system/framework/services.jar/0004-Nuke-SemService.patch",
+      "size": 1809,
+      "sha": "0f8e94e70df7425dda0a0c1b228a198fbf589a91"
+    },
+    {
+      "path": "unica/mods/deknox/smali/system/framework/services.jar/0005-Nuke-HDMService.patch",
+      "size": 1708,
+      "sha": "8bc98f4faf65127b0514edbf2f96d8712ea794ce"
     }
   ]
 }
