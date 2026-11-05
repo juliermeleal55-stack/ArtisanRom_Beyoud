@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """Strict transformations of the pinned Artisan scripts; refuse schema drift."""
 from pathlib import Path
+import re
 
 
 def once(text, old, new):
@@ -112,6 +113,17 @@ def partition_policy(text):
     return text
 
 
+def debloat_workers(text):
+    pattern = r'\[ "\$(?P<name>[A-Z_]+_DEBLOAT)" \] && (?P<command>xargs[^\n]*\n[^\n]*\n[ \t]*<<< "\$(?P=name)")'
+    def replacement(match):
+        command = match['command'].replace('$(nproc)', '${BEYOUD_JOBS:-1}')
+        return f'if [ -n "${match["name"]}" ]; then\n    {command} || exit 1\nfi'
+    result, count = re.subn(pattern, replacement, text)
+    if count != 7:
+        raise ValueError('Unexpected seven-partition debloat worker schema')
+    return result.rstrip() + '\nreturn 0\n'
+
+
 def apply(workspace):
     make = workspace / 'scripts/make_rom.sh'
     zip_file = workspace / 'scripts/internal/build_flashable_zip.sh'
@@ -139,6 +151,6 @@ def apply(workspace):
     command = 'python3 "$SRC_DIR/integration/debloat.py" "$OUT_DIR/beyoud-logs/debloat-plan.json"'
     for partition in ('ODM', 'PRODUCT', 'SYSTEM', 'SYSTEM_EXT', 'VENDOR', 'PRISM', 'OPTICS'):
         command += f' "${{{partition}_DEBLOAT:-}}"'
-    outputs[debloat] = once(debloat.read_text(), anchor, command + ' || exit 1\n\n' + anchor)
+    outputs[debloat] = debloat_workers(once(debloat.read_text(), anchor, command + ' || exit 1\n\n' + anchor))
     for path, content in outputs.items():
         path.write_text(content)

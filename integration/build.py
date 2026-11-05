@@ -15,6 +15,7 @@ import threading
 import time
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from integration.targets import from_marker
+from integration.patch_inventory import inventory
 from integration.samloader.metadata import configured_firmwares
 from integration.firmware_check import inspect as inspect_firmware
 from integration.package_inputs import atomic_json, retire
@@ -241,6 +242,8 @@ def execute(workspace, stage, jobs=1):
             if stage == 'retire':
                 retire(workspace)
             else:
+                if stage == 'patch':
+                    inventory(workspace, codename, env)
                 if stage == 'package':
                     receipt['package_budget'] = package_budget(workspace, codename)
                 command = {

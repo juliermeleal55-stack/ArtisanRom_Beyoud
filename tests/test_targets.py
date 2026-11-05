@@ -43,7 +43,7 @@ class TargetTests(unittest.TestCase):
             misc = root / 'platform/exynos9820/patches/miscs/customize.sh'
             misc.parent.mkdir(parents=True, exist_ok=True)
             misc.write_text((ROOT / 'reference/artisan-s10/platform/exynos9820/patches/miscs/customize.sh').read_text())
-            with patch.object(prepare, 'apply_build_policy'), patch.object(prepare, 'patch_downloader'), patch.object(prepare, 'patch_firmware_lookup'), patch.object(prepare, 'patch_parallel_builds'), patch.object(prepare, 'patch_sequential_firmwares'):
+            with patch.object(prepare, 'install_framework'), patch.object(prepare, 'apply_build_policy'), patch.object(prepare, 'patch_downloader'), patch.object(prepare, 'patch_firmware_lookup'), patch.object(prepare, 'patch_parallel_builds'), patch.object(prepare, 'patch_sequential_firmwares'):
                 prepare.apply_overlay(root, 'beyond1lte')
             text = config.read_text()
             self.assertIn('TARGET_ASSERT_MODEL=("SM-G973F")', text)

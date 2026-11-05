@@ -46,6 +46,16 @@
       "path": "external/make.sh",
       "size": 9082,
       "sha": "44513667fc6d29823c6f8dded03b8c95bcf4cbbb"
+    },
+    {
+      "path": "unica/patches/miscs/customize.sh",
+      "sha": "c653116c62918f2c1860e4fa7aa3d6859d2d3568",
+      "size": 2916
+    },
+    {
+      "path": "unica/patches/miscs/smali/system/framework/services.jar/0001-Better-model-detection-in-FreecessController.patch",
+      "sha": "a9431aa9465d0ed85fec4cc950b0d2ed4f1e2cac",
+      "size": 831
     }
   ]
 }

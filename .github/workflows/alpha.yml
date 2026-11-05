@@ -118,6 +118,7 @@ jobs:
             ${{ env.WORKSPACE }}/out/config.sh
             ${{ env.WORKSPACE }}/out/beyoud-logs/*.log
             ${{ env.WORKSPACE }}/out/beyoud-logs/*.json*
+            ${{ env.WORKSPACE }}/out/beyoud-logs/failed-smali/**/*.smali
             ${{ env.WORKSPACE }}/out/beyoud-stages/*.json
             ${{ env.WORKSPACE }}/out/beyoud-package-inputs.json
             ${{ env.WORKSPACE }}/out/beyoud-fw-retired.json

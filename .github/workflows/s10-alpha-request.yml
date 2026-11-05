@@ -12,3 +12,5 @@ jobs:
     uses: ./.github/workflows/alpha.yml
     with:
       target: beyond1lte
+
+# Attempt: guarded Freecess adaptation and additional build checks (2026-11-05).

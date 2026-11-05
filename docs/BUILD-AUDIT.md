@@ -131,3 +131,35 @@ revisão upstream e passaram em bash -n.
 Ainda pode faltar espaço dentro da extração de super.img, na criação do workdir,
 no kernel ou nas imagens finais; esses estágios não foram declarados resolvidos.
 Não foram removidas partições nem reduzidas imagens artificialmente para caber.
+
+## Resultado real de 2026-11-05 — execução 42079665263 (SM-G973F)
+
+As ferramentas e os DOIS firmwares foram preparados. O preflight registrou
+120.867.278.848 bytes livres; após extrair o doador, 102.732.095.488; após o
+G973F, 95.388.803.072 (~95,39 GB decimais). Esse runner tinha um filesystem maior
+que o das tentativas anteriores: não atribuir toda a melhora às otimizações.
+Não faltou espaço nesta execução; ainda não se mediu o pico de kernel/imagens/
+assinatura. Estes números não garantem espaço para qualquer tentativa futura.
+
+O bloqueio foi `0001-Better-model-detection-in-FreecessController.patch`, em
+services.jar. O hunk esperava registrador v2 e const-string/jumbo com contexto
+antigo. Substituído, SOMENTE na workspace, por adaptação que identifica uma
+leitura SystemProperties.get com a mesma chave e o mesmo registrador, aceita
+const-string normal/jumbo e localização em outro dex, preserva o resto do
+método e exige unicidade. Mantém a alteração ro.product.model ->
+ro.product.vendor.model, não desativa a correção. Falha em contexto desconhecido
+ou ambíguo; o código real decodificado ainda precisa confirmar a aplicabilidade
+na próxima execução. Testes sintéticos não são prova de funcionamento no donor.
+
+Revisão adicional: debloat agora trata listas vazias como sucesso, limita seus
+workers e propaga explicitamente falhas do xargs. Download da toolchain do
+kernel não desativa TLS e aborta em erro HTTP/descompactação, em vez de seguir
+com um arquivo de erro. O arquivo baixado ainda não tem digest upstream
+independente fixado: não alegamos reprodutibilidade transitiva completa.
+
+Antes dos patches é emitido `patch-inventory.json`, distinguindo módulos
+ativos/desativados, patches smali, scripts de HEX_PATCH e sites de falha ignorada.
+É inventário de risco, não validação binária e não desativa módulos sozinho.
+Diagnósticos de git apply preservam smali real (até 2 MiB por arquivo, restrito
+à árvore decodificada da workspace) no artefato privado, para permitir adaptar
+as próximas incompatibilidades sem adivinhar a partir do patch antigo.
