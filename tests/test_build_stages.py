@@ -227,6 +227,18 @@ EXTRACT_OS_PARTITIONS
                 with self.assertRaises(ValueError):
                     build.execute(root, 'package')
 
+    def test_reference_recipe_changes_checkpoint_identity(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            fixture(root)
+            reference = root / 'reference/build/scripts'
+            reference.mkdir(parents=True)
+            recipe = reference / 'recipe.sh'
+            recipe.write_text('version=1\\n')
+            before = build.identity(root)
+            recipe.write_text('version=2\\n')
+            self.assertNotEqual(before, build.identity(root))
+
     def test_failed_stage_never_gets_success_checkpoint(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
