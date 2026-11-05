@@ -1,0 +1,62 @@
+name: Inspect existing alpha diagnostics
+on:
+  push:
+    branches: [arena/0d47b1d6-artisanrom-beyoud]
+    paths: [.github/workflows/inspect-alpha-diagnostics.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Read existing private build diagnostics without firmware downloads
+        uses: actions/download-artifact@v4
+        with:
+          name: beyond1lte-alpha-build-diagnostics
+          run-id: 42113224237
+          github-token: ${{ github.token }}
+          path: ${{ runner.temp }}/prior-alpha
+      - name: Summarize actual failures
+        env:
+          DIAG_ROOT: ${{ runner.temp }}/prior-alpha
+        run: |
+          python3 - <<'PY'
+          import json,os,re
+          from pathlib import Path
+          root=Path(os.environ['DIAG_ROOT'])
+          def emit(title,text):
+              text=re.sub(r'\x1b\[[0-9;]*m','',text)
+              for i in range(0,len(text),10000):
+                  chunk=text[i:i+10000].replace('%','%25').replace('\r','%0D').replace('\n','%0A')
+                  print(f'::notice title={title}-{i//10000}::{chunk}')
+          reports=list(root.rglob('patch-preflight.json'))
+          if len(reports)!=1:raise SystemExit('Expected exactly one previous preflight report')
+          d=json.loads(reports[0].read_text())
+          summary={k:d[k] for k in ('status','modules','patches')}
+          summary['failures']=[{k:v for k,v in e.items() if k!='detail'} | {'detail':e.get('detail','')[-2000:]} for e in d['failures']]
+          emit('Prior actual failures',json.dumps(summary,indent=2)[:80000])
+          PY
+      - name: Read bounded relevant donor code excerpts
+        env:
+          DIAG_ROOT: ${{ runner.temp }}/prior-alpha
+        run: |
+          python3 - <<'PY'
+          import os,re,hashlib
+          from pathlib import Path
+          root=Path(os.environ['DIAG_ROOT']);seen=set();parts=[]
+          keys=('getDualDARVersion','getHdmVersion','blockchain','Blockchain','mpos_service','MPOS Service','SemService','hdm_service','HdmService','KnoxGuard','setCallEndTonePlayStatus','ro.surface_flinger.protected_contents')
+          for p in sorted(root.rglob('*.smali')):
+              data=p.read_bytes();digest=hashlib.sha256(data).hexdigest()
+              if digest in seen:continue
+              seen.add(digest);lines=data.decode(errors='replace').splitlines();indexes=set()
+              for i,line in enumerate(lines):
+                  if any(k in line for k in keys):indexes.update(range(max(0,i-12),min(len(lines),i+28)))
+              if indexes:
+                  parts.append('\nFILE '+str(p.relative_to(root))+'\n'+next((l for l in lines if l.startswith('.class ')),'')+'\n'+'\n'.join(f'{i+1}: {lines[i]}' for i in sorted(indexes))[:12000])
+          text='\n'.join(parts)[:80000]
+          for i in range(0,len(text),10000):
+              chunk=text[i:i+10000].replace('%','%25').replace('\r','%0D').replace('\n','%0A')
+              print(f'::notice title=Actual donor code-{i//10000}::{chunk}')
+          PY
