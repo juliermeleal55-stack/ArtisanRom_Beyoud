@@ -1,0 +1,1237 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-05",
+  "sources": {
+    "un1ca": {
+      "repository": "At30c/UN1CA_y2slte",
+      "branch": "seventeen",
+      "commit": "609fa7cc738e42dedcc31ffecbe4aefc0b34d6e2",
+      "role": "Framework e sistema doador experimental",
+      "tree_sha": "609fa7cc738e42dedcc31ffecbe4aefc0b34d6e2",
+      "inventory_truncated": false,
+      "files": 2670,
+      "blob_bytes": 4365748031,
+      "scopes": {
+        "platform/exynos9820/": {
+          "files": 0,
+          "bytes": 0,
+          "smali_patches": 0,
+          "modules": []
+        },
+        "target/beyond1lte/": {
+          "files": 0,
+          "bytes": 0,
+          "smali_patches": 0,
+          "modules": []
+        },
+        "target/beyond2lte/": {
+          "files": 0,
+          "bytes": 0,
+          "smali_patches": 0,
+          "modules": []
+        },
+        "scripts/": {
+          "files": 27,
+          "bytes": 271484,
+          "smali_patches": 0,
+          "modules": []
+        },
+        "unica/": {
+          "files": 529,
+          "bytes": 270938382,
+          "smali_patches": 161,
+          "modules": [
+            {
+              "path": "unica/mods/blocklist",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/bootlogo",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/bootsound",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/callsounds",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/csc",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/daagent",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/deknox",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/gamesprops",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/hma",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/keybox",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/knoxpatch",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/monotype",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/multiuser",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/outdoor",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/paradigm",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/pif",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/pinconfirm",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/preload",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/prophide",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/settings",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/setupwizard",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/tweaks",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/updater",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/v4a",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/wallpaper",
+              "disabled": true
+            },
+            {
+              "path": "unica/mods/zzz_legacy_graphics_mapper",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/zzzz_surface_generation_compat",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/__floating_feature",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/__props",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/_debloat",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/adb",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/autoblocker_compat",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/bluetooth",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/camera",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/cidmanager",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/dvfs",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/ese",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/fmradio",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/frp_migration_compat",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/fs",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/legacy",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/miscs",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/nfc",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/proca",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/product_feature",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/rro",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/saiv",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/selinux",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/signature",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/spen",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/stock_blobs",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/uwb",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/uwb_data_compat",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/vintf",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/vndk",
+              "disabled": false
+            }
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "path": "README.md",
+          "sha": "912a5894c85d0b5704d0f61e26bc7840d96dfd3b",
+          "size": 6209
+        },
+        {
+          "path": "LICENSE",
+          "sha": "94a9ed024d3859793618152ea559a168bbcbb5e2",
+          "size": 35147
+        },
+        {
+          "path": "unica/debloat.sh",
+          "sha": "d27a84b2f8ea8c40eb357456d57824f8d5533f5c",
+          "size": 9164
+        },
+        {
+          "path": "unica/configs/essi.sh",
+          "sha": "9de0fbc14f2f66badb76f2a28f4afd21707cad88",
+          "size": 4380
+        },
+        {
+          "path": "target/y2slte/config.sh",
+          "sha": "eb0651cdac9d3f9322c6aee6344fbb2d6ba23038",
+          "size": 2006
+        }
+      ]
+    },
+    "artisan_current": {
+      "repository": "ArtisanROM/ArtisanROM",
+      "branch": "sixteen-qpr2",
+      "commit": "abeb2cac4ff80fdf6f0748b7422d6b4d4b307323",
+      "role": "Refer\u00eancia de organiza\u00e7\u00e3o atual; n\u00e3o suporta beyond2lte nesta revis\u00e3o",
+      "tree_sha": "abeb2cac4ff80fdf6f0748b7422d6b4d4b307323",
+      "inventory_truncated": false,
+      "files": 2320,
+      "blob_bytes": 6246742721,
+      "scopes": {
+        "platform/exynos9820/": {
+          "files": 0,
+          "bytes": 0,
+          "smali_patches": 0,
+          "modules": []
+        },
+        "target/beyond1lte/": {
+          "files": 0,
+          "bytes": 0,
+          "smali_patches": 0,
+          "modules": []
+        },
+        "target/beyond2lte/": {
+          "files": 0,
+          "bytes": 0,
+          "smali_patches": 0,
+          "modules": []
+        },
+        "scripts/": {
+          "files": 27,
+          "bytes": 269148,
+          "smali_patches": 0,
+          "modules": []
+        },
+        "unica/": {
+          "files": 534,
+          "bytes": 288743838,
+          "smali_patches": 164,
+          "modules": [
+            {
+              "path": "unica/mods/beta",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/blocklist",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/bootlogo",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/csc",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/daagent",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/deknox",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/gamesprops",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/hma",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/keybox",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/knoxpatch",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/miracle",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/monotype",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/multiuser",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/outdoor",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/pif",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/pinconfirm",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/preload",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/prophide",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/settings",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/setupwizard",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/tweaks",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/updater",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/v4a",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/wallpaper",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/__floating_feature",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/__props",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/_debloat",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/adb",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/autoblocker_compat",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/bluetooth",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/camera",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/cidmanager",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/display_ddiscaler_boot_fix",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/dvfs",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/engmode",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/ese",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/fmradio",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/frp_migration_compat",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/fs",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/legacy",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/miscs",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/nfc",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/proca",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/product_feature",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/rro",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/saiv",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/selinux",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/signature",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/spen",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/stock_blobs",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/uwb",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/vintf",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/vndk",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/zzzz_sf_renderengine_compat",
+              "disabled": false
+            }
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "path": "README.md",
+          "sha": "06eaff369d2add0f4b7e79d0782b7736ea3b19f4",
+          "size": 8196
+        },
+        {
+          "path": "LICENSE",
+          "sha": "94a9ed024d3859793618152ea559a168bbcbb5e2",
+          "size": 35147
+        },
+        {
+          "path": "unica/debloat.sh",
+          "sha": "3aea2ad44f72e738e123f150da31643388c618c7",
+          "size": 9242
+        },
+        {
+          "path": "target/y2s/config.sh",
+          "sha": "6b366c1d9a5fc0eae811e562ae33210603cf7332",
+          "size": 1943
+        }
+      ]
+    },
+    "artisan_s10": {
+      "repository": "ArtisanROM-archive/ArtisanROM_old",
+      "branch": "sixteen-old",
+      "commit": "5638a7f66cdf8bc9dd43f087a96f7dfa4f9e6954",
+      "role": "Refer\u00eancia hist\u00f3rica de target beyond2lte e plataforma exynos9820",
+      "tree_sha": "5638a7f66cdf8bc9dd43f087a96f7dfa4f9e6954",
+      "inventory_truncated": false,
+      "files": 4987,
+      "blob_bytes": 2416010364,
+      "scopes": {
+        "platform/exynos9820/": {
+          "files": 239,
+          "bytes": 183283810,
+          "smali_patches": 2,
+          "modules": [
+            {
+              "path": "platform/exynos9820/patches/audio",
+              "disabled": false
+            },
+            {
+              "path": "platform/exynos9820/patches/bixbykey",
+              "disabled": false
+            },
+            {
+              "path": "platform/exynos9820/patches/camera",
+              "disabled": false
+            },
+            {
+              "path": "platform/exynos9820/patches/extradim",
+              "disabled": false
+            },
+            {
+              "path": "platform/exynos9820/patches/extremekrnl",
+              "disabled": false
+            },
+            {
+              "path": "platform/exynos9820/patches/hrm",
+              "disabled": false
+            },
+            {
+              "path": "platform/exynos9820/patches/midas",
+              "disabled": false
+            },
+            {
+              "path": "platform/exynos9820/patches/miscs",
+              "disabled": false
+            },
+            {
+              "path": "platform/exynos9820/patches/stock_blobs",
+              "disabled": false
+            },
+            {
+              "path": "platform/exynos9820/patches/vendor",
+              "disabled": false
+            }
+          ]
+        },
+        "target/beyond1lte/": {
+          "files": 12,
+          "bytes": 80474,
+          "smali_patches": 0,
+          "modules": [
+            {
+              "path": "target/beyond1lte/patches/camera",
+              "disabled": false
+            },
+            {
+              "path": "target/beyond1lte/patches/edge_lighting",
+              "disabled": false
+            }
+          ]
+        },
+        "target/beyond2lte/": {
+          "files": 12,
+          "bytes": 80497,
+          "smali_patches": 0,
+          "modules": [
+            {
+              "path": "target/beyond2lte/patches/camera",
+              "disabled": false
+            },
+            {
+              "path": "target/beyond2lte/patches/edge_lighting",
+              "disabled": false
+            }
+          ]
+        },
+        "scripts/": {
+          "files": 20,
+          "bytes": 174279,
+          "smali_patches": 0,
+          "modules": []
+        },
+        "unica/": {
+          "files": 2998,
+          "bytes": 212687043,
+          "smali_patches": 64,
+          "modules": [
+            {
+              "path": "unica/mods/applock",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/bootlogo",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/csc",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/deknox",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/knoxpatch",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/multiuser",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/phonelink",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/portrom",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/preload",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/rezetprop",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/settings",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/updater",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/v4a",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/_desixtification",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/adb",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/camera",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/debloat",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/floating_feature",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/miscs",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/nfc",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/proca",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/product_feature",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/rro",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/selinux",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/signature",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/spen",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/stock_blobs",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/telecom",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/uwb",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/vndk",
+              "disabled": false
+            }
+          ]
+        }
+      },
+      "evidence": []
+    },
+    "onerom": {
+      "repository": "DaDevMikey/OneROM",
+      "commit": "644f0aacc49ad2410e566de8deb05e6c8211d83d",
+      "tree_sha": "644f0aacc49ad2410e566de8deb05e6c8211d83d",
+      "inventory_truncated": false,
+      "files": 4468,
+      "blob_bytes": 2169646717,
+      "scopes": {
+        "platform/exynos9820/": {
+          "files": 241,
+          "bytes": 183284240,
+          "smali_patches": 2,
+          "modules": [
+            {
+              "path": "platform/exynos9820/patches/audio",
+              "disabled": false
+            },
+            {
+              "path": "platform/exynos9820/patches/bixbykey",
+              "disabled": false
+            },
+            {
+              "path": "platform/exynos9820/patches/camera",
+              "disabled": false
+            },
+            {
+              "path": "platform/exynos9820/patches/extradim",
+              "disabled": true
+            },
+            {
+              "path": "platform/exynos9820/patches/extremekrnl",
+              "disabled": true
+            },
+            {
+              "path": "platform/exynos9820/patches/hrm",
+              "disabled": false
+            },
+            {
+              "path": "platform/exynos9820/patches/midas",
+              "disabled": false
+            },
+            {
+              "path": "platform/exynos9820/patches/miscs",
+              "disabled": false
+            },
+            {
+              "path": "platform/exynos9820/patches/stock_blobs",
+              "disabled": false
+            },
+            {
+              "path": "platform/exynos9820/patches/vendor",
+              "disabled": false
+            }
+          ]
+        },
+        "target/beyond1lte/": {
+          "files": 233,
+          "bytes": 142724629,
+          "smali_patches": 18,
+          "modules": [
+            {
+              "path": "target/beyond1lte/patches/camera",
+              "disabled": false
+            },
+            {
+              "path": "target/beyond1lte/patches/edge_lighting",
+              "disabled": false
+            },
+            {
+              "path": "target/beyond1lte/patches/product_abilist",
+              "disabled": false
+            },
+            {
+              "path": "target/beyond1lte/patches/search_indexing",
+              "disabled": true
+            },
+            {
+              "path": "target/beyond1lte/patches/usb_initialization",
+              "disabled": true
+            },
+            {
+              "path": "target/beyond1lte/patches/user_defaults",
+              "disabled": true
+            },
+            {
+              "path": "target/beyond1lte/patches/wallpaper_capture",
+              "disabled": true
+            }
+          ]
+        },
+        "target/beyond2lte/": {
+          "files": 0,
+          "bytes": 0,
+          "smali_patches": 0,
+          "modules": []
+        },
+        "scripts/": {
+          "files": 20,
+          "bytes": 164005,
+          "smali_patches": 0,
+          "modules": []
+        },
+        "unica/": {
+          "files": 2590,
+          "bytes": 91464423,
+          "smali_patches": 60,
+          "modules": [
+            {
+              "path": "unica/mods/applock",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/bootlogo",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/csc",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/deknox",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/knoxpatch",
+              "disabled": true
+            },
+            {
+              "path": "unica/mods/phonelink",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/preload",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/rezetprop",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/settings",
+              "disabled": true
+            },
+            {
+              "path": "unica/patches/_desixtification",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/adb",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/camera",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/debloat",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/floating_feature",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/miscs",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/nfc",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/proca",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/product_feature",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/rro",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/selinux",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/signature",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/spen",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/stock_blobs",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/uwb",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/vndk",
+              "disabled": false
+            }
+          ]
+        }
+      },
+      "evidence": []
+    },
+    "extremerom": {
+      "repository": "ExtremeXT/ExtremeROM",
+      "commit": "2056320784b7d1d88f9e7025f86f7bbd39945d6b",
+      "branch": "fifteen",
+      "tree_sha": "2056320784b7d1d88f9e7025f86f7bbd39945d6b",
+      "inventory_truncated": false,
+      "files": 3889,
+      "blob_bytes": 1787635055,
+      "scopes": {
+        "platform/exynos9820/": {
+          "files": 212,
+          "bytes": 178095545,
+          "smali_patches": 2,
+          "modules": [
+            {
+              "path": "platform/exynos9820/patches/bixbykey",
+              "disabled": false
+            },
+            {
+              "path": "platform/exynos9820/patches/camera",
+              "disabled": false
+            },
+            {
+              "path": "platform/exynos9820/patches/extradim",
+              "disabled": false
+            },
+            {
+              "path": "platform/exynos9820/patches/extremekrnl",
+              "disabled": false
+            },
+            {
+              "path": "platform/exynos9820/patches/hrm",
+              "disabled": false
+            },
+            {
+              "path": "platform/exynos9820/patches/midas",
+              "disabled": false
+            },
+            {
+              "path": "platform/exynos9820/patches/miscs",
+              "disabled": false
+            },
+            {
+              "path": "platform/exynos9820/patches/stock_blobs",
+              "disabled": false
+            },
+            {
+              "path": "platform/exynos9820/patches/vendor",
+              "disabled": false
+            }
+          ]
+        },
+        "target/beyond1lte/": {
+          "files": 10,
+          "bytes": 80294,
+          "smali_patches": 0,
+          "modules": [
+            {
+              "path": "target/beyond1lte/patches/camera",
+              "disabled": false
+            }
+          ]
+        },
+        "target/beyond2lte/": {
+          "files": 10,
+          "bytes": 80317,
+          "smali_patches": 0,
+          "modules": [
+            {
+              "path": "target/beyond2lte/patches/camera",
+              "disabled": false
+            }
+          ]
+        },
+        "scripts/": {
+          "files": 19,
+          "bytes": 159480,
+          "smali_patches": 0,
+          "modules": []
+        },
+        "unica/": {
+          "files": 2589,
+          "bytes": 97846316,
+          "smali_patches": 63,
+          "modules": [
+            {
+              "path": "unica/mods/applock",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/bootlogo",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/csc",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/deknox",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/knoxpatch",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/paradigm",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/phonelink",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/preload",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/rezetprop",
+              "disabled": false
+            },
+            {
+              "path": "unica/mods/settings",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/_desixtification",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/adb",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/camera",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/debloat",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/floating_feature",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/miscs",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/nfc",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/proca",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/product_feature",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/rro",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/selinux",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/signature",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/spen",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/stock_blobs",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/uwb",
+              "disabled": false
+            },
+            {
+              "path": "unica/patches/vndk",
+              "disabled": false
+            }
+          ]
+        }
+      },
+      "evidence": [
+        {
+          "path": "README.md",
+          "sha": "8b066584e6fc6a9db24fc1f73f23b85d17223f04",
+          "size": 10251
+        },
+        {
+          "path": "LICENSE",
+          "sha": "94a9ed024d3859793618152ea559a168bbcbb5e2",
+          "size": 35147
+        },
+        {
+          "path": "target/beyond1lte/config.sh",
+          "sha": "ffe8f5eeeb47c96a837818da012ef58dfa968552",
+          "size": 2083
+        },
+        {
+          "path": "target/beyond2lte/config.sh",
+          "sha": "b1ec023ebf5bfc2a91446d705e1d57692ba71e0d",
+          "size": 2085
+        },
+        {
+          "path": "platform/exynos9820/debloat.sh",
+          "sha": "5c86d6ea0cf12b83a6697a11895d0a9cf3d2d14d",
+          "size": 2495
+        },
+        {
+          "path": "unica/debloat.sh",
+          "sha": "5c226785632021f8915e5d77956d08c1648fa506",
+          "size": 6371
+        }
+      ]
+    }
+  }
+}

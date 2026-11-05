@@ -1,4 +1,4 @@
-# ArtisanRom Beyoud — pesquisa de port para Galaxy S10+
+# ArtisanRom Beyoud — candidatos Galaxy S10/S10+ Exynos
 
 Objetivo: investigar um port One UI 9 para o S10+ usando o sistema da
 UN1CA `seventeen` e as adaptações históricas da ArtisanROM para Exynos 9820.
@@ -6,6 +6,14 @@ UN1CA `seventeen` e as adaptações históricas da ArtisanROM para Exynos 9820.
 **Estado: infraestrutura inicial de pesquisa. Não existe ROM compilada,
 instalador ou imagem validada neste repositório. Não faça flash destes arquivos.**
 Não somos uma distribuição oficial dos projetos citados.
+
+## Build atual: etapas separadas, um ZIP completo
+
+Veja [BUILD-STAGES.md](docs/BUILD-STAGES.md) para a ordem canônica atual.
+O Actions mantém um único runner, separa doador/aparelho/patches/limpeza/pacote
+e não divide a ROM em partes. A estrutura Artisan e o doador UN1CA continuam;
+nenhum componente de oneui85-lab foi importado.
+Auditoria: [CROSS-AUDIT.md](docs/CROSS-AUDIT.md). Ainda sem build/boot validado.
 
 ## Primeiros comandos
 
@@ -36,7 +44,7 @@ bootloader, recovery e layout de partições ainda não foram coletados.
 
 ## Fontes incorporados
 
-`reference/artisan-s10/` contém 68 arquivos textuais históricos, sem mudanças,
+`reference/artisan-s10/` contém 69 arquivos textuais históricos, sem mudanças,
 com configuração de device, overlays e módulos Exynos 9820. São referências
 para migração, ainda não uma árvore compilável. O inventário de 251 arquivos
 registra também os binários externos não incorporados.
@@ -47,7 +55,7 @@ python3 scripts/verify_reference.py
 
 A integração histórica usa ExtremeKernel; seu repositório e commit foram
 fixados no manifesto. Veja `docs/BUILD-STATUS.md` para os bloqueios reais.
-A GitHub Actions valida testes, integridade e sintaxe; **não compila ROM**.
+O workflow de validação verifica fontes; o workflow alpha manual tenta compilar a ROM.
 
 ## Integração candidata implementada
 
@@ -58,6 +66,8 @@ original do S10+. Veja [instruções e resultado real](docs/INTEGRATION.md).
 ```bash
 python3 scripts/prepare_workspace.py /caminho/externo/beyoud-workspace
 python3 scripts/init_workspace_dependencies.py /caminho/externo/beyoud-workspace
+bash scripts/build_smart_downloader.sh /caminho/externo/beyoud-workspace
+bash scripts/probe_firmware.sh /caminho/externo/beyoud-workspace
 bash scripts/build_candidate.sh /caminho/externo/beyoud-workspace dependencies
 bash scripts/build_candidate.sh /caminho/externo/beyoud-workspace rom
 ```

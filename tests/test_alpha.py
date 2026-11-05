@@ -70,6 +70,8 @@ class AlphaTests(unittest.TestCase):
             workspace = Path(tmp)
             (workspace / 'BEYOUD-WORKSPACE.json').write_text('{"target":"SM-G975F"}')
             (workspace / 'buildenv.sh').write_text('return 0\n')
+            (workspace / 'integration').mkdir()
+            (workspace / 'integration/build.py').write_text('import sys; print("failed-build"); sys.exit(7)\n')
             scripts = workspace / 'scripts'
             scripts.mkdir()
             make = scripts / 'make_rom.sh'

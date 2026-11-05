@@ -10,11 +10,15 @@ import sys
 from metadata import get, configured_firmwares
 
 
-def prepare(workspace):
+def prepare(workspace, role=None):
     workspace = workspace.resolve()
     if not (workspace / 'BEYOUD-WORKSPACE.json').is_file():
         raise ValueError('Not a generated workspace')
     out = workspace / 'out'
+    if (out / 'beyoud-fw-retired.json').exists():
+        raise ValueError('Firmware retirement has started; do not reuse extracted markers. Resume at package only after successful retirement, otherwise use a fresh workspace')
+    if any((out / name).is_symlink() for name in ('fw', 'odin')) or out.is_symlink():
+        raise ValueError('Unsafe firmware output root')
     lock = out / 'firmware-lock.json'
     env = dict(os.environ, SRC_DIR=str(workspace), OUT_DIR=str(out),
                ODIN_DIR=str(out / 'odin'), FW_DIR=str(out / 'fw'), TOOLS_DIR=str(out / 'tools'))
@@ -22,7 +26,7 @@ def prepare(workspace):
     # after checking the version-specific successful extraction marker.
     env.pop('GITHUB_ACTIONS', None)
     seen = set()
-    for descriptor in configured_firmwares(out / 'config.sh'):
+    for descriptor in configured_firmwares(out / 'config.sh', role):
         model, csc, *_ = descriptor.split('/')
         if (model, csc) in seen:
             continue
@@ -30,11 +34,15 @@ def prepare(workspace):
         record = get(lock, model, csc)
         extracted = out / 'fw' / f'{model}_{csc}'
         odin = out / 'odin' / f'{model}_{csc}'
+        if extracted.is_symlink():
+            raise ValueError('Unsafe extracted firmware directory')
         marker = extracted / '.extracted'
         if marker.exists():
             if marker.read_text().strip() != record['version']:
                 raise ValueError(f'Extracted version differs from lock for {model}/{csc}; use a fresh workspace')
         else:
+            if extracted.exists():
+                raise ValueError('Incomplete extraction directory; preserve diagnostics and use a fresh workspace')
             free = shutil.disk_usage(workspace).free
             required = record['size'] + 8 * 1024**3
             print(f'Sequential firmware {model}/{csc}: free={free}, download minimum={required}', flush=True)
@@ -57,7 +65,7 @@ def prepare(workspace):
 
 if __name__ == '__main__':
     try:
-        prepare(Path(sys.argv[1]))
+        prepare(Path(sys.argv[1]), sys.argv[2] if len(sys.argv) > 2 else None)
     except (OSError, ValueError, KeyError, subprocess.SubprocessError) as exc:
         print(f'Sequential firmware preparation failed: {exc}', file=sys.stderr)
         sys.exit(1)

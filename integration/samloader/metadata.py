@@ -32,8 +32,13 @@ def get(lock, model, csc):
     return matches[0]
 
 
-def configured_firmwares(config):
+def configured_firmwares(config, role=None):
     values = dict(re.findall(r'^([A-Z_]+)="([^"\n]*)"$', config.read_text(), re.M))
+    if role is not None:
+        if role not in ('source', 'target'):
+            raise ValueError('Unknown firmware role')
+        prefix = role.upper()
+        return [values[f'{prefix}_FIRMWARE']] + list(filter(None, values.get(f'{prefix}_EXTRA_FIRMWARES', '').split(':')))
     descriptors = [values['SOURCE_FIRMWARE'], values['TARGET_FIRMWARE']]
     for key in ('SOURCE_EXTRA_FIRMWARES', 'TARGET_EXTRA_FIRMWARES'):
         descriptors.extend(filter(None, values.get(key, '').split(':')))

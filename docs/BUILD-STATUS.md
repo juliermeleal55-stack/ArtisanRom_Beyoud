@@ -1,3 +1,7 @@
+> **Fluxo atual:** consulte [BUILD-STAGES.md](BUILD-STAGES.md) e
+> [CROSS-AUDIT.md](CROSS-AUDIT.md). As tentativas e comandos anteriores abaixo
+> são históricos; não comprovam sucesso do fluxo atual.
+
 # Estado de construção — SM-G975F
 
 ## Implementado

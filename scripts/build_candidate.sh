@@ -1,29 +1,14 @@
 #!/usr/bin/env bash
-# Execute the original Artisan pipeline in the generated candidate workspace.
+# Persistent, checkpointed stages of the original Artisan build procedure.
 set -euo pipefail
 if [[ $# -lt 1 || $# -gt 2 ]]; then
-    echo "Usage: $0 /absolute/candidate/workspace [dependencies|rom|alpha]" >&2
+    echo "Usage: $0 /absolute/workspace [dependencies|source|target|firmware|patch|retire|package|rom|alpha]" >&2
     exit 64
 fi
 workspace=$(realpath "$1")
 stage=${2:-rom}
-[[ "$stage" == dependencies || "$stage" == rom || "$stage" == alpha ]] || { echo 'Invalid stage' >&2; exit 64; }
 [[ -f "$workspace/BEYOUD-WORKSPACE.json" ]] || { echo 'Not a generated Beyoud workspace' >&2; exit 1; }
-codename=$(python3 "$(dirname "$0")/workspace_target.py" "$workspace")
+[[ -f "$workspace/integration/build.py" ]] || { echo 'Regenerate a fresh workspace with the staged build integration' >&2; exit 1; }
 mkdir -p "$workspace/out/beyoud-logs"
 log="$workspace/out/beyoud-logs/$stage-$(date +%Y%m%d-%H%M%S).log"
-(
-    cd "$workspace"
-    # Legacy envsetup reads unset variables: do not impose nounset on upstream.
-    set +u
-    source buildenv.sh "$codename"
-    if [[ "$stage" == dependencies ]]; then
-        ./scripts/build_dependencies.sh
-    elif [[ "$stage" == alpha ]]; then
-        echo "EXPERIMENTAL ALPHA: no boot or hardware validation; not for daily use."
-        ./scripts/make_rom.sh
-    else
-        # No flashable ZIP until kernel/vendor/framework compatibility is validated.
-        ./scripts/make_rom.sh --no-rom-zip
-    fi
-) 2>&1 | tee "$log"
+python3 "$workspace/integration/build.py" "$workspace" "$stage" --jobs "${BEYOUD_JOBS:-1}" 2>&1 | tee "$log"

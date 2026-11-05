@@ -19,7 +19,14 @@ REPLACE_PINNED_KERNEL_BINARIES()
     fi
     [[ "$(git -C "$kernel_dir" rev-parse HEAD)" == "$revision" ]] || ABORT "Unexpected kernel revision; use a fresh work directory"
     [[ -z "$(git -C "$kernel_dir" status --porcelain)" ]] || ABORT "Kernel source contains local changes"
-    (cd "$kernel_dir" && ./build.sh -m "$TARGET_CODENAME" -k y -r n) || ABORT "Kernel build failed"
+    (
+        set -e
+        local_driver=$(mktemp "$kernel_dir/.beyoud-build.XXXXXX.sh") || exit 1
+        trap 'rm -f "$local_driver"' EXIT
+        python3 "$SRC_DIR/integration/kernel_budget.py" "$kernel_dir/build.sh" "$local_driver" || exit 1
+        cd "$kernel_dir" || exit 1
+        bash "$local_driver" -m "$TARGET_CODENAME" -k y -r n
+    ) || ABORT "Kernel build failed"
     local image
     for image in boot dtb dtbo; do
         [[ -s "$kernel_dir/build/out/$TARGET_CODENAME/$image.img" ]] || ABORT "Kernel image missing: $image"

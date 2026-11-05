@@ -1,0 +1,51 @@
+{
+  "repository": "ArtisanROM-archive/ArtisanROM_old",
+  "commit": "5638a7f66cdf8bc9dd43f087a96f7dfa4f9e6954",
+  "files": [
+    {
+      "path": "scripts/make_rom.sh",
+      "size": 6000,
+      "sha": "ffe2b2bdc47bebd7badd2ecfe7c0c83cbefcf7cd"
+    },
+    {
+      "path": "scripts/download_fw.sh",
+      "size": 6859,
+      "sha": "a7bcf27abbd7141f54f772160274575b6a6744d5"
+    },
+    {
+      "path": "scripts/extract_fw.sh",
+      "size": 17977,
+      "sha": "cf32cce93dac7b360e40ffc47735bb0c6978fc43"
+    },
+    {
+      "path": "scripts/internal/build_flashable_zip.sh",
+      "size": 31331,
+      "sha": "08652071101a0979eb543bda38dc25b816333df2"
+    },
+    {
+      "path": "scripts/utils/firmware_utils.sh",
+      "size": 6924,
+      "sha": "eb6a1f5c639a202e8cb1f95d1d3aa791952f1306"
+    },
+    {
+      "path": "scripts/internal/gen_config_file.sh",
+      "size": 7139,
+      "sha": "65641f80cfb23fb19e0a39c860b5d9e7260afe8f"
+    },
+    {
+      "path": "unica/patches/debloat/customize.sh",
+      "size": 2080,
+      "sha": "6ae7f13c6f7357e992fdb1f9b49f35627671900c"
+    },
+    {
+      "path": "unica/debloat.sh",
+      "size": 6550,
+      "sha": "253e39b299b44bc7bf4259f0ab8885ed239d4b2c"
+    },
+    {
+      "path": "external/make.sh",
+      "size": 9082,
+      "sha": "44513667fc6d29823c6f8dded03b8c95bcf4cbbb"
+    }
+  ]
+}
