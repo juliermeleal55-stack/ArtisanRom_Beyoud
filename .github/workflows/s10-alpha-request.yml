@@ -1,0 +1,14 @@
+# Explicit build request for SM-G973F, authorized by the repository owner.
+# Only editing this request file on the session branch starts another attempt.
+name: Requested S10 SM-G973F alpha
+on:
+  push:
+    branches: [arena/0d47b1d6-artisanrom-beyoud]
+    paths: [.github/workflows/s10-alpha-request.yml]
+permissions:
+  contents: read
+jobs:
+  build:
+    uses: ./.github/workflows/alpha.yml
+    with:
+      target: beyond1lte

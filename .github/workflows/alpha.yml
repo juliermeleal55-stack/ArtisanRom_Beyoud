@@ -1,5 +1,11 @@
 name: Galaxy S10 Exynos experimental alpha build
 on:
+  workflow_call:
+    inputs:
+      target:
+        description: Explicit Exynos candidate codename
+        type: string
+        required: true
   workflow_dispatch:
     inputs:
       target:
