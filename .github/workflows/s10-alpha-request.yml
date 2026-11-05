@@ -14,3 +14,5 @@ jobs:
       target: beyond1lte
 
 # Attempt: guarded Freecess adaptation and additional build checks (2026-11-05).
+
+# Attempt: install audited APKTool overlay and correct per-DEX metadata ordering.

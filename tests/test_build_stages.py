@@ -75,7 +75,7 @@ class StageTests(unittest.TestCase):
             self.assertIn('set -o pipefail', (root / 'scripts/utils/firmware_utils.sh').read_text())
 
     def test_apktool_uses_one_decode_pass_and_per_dex_api_metadata(self):
-        script = ROOT / 'reference/build/scripts/apktool.sh'
+        script = ROOT / 'integration/artisan/apktool.sh'
         text = script.read_text()
         subprocess.run(['bash', '-n', str(script)], check=True)
         self.assertIn('dex_api_versions.tsv', text)

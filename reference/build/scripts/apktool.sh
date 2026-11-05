@@ -35,14 +35,7 @@ THREAD_COUNT=$(awk -v max="$(nproc)" '/MemTotal/ {
   print (tc < 1 ? 1 : (tc > max ? max : tc));
 }' /proc/meminfo)
 
-# Respect the orchestrator's explicit resource budget even when GITHUB_ACTIONS
-# is intentionally removed from child environments.
-if [[ "${BEYOUD_JOBS:-}" =~ ^[1-9][0-9]*$ ]]; then
-    THREAD_COUNT="$BEYOUD_JOBS"
-elif [ -n "$GITHUB_ACTIONS" ]; then
-    THREAD_COUNT=1
-fi
-
+[ -n "$GITHUB_ACTIONS" ] && THREAD_COUNT=1
 
 BUILD()
 {
@@ -61,26 +54,18 @@ BUILD()
         local DEX_FILENAME
 
         while IFS= read -r d; do
-            local DEX_DIR
-            DEX_DIR="$(basename "$d")"
-            if [ -f "$OUTPUT_PATH/dex_api_versions.tsv" ]; then
-                DEX_API_LEVEL="$(awk -F '\t' -v dir="$DEX_DIR" '$1 == dir { print $2; count++ } END { if (count != 1) exit 1 }' "$OUTPUT_PATH/dex_api_versions.tsv")" || {
-                    LOGE "Missing or duplicate DEX API metadata for $DEX_DIR"
-                    exit 1
-                }
-            else
-                # Compatibility with workspaces decoded by the previous script.
-                DEX_API_LEVEL="$(cat "$OUTPUT_PATH/dex_api_version" 2> /dev/null)"
-            fi
-            if [[ ! "$DEX_API_LEVEL" =~ ^[0-9]+$ ]] || [[ "$DEX_API_LEVEL" -gt 36 ]]; then
-                LOGE "Invalid DEX API level for $DEX_DIR: $DEX_API_LEVEL"
+            DEX_API_LEVEL="$(cat "$OUTPUT_PATH/dex_api_version" 2> /dev/null)"
+
+            # https://github.com/google/smali/blob/3.0.9/dexlib2/src/main/java/com/android/tools/smali/dexlib2/VersionMap.java#L55-L79
+            if [ ! "$DEX_API_LEVEL" ] || [[ "$DEX_API_LEVEL" -gt "35" ]]; then
+                LOGE "Unvalid DEX API level: $DEX_API_LEVEL"
                 exit 1
             fi
 
-            if [[ "$d" == *"/smali" ]]; then
+            if [[ "$d" == *"smali" ]]; then
                 DEX_FILENAME="classes.dex"
             else
-                DEX_FILENAME="$(basename "${d#"$OUTPUT_PATH/smali_"}").dex"
+                DEX_FILENAME="$(basename "${d//smali_/}").dex"
             fi
 
             EVAL "smali a -a \"$DEX_API_LEVEL\" -j \"$THREAD_COUNT\" -o \"$OUTPUT_PATH/$DEX_FILENAME\" \"$d\"" &
@@ -88,7 +73,6 @@ BUILD()
 
         # shellcheck disable=SC2046
         wait $(jobs -p) || exit 1
-        rm -f "$OUTPUT_PATH/dex_api_versions.tsv" "$OUTPUT_PATH/dex_api_version"
     fi
 
     # Copy original META-INF
@@ -161,18 +145,18 @@ DECODE()
     # DEX format version might not be matching minSdkVersion, currently we handle
     # baksmali manually as apktool will by default use minSdkVersion when available
     # instead of the actual DEX format version used in the input apk
+    if [[ "$INPUT_FILE" == *services.jar* ]]; then
+        EVAL "baksmali d -a 36 --ac false --di false -j \"$THREAD_COUNT\" -l -o \"$OUTPUT_PATH/smali\" --sl \"$INPUT_FILE\"/classes.dex" &
+        EVAL "baksmali d -a 36 --ac false --di false -j \"$THREAD_COUNT\" -l -o \"$OUTPUT_PATH/smali_classes2\" --sl \"$INPUT_FILE\"/classes.dex/2" &
+    fi
+
     if [ -f "$OUTPUT_PATH/classes.dex" ]; then
         local DEX_API_LEVEL
         local SMALI_OUT
-        : > "$OUTPUT_PATH/dex_api_versions.tsv"
 
         while IFS= read -r f; do
             DEX_API_LEVEL="$(DEX_TO_API "$f")"
             [ "$DEX_API_LEVEL" ] || exit 1
-            # Samsung's services.jar in this port is assembled against API 36.
-            # Apply the override in the single decode path, not in a racing second pass.
-            [[ "$INPUT_FILE" == *services.jar* ]] && DEX_API_LEVEL=36
-            printf '%s\t%s\n' "$SMALI_OUT" "$DEX_API_LEVEL" >> "$OUTPUT_PATH/dex_api_versions.tsv"
             echo -n "$DEX_API_LEVEL" > "$OUTPUT_PATH/dex_api_version"
 
             if [[ "$f" == *"classes.dex" ]]; then

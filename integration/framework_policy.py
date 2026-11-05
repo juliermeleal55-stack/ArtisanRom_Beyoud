@@ -19,11 +19,8 @@ def install(workspace):
     for relative in (CORE_PATCH, APKTOOL, SETTINGS_SCRIPT, SETTINGS_PATCH):
         if (workspace / relative).read_bytes() != (ROOT / 'reference/build' / relative).read_bytes():
             raise ValueError('Unexpected pinned CoreRune/apktool input')
-    apktool = (workspace / APKTOOL).read_text()
-    old = 'unzip -q \"$INPUT_FILE\" \"res/*\" -d \"$OUTPUT_PATH/unknown\"'
-    if apktool.count(old) != 1:
-        raise ValueError('Unexpected framework resource extraction')
-    apktool = apktool.replace(old, 'unzip -oq \"$INPUT_FILE\" \"res/*\" -d \"$OUTPUT_PATH/unknown\" || return 1')
+    # Validate raw upstream above, then install the maintained overlay explicitly.
+    apktool = (ROOT / 'integration/artisan/apktool.sh').read_text()
     addition = '''
 # Beyoud: retain the model-detection fix without compiler-specific v2/jumbo context.
 DECODE_APK "system" "system/framework/services.jar" || exit 1

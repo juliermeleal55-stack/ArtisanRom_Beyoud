@@ -189,3 +189,22 @@ filesystem persistente, com receitas compatíveis. “Re-run jobs” executa em
 runner novo e não incorpora correções posteriores ao SHA original. Para testar
 as correções novas, é preciso uma execução NOVA no commit corrigido, ou uma
 máquina persistente preparada. Não prometer retomada instantânea desse run.
+
+## Correção da integração APKTool após revisão 01d3173
+
+As alterações externas tinham sido gravadas em reference/build/scripts/apktool.sh,
+mas o preparador continuava exigindo o script original do archive. Isso causava
+`Unexpected pinned CoreRune/apktool input`. A referência e seu Git blob ID foram
+restaurados à revisão upstream; a versão adaptada agora reside explicitamente
+em integration/artisan/apktool.sh e é instalada pelo framework_policy após a
+validação do original. Correções de extração ZIP do outro autor foram mantidas.
+
+O TSV por DEX agora é gravado DEPOIS de definir SMALI_OUT na mesma iteração.
+Mantida a passagem única de baksmali, o orçamento BEYOUD_JOBS, os nomes de DEX
+na remontagem e a política API 36 de services.jar da alteração revisada.
+
+Novos testes executam os loops reais de decode/assembly com comandos externos
+simulados: validam classes.dex e classes2.dex com APIs distintas, associação de
+pastas, execução única por DEX e override services.jar. Também reproduzem a
+montagem a partir do arquivo upstream intacto e verificam que a workspace
+recebe o overlay, não uma referência modificada. Não são testes dos APKs reais.
