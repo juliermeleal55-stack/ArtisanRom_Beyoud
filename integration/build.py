@@ -53,7 +53,7 @@ def digest_path(path):
 
 def identity(workspace):
     scopes = ['BEYOUD-WORKSPACE.json', 'buildenv.sh', 'scripts', 'integration',
-              'platform', 'target', 'unica', 'security', 'prebuilts',
+              'reference', 'platform', 'target', 'unica', 'security', 'prebuilts',
               'out/firmware-lock.json', 'out/config.sh']
     # Missing optional scopes are represented, never silently confused with data.
     entries = {name: digest_path(workspace / name) if (workspace / name).exists() else None for name in scopes}
