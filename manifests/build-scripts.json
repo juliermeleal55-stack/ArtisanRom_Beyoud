@@ -64,8 +64,8 @@
     },
     {
       "path": "scripts/apktool.sh",
-      "sha": "31a820764f3e3f60582457d4286c72b7bb695318",
-      "size": 9832
+      "sha": "6f3782d1bd12c2957bc703b294a01efc5f425bf7",
+      "size": 10622
     },
     {
       "path": "unica/mods/settings/customize.sh",
