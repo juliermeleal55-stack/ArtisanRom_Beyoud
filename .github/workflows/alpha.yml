@@ -120,6 +120,7 @@ jobs:
             ${{ env.WORKSPACE }}/out/beyoud-logs/*.json*
             ${{ env.WORKSPACE }}/out/beyoud-logs/failed-smali/**/*.smali
             ${{ env.WORKSPACE }}/out/beyoud-logs/patch-preflight-smali/**/*.smali
+            ${{ env.WORKSPACE }}/out/beyoud-logs/native-inputs/*
             ${{ env.WORKSPACE }}/out/beyoud-logs/patch-preflight-modules/**/*.log
             ${{ env.WORKSPACE }}/out/beyoud-stages/*.json
             ${{ env.WORKSPACE }}/out/beyoud-package-inputs.json

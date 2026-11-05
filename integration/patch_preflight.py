@@ -11,6 +11,8 @@ import re
 import shutil
 import subprocess
 import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from smali_patch import apply as apply_smali_patch
 
 
 def logdir(workspace):
@@ -56,18 +58,17 @@ def apply(workspace, decoded, patch):
         raise ValueError('No patch targets')
     hashes = {relative(workspace, p): hashlib.sha256(p.read_bytes()).hexdigest()
               for p in targets if p.is_file()}
-    command = ['git', 'apply', '--directory=' + str(decoded), '--unsafe-paths', '--verbose']
-    # Git applies atomically without --reject. Preserve sequential dependencies
-    # for successful patches, but do not mutate a target when check fails.
-    checked = subprocess.run(command + ['--check', str(patch)], cwd=workspace, capture_output=True, text=True)
-    result = checked if checked.returncode else subprocess.run(command + [str(patch)], cwd=workspace, capture_output=True, text=True)
+    result, resolved_targets = apply_smali_patch(workspace, decoded, patch)
+    if resolved_targets:
+        targets = resolved_targets
+    hashes = getattr(result, 'input_hashes', hashes)
     event = dict(kind='patch', patch=name, status='failed' if result.returncode else 'passed',
                  inputs=hashes, detail=(result.stderr + result.stdout)[-6000:])
     if result.returncode:
         saved = logdir(workspace) / 'patch-preflight-smali'
         total = sum(p.stat().st_size for p in saved.rglob('*.smali')) if saved.exists() else 0
         for path in targets:
-            if path.is_file() and path.suffix == '.smali' and path.stat().st_size <= 1024**2 and total + path.stat().st_size <= 16 * 1024**2:
+            if path.is_file() and path.suffix == '.smali' and path.stat().st_size <= 8 * 1024**2 and total + path.stat().st_size <= 64 * 1024**2:
                 dest = saved / hashlib.sha256(name.encode()).hexdigest()[:16] / path.name
                 dest.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(path, dest)
@@ -82,7 +83,7 @@ def apply(workspace, decoded, patch):
 
 def module(workspace, path, status, log):
     record(workspace, dict(kind='module', module=relative(workspace, path), status=status,
-                           detail=log.read_text(errors='replace')[-2000:]))
+                           detail=re.sub(r'\x1b\[[0-9;]*m', '', log.read_text(errors='replace'))[-2500:]))
 
 
 def finish(workspace):
@@ -107,9 +108,10 @@ def finish(workspace):
     (logdir(workspace) / 'patch-preflight.json').write_text(json.dumps(report, indent=2) + '\n')
     print(f'Patch preflight: {len(modules)} modules, {len(patches)} patch attempts, {len(failures)} failures', flush=True)
     if failures:
-        summary = '\n'.join(e.get('patch', e.get('module', 'coverage')) + ': ' + e.get('detail', '')[:500] for e in failures)
+        summary = '\n'.join(e.get('patch', e.get('module', 'coverage')) + ': ' + e.get('detail', '')[-900:] for e in failures)
         summary = summary[:28000].replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
-        print(f'::error title=Patch preflight blocked; no ROM built::{summary}', flush=True)
+        for i in range(0,len(summary),3000):
+            print(f'::error title=Patch preflight blocked {i//3000}; no ROM built::{summary[i:i+3000]}', flush=True)
         raise ValueError('Donor patch preflight failed; refusing kernel/APK/ROM build')
     return report
 

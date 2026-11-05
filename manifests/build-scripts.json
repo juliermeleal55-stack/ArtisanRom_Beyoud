@@ -96,6 +96,61 @@
       "path": "scripts/internal/apply_modules.sh",
       "sha": "d554aa71013d9068174cbc4079e1bc0e2971a2de",
       "size": 4507
+    },
+    {
+      "path": "scripts/utils/smali_utils.sh",
+      "size": 14136,
+      "sha": "633818c5e7a4702d3409080dcd7bb64efb9ac3c4"
+    },
+    {
+      "path": "unica/patches/rro/customize.sh",
+      "size": 1094,
+      "sha": "d9414e9b71e368f1e5c1c3e908123d165cde5d67"
+    },
+    {
+      "path": "platform/exynos9820/patches/camera/customize.sh",
+      "size": 5403,
+      "sha": "df18f3732ab2d9bce1fa2afee4a4d71703d7e258"
+    },
+    {
+      "path": "unica/mods/applock/smali/system/framework/framework.jar/0001-Force-AppLock-support.patch",
+      "size": 820,
+      "sha": "f5dbdc8a80fbe6892482c4245c3f7666c5de7af9"
+    },
+    {
+      "path": "unica/mods/deknox/smali/system/framework/knoxsdk.jar/0001-Nuke-Knox-DualDAR-and-HDM-version.patch",
+      "size": 2607,
+      "sha": "9e953ed8e32ad66533104909c74d1dd06957040a"
+    },
+    {
+      "path": "unica/mods/deknox/smali/system/priv-app/SecSettings/SecSettings.apk/0001-Nuke-Knox-DualDAR-version.patch",
+      "size": 925,
+      "sha": "47c691f78526d95b8ab767994096dafefa138068"
+    },
+    {
+      "path": "unica/mods/deknox/smali/system/priv-app/SecSettings/SecSettings.apk/0002-Nuke-Knox-HDM-version.patch",
+      "size": 2100,
+      "sha": "581aac8b328625c05a76fbe7615f43eed413fe82"
+    },
+    {
+      "path": "unica/mods/deknox/smali/system/priv-app/SecSettingsIntelligence/SecSettingsIntelligence.apk/0001-Nuke-Knox-DualDAR-and-HDM-version.patch",
+      "size": 3442,
+      "sha": "02ce8f36b70d15260baaba5a189fb6343c6a74df"
+    },
+    {
+      "path": "unica/mods/deknox/smali/system_ext/priv-app/StorageManager/StorageManager.apk/0001-Nuke-Knox-DualDAR-and-HDM-version.patch",
+      "size": 3370,
+      "sha": "53c3c20b2f05bf9a670150977e7d65d6ff14efc9"
+    },
+    {
+      "path": "unica/mods/knoxpatch/smali/system/framework/services.jar/0002-Disable-SAK-in-DarManagerService.patch",
+      "size": 15766,
+      "sha": "9039d4620865293a1814fa1ac4725ecb9c64b747"
+    },
+    {
+      "path": "unica/patches/telecom/0001-Modify-SamsungBluetoothRouteManager.patch",
+      "size": 19233,
+      "sha": "b043baa4ec796945182f6209d0a5c9cc6e480867"
     }
   ]
 }

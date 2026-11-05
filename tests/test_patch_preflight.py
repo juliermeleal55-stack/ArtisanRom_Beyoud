@@ -1,4 +1,6 @@
 import json
+import contextlib
+import io
 import os
 from pathlib import Path
 import shutil
@@ -33,6 +35,9 @@ def completed_root(root):
 
 
 class PatchPreflightTests(unittest.TestCase):
+    def setUp(self):
+        self.enterContext(contextlib.redirect_stdout(io.StringIO()))
+
     def test_collects_multiple_mismatches_and_blocks_final_build(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);decoded=setup(root);audit.start(root)
@@ -90,7 +95,7 @@ class PatchPreflightTests(unittest.TestCase):
             make=(root/'scripts/make_rom.sh').read_text()
             self.assertLess(make.index('patch_preflight.py" finish'),make.index('Building APKs/JARs'))
             utils=(root/'scripts/utils/module_utils.sh').read_text()
-            self.assertIn('else\n    EVAL "LC_ALL=C git apply',utils)
+            self.assertIn('else\n    python3 "$SRC_DIR/integration/smali_patch.py"',utils)
             self.assertIn('--beyoud-audit-module', (root/'scripts/internal/apply_modules.sh').read_text())
             with self.assertRaises(ValueError):install(root)
 
@@ -100,7 +105,8 @@ class PatchPreflightTests(unittest.TestCase):
             shutil.copytree(ROOT/'reference/build',root,dirs_exist_ok=True)
             install(root)
             (root/'integration').mkdir()
-            shutil.copyfile(ROOT/'integration/patch_preflight.py',root/'integration/patch_preflight.py')
+            for name in ('patch_preflight.py','smali_patch.py','smali_paths.py','semantic_smali.py','semantic_smali.json'):
+                shutil.copyfile(ROOT/'integration'/name,root/'integration'/name)
             # Isolate the actual module runner from external Android tools.
             (root/'scripts/utils/module_utils.sh').write_text('LOG_STEP_IN() { :; }; LOG_STEP_OUT() { :; }; LOGE() { :; }; IS_VALID_PARTITION_NAME() { return 1; }\n')
             modules=root/'audit-modules'

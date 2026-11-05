@@ -1,0 +1,156 @@
+{
+  "unica/mods/applock/smali/system/framework/framework.jar/0001-Force-AppLock-support.patch": {
+    "sha": "f5dbdc8a80fbe6892482c4245c3f7666c5de7af9",
+    "classes": [
+      {
+        "path": "smali_classes6/com/samsung/android/rune/CoreRune.smali",
+        "applock": true
+      }
+    ]
+  },
+  "unica/mods/deknox/smali/system/framework/knoxsdk.jar/0001-Nuke-Knox-DualDAR-and-HDM-version.patch": {
+    "sha": "9e953ed8e32ad66533104909c74d1dd06957040a",
+    "classes": [
+      {
+        "path": "smali/com/samsung/android/knox/ddar/DualDARPolicy.smali",
+        "methods": [
+          {
+            "signature": "getDualDARVersion()Ljava/lang/String;",
+            "value": "null",
+            "static": true
+          }
+        ]
+      },
+      {
+        "path": "smali/com/samsung/android/knox/hdm/HdmManager.smali",
+        "methods": [
+          {
+            "signature": "getHdmVersion()Ljava/lang/String;",
+            "value": "null",
+            "static": true
+          }
+        ]
+      }
+    ]
+  },
+  "unica/mods/deknox/smali/system/priv-app/SecSettings/SecSettings.apk/0001-Nuke-Knox-DualDAR-version.patch": {
+    "sha": "47c691f78526d95b8ab767994096dafefa138068",
+    "classes": [
+      {
+        "path": "smali_classes4/com/samsung/android/knox/ddar/DualDARPolicy.smali",
+        "methods": [
+          {
+            "signature": "getDualDARVersion()Ljava/lang/String;",
+            "value": "null",
+            "static": true
+          }
+        ]
+      }
+    ]
+  },
+  "unica/mods/deknox/smali/system/priv-app/SecSettings/SecSettings.apk/0002-Nuke-Knox-HDM-version.patch": {
+    "sha": "581aac8b328625c05a76fbe7615f43eed413fe82",
+    "classes": [
+      {
+        "path": "smali_classes4/com/samsung/android/knox/hdm/HdmManager.smali",
+        "methods": [
+          {
+            "signature": "getHdmVersion()Ljava/lang/String;",
+            "value": "null",
+            "static": true
+          }
+        ]
+      }
+    ]
+  },
+  "unica/mods/deknox/smali/system/priv-app/SecSettingsIntelligence/SecSettingsIntelligence.apk/0001-Nuke-Knox-DualDAR-and-HDM-version.patch": {
+    "sha": "02ce8f36b70d15260baaba5a189fb6343c6a74df",
+    "classes": [
+      {
+        "path": "smali_classes2/com/samsung/android/knox/ddar/DualDARPolicy.smali",
+        "methods": [
+          {
+            "signature": "getDualDARVersion()Ljava/lang/String;",
+            "value": "null",
+            "static": true
+          }
+        ]
+      },
+      {
+        "path": "smali_classes2/com/samsung/android/knox/hdm/HdmManager.smali",
+        "methods": [
+          {
+            "signature": "getHdmVersion()Ljava/lang/String;",
+            "value": "null",
+            "static": true
+          }
+        ]
+      }
+    ]
+  },
+  "unica/mods/deknox/smali/system_ext/priv-app/StorageManager/StorageManager.apk/0001-Nuke-Knox-DualDAR-and-HDM-version.patch": {
+    "sha": "53c3c20b2f05bf9a670150977e7d65d6ff14efc9",
+    "classes": [
+      {
+        "path": "smali/com/samsung/android/knox/ddar/DualDARPolicy.smali",
+        "methods": [
+          {
+            "signature": "getDualDARVersion()Ljava/lang/String;",
+            "value": "null",
+            "static": true
+          }
+        ]
+      },
+      {
+        "path": "smali/com/samsung/android/knox/hdm/HdmManager.smali",
+        "methods": [
+          {
+            "signature": "getHdmVersion()Ljava/lang/String;",
+            "value": "null",
+            "static": true
+          }
+        ]
+      }
+    ]
+  },
+  "unica/mods/knoxpatch/smali/system/framework/services.jar/0002-Disable-SAK-in-DarManagerService.patch": {
+    "sha": "9039d4620865293a1814fa1ac4725ecb9c64b747",
+    "classes": [
+      {
+        "path": "smali/com/android/server/knox/dar/DarManagerService.smali",
+        "methods": [
+          {
+            "signature": "checkDeviceIntegrity([Ljava/security/cert/Certificate;)Z",
+            "value": "true",
+            "static": false
+          },
+          {
+            "signature": "isDeviceRootKeyInstalled()Z",
+            "value": "true",
+            "static": false
+          },
+          {
+            "signature": "isKnoxKeyInstallable()Z",
+            "value": "true",
+            "static": false
+          }
+        ]
+      }
+    ]
+  },
+  "unica/patches/telecom/0001-Modify-SamsungBluetoothRouteManager.patch": {
+    "sha": "b043baa4ec796945182f6209d0a5c9cc6e480867",
+    "classes": [
+      {
+        "path": "smali/com/samsung/server/telecom/device/bluetooth/SamsungBluetoothRouteManager.smali",
+        "methods": [
+          {
+            "signature": "setCallEndTonePlayStatus(Z)V",
+            "value": "void",
+            "static": false
+          }
+        ]
+      }
+    ]
+  }
+}

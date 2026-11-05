@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
+      - uses: actions/checkout@v4
       - name: Read existing private build diagnostics without firmware downloads
         uses: actions/download-artifact@v4
         with:
@@ -18,6 +19,21 @@ jobs:
           run-id: 42113224237
           github-token: ${{ github.token }}
           path: ${{ runner.temp }}/prior-alpha
+      - name: Replay adaptations on retained actual donor inputs
+        run: |
+          set +e
+          python3 scripts/replay_patch_diagnostics.py "$RUNNER_TEMP/prior-alpha" > "$RUNNER_TEMP/replay-result" 2>&1
+          status=$?
+          cat "$RUNNER_TEMP/replay-result"
+          python3 - <<'PYCODE'
+          import os
+          from pathlib import Path
+          text=(Path(os.environ['RUNNER_TEMP'])/'replay-result').read_text()
+          for i in range(0,len(text),2800):
+              chunk=text[i:i+2800].replace('%','%25').replace('\r','%0D').replace('\n','%0A')
+              print(f'::notice title=Actual donor replay-{i//2800}::{chunk}')
+          PYCODE
+          exit "$status"
       - name: Summarize actual failures
         env:
           DIAG_ROOT: ${{ runner.temp }}/prior-alpha

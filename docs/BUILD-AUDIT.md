@@ -262,3 +262,50 @@ DEX ficam limitados a THREAD_COUNT/BEYOUD_JOBS, em vez de lançar todos juntos e
 aceitar só o resultado do último. Esta revisão não promete boot nem ausência de
 outros erros. A workspace do runner encerrado continua irrecuperável e uma nova
 verificação do doador ainda exige preparar as firmwares outra vez.
+
+## Revisão dos 23 registros de falha do preflight 42113224237
+
+O artefato existente foi inspecionado em um job separado (sem firmware nova).
+O relatório real contém 47 módulos, 25 tentativas de patch e 23 registros de
+falha: isso NÃO equivale a 23 bugs independentes. Alguns módulos interrompidos
+não chegaram a executar todos seus patches condicionais.
+
+Correções nesta revisão:
+
+* Resolução por descriptor completo de classe entre diretórios dex, tanto para
+  APPLY_PATCH quanto SMALI_PATCH e caminhos smali literais/FTP usados por sed.
+  Mesmo basename em outro pacote nunca é aceito; duplicidade, symlink ou
+  descriptor inconsistente bloqueiam. Os hunks restantes continuam estritos.
+* Equivalentes semânticos limitados a oito patches upstream identificados pelo
+  SHA do Git blob: getters de versão DualDAR/HDM retornando null, os três métodos
+  SAK com o retorno do patch original, suporte AppLock e o no-op específico de
+  setCallEndTonePlayStatus. Nenhuma política geral de assinatura é relaxada pelo
+  resolvedor: o patch de assinatura original ainda precisa passar inteiro.
+* AppLock usa novo registrador local, preservando outros consumidores da
+  variável original do doador. Todos os arquivos de um patch semântico são
+  validados antes da primeira gravação.
+* RRO remove apenas as entradas rounded-corner indicadas e aceita ausência
+  prévia do drawable; conserva IDs e recursos não relacionados.
+* Operações de câmera serializadas, com erros de importação preservados e
+  ausência prévia de blobs obsoletos tratada explicitamente como remoção concluída.
+* Suprimidos comandos de annotation sintéticos produzidos pelos testes negativos;
+  mensagens reais divididas abaixo do limite de truncamento da API GitHub.
+
+Limitações NÃO resolvidas por aproximação:
+
+* O libstagefright.so real não contém o padrão de instruções SVC antigo. Não há
+  esse binário no artefato anterior. O patch nativo não foi removido nem trocado
+  por uma sequência adivinhada. Próximos preflights preservam uma cópia privada
+  limitada do binário incompatível para análise offline sem repetir downloads.
+* Os blocos DeKnox de registro de serviços e HDM sofreram mudanças de contexto;
+  HDM agora tem inicialização inline extensa. Não é seguro recortar por números
+  de linha ou forçar aplicação sem analisar fluxo/registradores do doador.
+* Caminhos corrigidos não provam que os hunks complexos restantes passarão.
+
+scripts/replay_patch_diagnostics.py testa os novos equivalentes contra snapshots
+reais com o hash exato registrado pelo preflight anterior, em um job curto.
+Inputs não preservados são classificados como unavailable, nunca como passed.
+O snapshot privado por smali foi ampliado de 1 MiB para 8 MiB (total 64 MiB) para
+não perder classes grandes, como lambdas SystemServer com código inline.
+Nenhuma nova execução pesada deve ser descrita como necessária apenas para
+rever um getter já preservado no artefato, e esta revisão não certifica a ROM.

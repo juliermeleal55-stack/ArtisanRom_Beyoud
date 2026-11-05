@@ -18,7 +18,10 @@ def install(workspace):
     text = text.replace(call, '''    if [[ "${BEYOUD_PATCH_PREFLIGHT:-0}" == "1" ]]; then
         python3 "$SRC_DIR/integration/patch_preflight.py" apply "$SRC_DIR" "$APKTOOL_DIR/$PARTITION/${FILE//system\\//}" "$PATCH" || return 1
     else
-''' + call + '\n    fi')
+''' + '    python3 "$SRC_DIR/integration/smali_patch.py" "$SRC_DIR" "$APKTOOL_DIR/$PARTITION/${FILE//system\\//}" "$PATCH" || return 1' + '\n    fi')
+    native='    FROM="$(tr "[:upper:]" "[:lower:]" <<< "$FROM")"'
+    if text.count(native)!=1:raise ValueError('Unexpected native patch preflight boundary')
+    text=text.replace(native, '\n    if [[ "${BEYOUD_PATCH_PREFLIGHT:-0}" == "1" ]]; then\n        python3 "$SRC_DIR/integration/native_patch_input.py" "$SRC_DIR" "$FILE" "$FROM" "$TO" || return 1\n    fi\n\n'+native)
     utils.write_text(text)
     runner = workspace / 'scripts/internal/apply_modules.sh'
     text = runner.read_text()
