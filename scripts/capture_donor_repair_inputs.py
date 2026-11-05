@@ -7,7 +7,8 @@ from pathlib import Path
 import shutil
 import sys
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
-from integration.samloader.metadata import configured_firmwares
+from integration.samloader.metadata import configured_firmwares, get
+from integration.native_analysis import analyze
 
 NAMES=('libstagefright.so','services.jar','SecSettings.apk','SystemUI.apk','framework.jar')
 BUDGET=256*1024**2
@@ -17,7 +18,7 @@ def capture(workspace,destination):
     descriptor=configured_firmwares(workspace/'out/config.sh','source')[0]
     model,csc,*_=descriptor.split('/')
     root=workspace/'out/fw'/f'{model}_{csc}'
-    record=next(e for e in json.loads((workspace/'out/firmware-lock.json').read_text())['firmwares'] if e['model']==model and e['csc']==csc)
+    record=get(workspace/'out/firmware-lock.json',model,csc)
     if (root/'.extracted').read_text().strip()!=record['version']:raise ValueError('Donor extraction does not match firmware lock')
     if destination.exists():raise ValueError('Input destination must be new')
     destination.mkdir(parents=True)
@@ -33,6 +34,9 @@ def capture(workspace,destination):
             files.append(dict(name=name,status='unavailable',reason='bounded diagnostic budget'));continue
         target=destination/name;shutil.copyfile(path,target)
         used+=size
+        if name=='libstagefright.so':
+            report=analyze(target)
+            (destination/'libstagefright-analysis.json').write_text(json.dumps(report,indent=2)+'\n')
         files.append(dict(name=name,path=str(path.relative_to(root)),size=size,sha256=hashlib.sha256(target.read_bytes()).hexdigest(),status='captured'))
     manifest=dict(schema_version=1,status='private-repair-inputs-not-a-ROM',model=model,csc=csc,version=record['version'],total_bytes=used,files=files)
     (destination/'repair-inputs.json').write_text(json.dumps(manifest,indent=2)+'\n')
