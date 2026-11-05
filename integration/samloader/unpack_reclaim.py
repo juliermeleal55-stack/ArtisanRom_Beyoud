@@ -37,7 +37,8 @@ def punch(fd, start, end):
 def output_path(destination, info):
     relative = Path(info.filename)
     output = destination / relative
-    if (relative.is_absolute() or '..' in relative.parts or relative.name.endswith('.beyoud-partial')
+    if (not info.filename or relative == Path('.') or relative.is_absolute()
+            or '..' in relative.parts or relative.name.endswith('.beyoud-partial')
             or relative.name == '.beyoud-punch-probe'
             or not output.resolve().is_relative_to(destination.resolve())):
         raise ValueError('Unsafe ZIP path')
@@ -52,6 +53,12 @@ def unpack(source, destination, reserve=RESERVE):
     destination = destination.resolve()
     if not destination.is_dir():
         raise ValueError('Destination must already exist')
+    if not source.is_file():
+        raise ValueError('Source ZIP must be a regular file')
+    # Hole punching only frees space for extraction when source and destination
+    # share a filesystem. Reject cross-device layouts before modifying either.
+    if source.stat().st_dev != destination.stat().st_dev:
+        raise ValueError('Source ZIP and extraction destination must be on the same filesystem')
     # Fail BEFORE extracting if hole punching is unsupported; test on a disposable sibling.
     with open(destination / '.beyoud-punch-probe', 'xb+') as probe:
         try:
@@ -67,6 +74,11 @@ def unpack(source, destination, reserve=RESERVE):
             output = output_path(destination, info)
             if output == source or output in seen:
                 raise ValueError('Duplicate ZIP entry or entry overwrites source')
+            if info.is_dir():
+                if output.is_symlink() or (output.exists() and not output.is_dir()):
+                    raise ValueError(f'ZIP directory conflicts with existing path: {output}')
+            elif output.exists() or output.is_symlink():
+                raise ValueError(f'Refusing to overwrite existing extraction output: {output}')
             seen.add(output)
         if not infos:
             raise ValueError('Empty firmware ZIP')
