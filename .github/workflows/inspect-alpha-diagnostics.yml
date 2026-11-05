@@ -76,3 +76,5 @@ jobs:
               chunk=text[i:i+3000].replace('%','%25').replace('\r','%0D').replace('\n','%0A')
               print(f'::notice title=Actual donor code-{i//3000}::{chunk}')
           PY
+
+# Replay includes hidden-API initializer modifiers and proven absent Telecom behavior.

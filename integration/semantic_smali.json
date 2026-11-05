@@ -147,7 +147,8 @@
           {
             "signature": "setCallEndTonePlayStatus(Z)V",
             "value": "void",
-            "static": false
+            "static": false,
+            "absent_if_unreferenced": true
           }
         ]
       }

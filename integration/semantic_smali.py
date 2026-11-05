@@ -9,11 +9,13 @@ from smali_paths import resolve
 SPECS = Path(__file__).with_name('semantic_smali.json')
 
 
-def method_return(text, signature, value, static):
+def method_return(text, signature, value, static, absent_if_unreferenced=False):
     expected={'null':'Ljava/lang/String;','true':'Z','void':'V'}.get(value)
     if expected is None or not signature.endswith(')'+expected):raise ValueError('Unexpected return contract')
     pattern=re.compile(r'(?ms)^(\.method ([^\n]* )?'+re.escape(signature)+r')\n(.*?)^\.end method[^\n]*')
     matches=list(pattern.finditer(text))
+    if not matches and absent_if_unreferenced and value=='void' and signature=='setCallEndTonePlayStatus(Z)V' and 'setCallEndTonePlayStatus' not in text:
+        return text  # The legacy patch's sole functional call is absent in this class.
     if len(matches)!=1:raise ValueError('Missing/ambiguous method '+signature)
     m=matches[0]; flags=m[1].split()
     if ('static' in flags)!=static or 'abstract' in flags or 'native' in flags:
@@ -31,9 +33,12 @@ def method_return(text, signature, value, static):
 
 
 def force_applock(text):
-    matches=list(re.finditer(r'(?ms)^\.method static constructor <clinit>\(\)V\n.*?^\.end method',text))
+    matches=list(re.finditer(r'(?ms)^\.method [^\n]*<clinit>\(\)V\n.*?^\.end method',text))
     if len(matches)!=1:raise ValueError('Expected one CoreRune static initializer')
     m=matches[0];body=m[0]
+    flags=body.splitlines()[0].split()
+    if 'static' not in flags or 'constructor' not in flags or 'native' in flags or 'abstract' in flags:
+        raise ValueError('Unexpected CoreRune initializer modifiers')
     locals_=list(re.finditer(r'(?m)^(\s*\.locals )([0-9]+)\s*$',body))
     if len(locals_)!=1 or int(locals_[0][2])>255:raise ValueError('Unsupported CoreRune local register budget')
     fields=('FW_SUPPORT_APPLOCK','FW_APPLOCK')
@@ -63,7 +68,7 @@ def plan(workspace, decoded, patch):
             text=force_applock(text)
         else:
             for change in item['methods']:
-                text=method_return(text,change['signature'],change['value'],change['static'])
+                text=method_return(text,change['signature'],change['value'],change['static'],change.get('absent_if_unreferenced',False))
         targets[path]=text
     # Caller validates every class before committing any of them.
     return targets

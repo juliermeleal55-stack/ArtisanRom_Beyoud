@@ -143,3 +143,14 @@ class SmaliAdaptationsTests(unittest.TestCase):
             reports=list((root/'out/beyoud-logs/native-inputs').glob('*.json'))
             self.assertEqual(len(reports),1)
             self.assertEqual(json.loads(reports[0].read_text())['status'],'input-only-native-fix-unvalidated')
+
+    def test_hidden_api_initializer_modifier_is_accepted(self):
+        text='.method static constructor blacklist <clinit>()V\n.locals 25\nconst/4 v15, 0x0\nsput-boolean v15, Lcom/samsung/android/rune/CoreRune;->FW_SUPPORT_APPLOCK:Z\nsput-boolean v15, Lcom/samsung/android/rune/CoreRune;->FW_APPLOCK:Z\nreturn-void\n.end method\n'
+        self.assertIn('sput-boolean v25',force_applock(text))
+
+    def test_telecom_absence_is_proven_only_for_the_legacy_target_behavior(self):
+        text='.class public Lcom/samsung/server/telecom/device/bluetooth/SamsungBluetoothRouteManager;\n'
+        signature='setCallEndTonePlayStatus(Z)V'
+        self.assertEqual(method_return(text,signature,'void',False,True),text)
+        with self.assertRaises(ValueError):method_return(text+'# setCallEndTonePlayStatus\n',signature,'void',False,True)
+        with self.assertRaises(ValueError):method_return(text,'other()V','void',False,True)
