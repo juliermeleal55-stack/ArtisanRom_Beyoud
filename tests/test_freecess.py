@@ -112,7 +112,7 @@ class FreecessTests(unittest.TestCase):
     def test_installer_preserves_fix_and_refuses_unknown_schema(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            shutil.copytree(ROOT / 'reference/build/unica', root / 'unica')
+            shutil.copytree(ROOT / 'reference/build', root, dirs_exist_ok=True)
             install(root)
             self.assertFalse((root / PATCH).exists())
             self.assertIn('DECODE_APK', (root / CUSTOMIZE).read_text())

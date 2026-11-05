@@ -159,8 +159,8 @@ def apply_overlay(workspace, codename="beyond2lte"):
     patch_firmware_lookup(workspace)
     patch_parallel_builds(workspace)
     patch_sequential_firmwares(workspace)
-    apply_build_policy(workspace)
     install_framework(workspace)
+    apply_build_policy(workspace)
     onerom = install_onerom(workspace, codename)
     target = workspace / 'target' / codename / 'config.sh'
     text = target.read_text()

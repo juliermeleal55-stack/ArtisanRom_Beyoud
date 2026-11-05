@@ -56,6 +56,26 @@
       "path": "unica/patches/miscs/smali/system/framework/services.jar/0001-Better-model-detection-in-FreecessController.patch",
       "sha": "a9431aa9465d0ed85fec4cc950b0d2ed4f1e2cac",
       "size": 831
+    },
+    {
+      "path": "unica/patches/miscs/smali/system/framework/framework.jar/0001-Better-device-model-detection-in-CoreRune.patch",
+      "sha": "7d58f9cec27aae0bbe319ca551e4b6ed6dbe8852",
+      "size": 1343
+    },
+    {
+      "path": "scripts/apktool.sh",
+      "sha": "31a820764f3e3f60582457d4286c72b7bb695318",
+      "size": 9832
+    },
+    {
+      "path": "unica/mods/settings/customize.sh",
+      "sha": "26cf7ccb0dedb33d309071774bf9ad3b87325920",
+      "size": 2253
+    },
+    {
+      "path": "unica/mods/settings/smali/system/priv-app/SecSettings/SecSettings.apk/0003-Show-real-device-model-number.patch",
+      "sha": "77052927b8bf2df87a11a24d6c33d1ae0c9fd164",
+      "size": 1000
     }
   ]
 }

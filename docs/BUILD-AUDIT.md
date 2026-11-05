@@ -163,3 +163,29 @@ ativos/desativados, patches smali, scripts de HEX_PATCH e sites de falha ignorad
 Diagnósticos de git apply preservam smali real (até 2 MiB por arquivo, restrito
 à árvore decodificada da workspace) no artefato privado, para permitir adaptar
 as próximas incompatibilidades sem adivinhar a partir do patch antigo.
+
+## Execução 42087870700: Freecess passou, CoreRune bloqueou
+
+O log confirma `Freecess model detection: adapted`. O próximo bloqueio foi o
+hunk CoreRune em framework.jar (dex/registrador/contexto antigos). Foram
+substituídos os DOIS reads de identidade (device/model) por adaptação guardada:
+procura SystemProperties.get, valida registradores e método, exige unicidade,
+valida ambas as mudanças antes de gravar. Mantém as propriedades vendor e não
+ignora a correção. A procura não depende de smali_classes6.
+
+A revisão de patches de identificação também localizou o mesmo tipo de hunk
+em Settings/ModelNameGetter: preservada a mudança para ro.boot.em.model usando
+a mesma validação de leitura, sem hunk fixo. Outros patches de funções/recursos
+não são convertidos cegamente por não serem simples trocas de propriedade.
+
+Outro problema observado: unzip da recuperação de recursos de framework.jar
+pediu confirmação e recebeu EOF no runner sem terminal. Agora a chamada é
+não interativa (-oq) e propaga falha de extração.
+
+Não é possível continuar o job GitHub-hosted já encerrado. Somente diagnósticos
+foram preservados; não há backup da workspace pesada nem cache restaurável de
+firmware/árvore compilada. Checkpoints locais só permitem retomar no mesmo
+filesystem persistente, com receitas compatíveis. “Re-run jobs” executa em
+runner novo e não incorpora correções posteriores ao SHA original. Para testar
+as correções novas, é preciso uma execução NOVA no commit corrigido, ou uma
+máquina persistente preparada. Não prometer retomada instantânea desse run.
