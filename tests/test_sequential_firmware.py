@@ -69,6 +69,19 @@ class ReclaimZipTests(unittest.TestCase):
                 unpack.unpack(source, root, reserve=0)
             self.assertTrue(source.exists())
 
+    def test_existing_extraction_output_is_never_overwritten(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / 'firmware.zip'
+            with zipfile.ZipFile(source, 'w') as archive:
+                archive.writestr('AP.md5', b'new firmware')
+            output = root / 'AP.md5'
+            output.write_bytes(b'keep existing data')
+            with self.assertRaisesRegex(ValueError, 'Refusing to overwrite'):
+                unpack.unpack(source, root, reserve=0)
+            self.assertTrue(source.exists())
+            self.assertEqual(output.read_bytes(), b'keep existing data')
+
     def test_unsupported_reclaim_fails_without_full_copy_fallback(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
