@@ -53,6 +53,8 @@ jobs:
           git config --global user.name "Beyoud Alpha Builder"
           git config --global user.email "beyoud-build@users.noreply.github.com"
       - name: Validate integration
+        env:
+          BEYOUD_EXPERIMENTAL_ALLOW_PATCH_FAILURES: '0'
         run: |
           python3 -m unittest discover -s tests -v
           python3 scripts/verify_reference.py

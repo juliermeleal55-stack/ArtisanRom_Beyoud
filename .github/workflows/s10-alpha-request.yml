@@ -22,3 +22,5 @@ jobs:
 
 # Explicit owner request: continue past recorded patch/module failures for an experimental test ZIP.
 # APK/kernel/image/ZIP errors remain fatal; boot is not validated.
+
+# Keep integration tests in strict mode; enable experimental tolerance only for actual build steps.
