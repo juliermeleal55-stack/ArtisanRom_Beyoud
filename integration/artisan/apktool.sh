@@ -231,33 +231,34 @@ DEX_TO_API()
     local DEX_FILE="$1"
 
     local DEX_VERSION
-    DEX_VERSION="$(READ_BYTES_AT "$DEX_FILE" "6" "1")"
+    DEX_VERSION="$(READ_BYTES_AT "$DEX_FILE" "0" "8")"
 
     local API
     case "$DEX_VERSION" in
-        "31")
+        "6364657830303100")
             API="29"
             ;;
-        "35")
+        "6465780a30333500")
             API="23"
             ;;
-        "37")
+        "6465780a30333700")
             API="25"
             ;;
-        "38")
+        "6465780a30333800")
             API="27"
             ;;
-        "39")
+        "6465780a30333900")
             API="29"
             ;;
-        "40")
+        "6465780a30343000")
             API="34"
             ;;
-        "41")
+        "6465780a30343100")
             API="35"
             ;;
         *)
             LOGE "Unknown DEX format version ($DEX_VERSION) found in ${DEX_FILE//$APKTOOL_DIR\//}"
+            return 1
             ;;
     esac
 

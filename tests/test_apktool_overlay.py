@@ -104,3 +104,18 @@ smali() {
             self.assertNotEqual(result.returncode,0)
             self.assertIn('Invalid DEX API level',result.stderr)
             self.assertNotIn('SHOULD_NOT_ASSEMBLE',result.stdout)
+
+    def test_dex_header_mapping_reads_full_magic_not_last_ascii_digit(self):
+        text=OVERLAY.read_text()
+        mapper=text[text.index('DEX_TO_API()\n'):text.index('PREPARE_SCRIPT()\n')]
+        harness='LOGE() { echo "$*" >&2; }; READ_BYTES_AT() { od -An -v -tx1 -j "$2" -N "$3" "$1" | tr -d " \\n"; };\n'
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/'classes.dex'
+            for version,api in [('035','23'),('037','25'),('038','27'),('039','29'),('040','34'),('041','35')]:
+                path.write_bytes(('dex\n'+version+'\0').encode())
+                result=subprocess.run(['bash','-c',harness+mapper+'\nDEX_TO_API "$1"','test',str(path)],capture_output=True,text=True)
+                self.assertEqual(result.returncode,0,result.stderr)
+                self.assertEqual(result.stdout.strip(),api)
+            path.write_bytes(b'dex\n999\0')
+            result=subprocess.run(['bash','-c',harness+mapper+'\nDEX_TO_API "$1"','test',str(path)],capture_output=True,text=True)
+            self.assertNotEqual(result.returncode,0)

@@ -86,3 +86,9 @@ download dos firmwares: monta uma classe mínima em cada formato suportado
 Os testes locais do smoke usam um mock do Java; só a etapa no runner prova
 a execução do JAR real. O resultado local desta revisão é 138 testes PASS.
 Ainda não equivale a sucesso de reconstrução dos JARs reais nem boot.
+
+Correção adicional da mesma revisão: DEX_TO_API lia só o byte 6 do magic,
+confundindo o caractere ASCII final de 041 com compact DEX e não reconhecendo
+040 corretamente. Agora compara os oito bytes completos, preserva o caso
+compact DEX legado e rejeita headers desconhecidos. Testes reais de bytes
+035/037/038/039/040/041 foram adicionados. Total atualizado: 139 testes PASS.
