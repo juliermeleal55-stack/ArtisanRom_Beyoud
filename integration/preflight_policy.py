@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""Install diagnostic-only traversal without weakening production error handling."""
+"""Install collection plus explicit opt-in experimental traversal; strict by default."""
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -22,6 +22,9 @@ def install(workspace):
     native='    FROM="$(tr "[:upper:]" "[:lower:]" <<< "$FROM")"'
     if text.count(native)!=1:raise ValueError('Unexpected native patch preflight boundary')
     text=text.replace(native, '\n    if [[ "${BEYOUD_PATCH_PREFLIGHT:-0}" == "1" ]]; then\n        python3 "$SRC_DIR/integration/native_patch_input.py" "$SRC_DIR" "$FILE" "$FROM" "$TO" || return 1\n    fi\n\n'+native)
+    experimental = '${BEYOUD_EXPERIMENTAL_ALLOW_PATCH_FAILURES:-0}'
+    text = text.replace('"${BEYOUD_PATCH_PREFLIGHT:-0}" == "1"',
+                        '"${BEYOUD_PATCH_PREFLIGHT:-0}" == "1" || "' + experimental + '" == "1"')
     utils.write_text(text)
     runner = workspace / 'scripts/internal/apply_modules.sh'
     text = runner.read_text()
@@ -53,6 +56,8 @@ done < <(find "$1"''')
     if not text.endswith(footer):
         raise ValueError('Unexpected module runner footer')
     text = text[:-len(footer)] + '\nif [[ "${BEYOUD_PATCH_PREFLIGHT:-0}" == "1" ]]; then\n    python3 "$SRC_DIR/integration/patch_preflight.py" root "$SRC_DIR" "$1" || exit 1\nfi\n' + footer
+    text = text.replace('"${BEYOUD_PATCH_PREFLIGHT:-0}" == "1"',
+                        '( "${BEYOUD_PATCH_PREFLIGHT:-0}" == "1" || "${BEYOUD_EXPERIMENTAL_ALLOW_PATCH_FAILURES:-0}" == "1" )')
     runner.write_text(text)
     make = workspace / 'scripts/make_rom.sh'
     text = make.read_text()
@@ -65,4 +70,6 @@ done < <(find "$1"''')
     fi
 
 ''' + anchor)
+    text = text.replace('        exit 0\n    fi\n\n    if [ -d "$APKTOOL_DIR" ]; then',
+                        '        exit 0\n    elif [[ "${BEYOUD_EXPERIMENTAL_ALLOW_PATCH_FAILURES:-0}" == "1" ]]; then\n        python3 "$SRC_DIR/integration/patch_preflight.py" finish "$SRC_DIR" || exit 1\n    fi\n\n    if [ -d "$APKTOOL_DIR" ]; then')
     make.write_text(text)

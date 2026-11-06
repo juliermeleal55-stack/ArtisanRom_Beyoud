@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""Collect donor patch mismatches in diagnostic-only runs; never approve a partial run."""
+"""Collect donor mismatches; explicit experimental failures are never reported as passed."""
 import argparse
 import fcntl
 import hashlib
@@ -77,8 +77,8 @@ def apply(workspace, decoded, patch):
     print(f'PREFLIGHT {event["status"]}: {name}', flush=True)
     if result.returncode:
         print(event['detail'], flush=True)
-    # Only this explicitly diagnostic caller collects onward. finish() fails
-    # the entire stage before any APK/kernel/package is built if ANY failed.
+    # Collection continues. finish() blocks by default; explicit experimental
+    # mode retains failures in its report instead of declaring a clean pass.
 
 
 def module(workspace, path, status, log):
@@ -100,13 +100,19 @@ def finish(workspace):
         failures.append(dict(kind='coverage', status='failed', detail='Missing/duplicate module-root traversal'))
     if not events or events[0].get('kind') != 'start' or not modules or not patches:
         failures.append(dict(kind='coverage', status='failed', detail='Incomplete/empty module or patch traversal'))
-    report = dict(schema_version=1, status='blocked' if failures else 'passed',
+    experimental = os.environ.get('BEYOUD_EXPERIMENTAL_ALLOW_PATCH_FAILURES') == '1'
+    tolerated = experimental and failures and all(e['kind'] in ('patch', 'module') for e in failures)
+    report = dict(schema_version=1, status=('experimental-with-failures' if tolerated else 'blocked') if failures else 'passed',
+                  experimental=experimental, boot_validated=False,
                   scope='executed conditional paths; not boot/native runtime validation',
                   kernel='deferred to real build',
                   warning='Later mismatches may depend on earlier failures; failed modules have incomplete coverage.',
                   modules=len(modules), patches=len(patches), failures=failures, events=events)
     (logdir(workspace) / 'patch-preflight.json').write_text(json.dumps(report, indent=2) + '\n')
     print(f'Patch preflight: {len(modules)} modules, {len(patches)} patch attempts, {len(failures)} failures', flush=True)
+    if tolerated:
+        print('::warning::EXPERIMENTAL: patch/module failures retained; boot is NOT validated. See patch-preflight.json', flush=True)
+        return report
     if failures:
         summary = '\n'.join(e.get('patch', e.get('module', 'coverage')) + ': ' + e.get('detail', '')[-900:] for e in failures)
         summary = summary[:28000].replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')

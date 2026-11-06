@@ -2,12 +2,20 @@ name: Galaxy S10 Exynos experimental alpha build
 on:
   workflow_call:
     inputs:
+      experimental_patch_failures:
+        description: Continue despite patch/module failures; boot NOT validated
+        type: boolean
+        default: false
       target:
         description: Explicit Exynos candidate codename
         type: string
         required: true
   workflow_dispatch:
     inputs:
+      experimental_patch_failures:
+        description: Continue despite patch/module failures; boot NOT validated
+        type: boolean
+        default: false
       target:
         description: Exynos candidate (no boot validation)
         type: choice
@@ -26,6 +34,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 180
     env:
+      BEYOUD_EXPERIMENTAL_ALLOW_PATCH_FAILURES: ${{ inputs.experimental_patch_failures && '1' || '0' }}
       BEYOUD_JOBS: '1'
       CARGO_BUILD_JOBS: '1'
       BEYOUD_TARGET: ${{ inputs.target }}

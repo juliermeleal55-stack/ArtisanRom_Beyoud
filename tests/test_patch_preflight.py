@@ -127,6 +127,13 @@ class PatchPreflightTests(unittest.TestCase):
             production=subprocess.run(command,env=env,text=True,capture_output=True)
             self.assertNotEqual(production.returncode,0)
             self.assertNotIn('LATER_MODULE_RAN',production.stdout)
+            audit.start(root)
+            env['BEYOUD_EXPERIMENTAL_ALLOW_PATCH_FAILURES']='1'
+            experimental=subprocess.run(command,env=env,text=True,capture_output=True)
+            self.assertEqual(experimental.returncode,0,experimental.stderr)
+            self.assertIn('LATER_MODULE_RAN',experimental.stdout)
+            self.assertNotIn('SHOULD_NOT_RUN',experimental.stdout)
+
 
     def test_controller_never_starts_real_pass_if_preflight_fails(self):
         from integration import build
@@ -146,3 +153,32 @@ class PatchPreflightTests(unittest.TestCase):
         self.assertEqual(len({e['path'] for e in report['patches']}),66)
         self.assertEqual(report['status'],'static-risk-inventory-not-donor-certification')
         self.assertEqual(sum(bool(e['adaptation']) for e in report['patches']),4)
+
+class ExperimentalPatchPolicyTests(unittest.TestCase):
+    def test_opt_in_preserves_failures_instead_of_reporting_success(self):
+        with tempfile.TemporaryDirectory() as tmp, contextlib.redirect_stdout(io.StringIO()):
+            root=Path(tmp);decoded=setup(root);audit.start(root)
+            audit.apply(root,decoded,change(root,'bad.patch','missing','new'))
+            completed_root(root)
+            with patch.dict(os.environ,BEYOUD_EXPERIMENTAL_ALLOW_PATCH_FAILURES='1'):
+                report=audit.finish(root)
+            self.assertEqual(report['status'],'experimental-with-failures')
+            self.assertFalse(report['boot_validated'])
+            self.assertEqual(len(report['failures']),1)
+            self.assertEqual((decoded/'A.smali').read_text(),'old\n')
+
+    def test_opt_in_does_not_bypass_incomplete_traversal(self):
+        with tempfile.TemporaryDirectory() as tmp, contextlib.redirect_stdout(io.StringIO()):
+            root=Path(tmp);setup(root);audit.start(root)
+            with patch.dict(os.environ,BEYOUD_EXPERIMENTAL_ALLOW_PATCH_FAILURES='1'):
+                with self.assertRaises(ValueError):audit.finish(root)
+
+    def test_checkpoint_identity_separates_experimental_and_strict_modes(self):
+        from integration.build import identity
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            with patch.dict(os.environ,BEYOUD_EXPERIMENTAL_ALLOW_PATCH_FAILURES='0'):
+                strict=identity(root)
+            with patch.dict(os.environ,BEYOUD_EXPERIMENTAL_ALLOW_PATCH_FAILURES='1'):
+                experimental=identity(root)
+            self.assertNotEqual(strict,experimental)

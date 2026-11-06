@@ -12,9 +12,13 @@ jobs:
     uses: ./.github/workflows/alpha.yml
     with:
       target: beyond1lte
+      experimental_patch_failures: true
 
 # Attempt: guarded Freecess adaptation and additional build checks (2026-11-05).
 
 # Attempt: install audited APKTool overlay and correct per-DEX metadata ordering.
 
 # Attempt: guarded HFR adaptation and donor-wide module preflight before compilation.
+
+# Explicit owner request: continue past recorded patch/module failures for an experimental test ZIP.
+# APK/kernel/image/ZIP errors remain fatal; boot is not validated.

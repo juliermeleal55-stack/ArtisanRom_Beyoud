@@ -58,6 +58,7 @@ def identity(workspace):
               'out/firmware-lock.json', 'out/config.sh']
     # Missing optional scopes are represented, never silently confused with data.
     entries = {name: digest_path(workspace / name) if (workspace / name).exists() else None for name in scopes}
+    entries['experimental_patch_failures'] = os.environ.get('BEYOUD_EXPERIMENTAL_ALLOW_PATCH_FAILURES') == '1'
     return hashlib.sha256(json.dumps(entries, sort_keys=True).encode()).hexdigest()
 
 
@@ -260,8 +261,15 @@ def execute(workspace, stage, jobs=1):
                         env.pop('BEYOUD_PATCH_PREFLIGHT', None)
                         start_preflight(workspace)
                         run_command(command, workspace, dict(env, BEYOUD_PATCH_PREFLIGHT='1'), telemetry)
-                        if json.loads((logs / 'patch-preflight.json').read_text()).get('status') != 'passed':
+                        accepted = {'passed'}
+                        if env.get('BEYOUD_EXPERIMENTAL_ALLOW_PATCH_FAILURES') == '1':
+                            accepted.add('experimental-with-failures')
+                        if json.loads((logs / 'patch-preflight.json').read_text()).get('status') not in accepted:
                             raise ValueError('No successful donor patch preflight; real build blocked')
+                        if env.get('BEYOUD_EXPERIMENTAL_ALLOW_PATCH_FAILURES') == '1':
+                            shutil.copyfile(logs / 'patch-preflight.json', logs / 'diagnostic-preflight.json')
+                            start_preflight(workspace)
+                            receipt['experimental_patch_failures'] = True
                         # --force reconstructs work_dir from retained firmware and
                         # clears decoded APKs. Diagnostic edits are never packaged.
                     receipt['minimum_observed_free'] = run_command(command, workspace, env, telemetry)
