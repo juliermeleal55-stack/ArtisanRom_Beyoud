@@ -29,12 +29,40 @@ def atomic_json(path, data):
     temporary.replace(path)
 
 
-def read_prop(path, key):
-    values = [line.partition('=')[2].strip() for line in path.read_text().splitlines()
-              if line.partition('=')[0].strip() == key]
-    if len(values) != 1 or not re.fullmatch(r'[A-Za-z0-9_.-]+', values[0]):
-        raise ValueError(f'Missing/ambiguous package identifier {key} in {path}')
-    return values[0]
+def read_prop(path, key, aliases=(), fingerprint_keys=()):
+    """Resolve real firmware properties, never invent a device from a model name.
+
+    Malformed/duplicate preferred properties are errors, not reasons to fall
+    through to another key. Android partition-scoped aliases are used only
+    when the legacy property is absent.
+    """
+    props = {}
+    for line in path.read_text().splitlines():
+        if line.lstrip().startswith('#') or '=' not in line:
+            continue
+        name, _, value = line.partition('=')
+        props.setdefault(name.strip(), []).append(value.strip())
+    for name in (key, *aliases):
+        if name not in props:
+            continue
+        values = props[name]
+        if len(values) != 1 or not re.fullmatch(r'[A-Za-z0-9_.-]+', values[0]):
+            raise ValueError(f'Invalid/ambiguous package identifier {name} in {path}')
+        return values[0]
+    # A standard Android fingerprint is brand/product/device:release/id/
+    # incremental:type/tags. Only its device component is an equivalent here.
+    token = r'[A-Za-z0-9_.-]+'
+    pattern = rf'{token}/{token}/({token}):{token}/{token}/{token}:{token}/{token}'
+    for name in fingerprint_keys:
+        if name not in props:
+            continue
+        values = props[name]
+        match = re.fullmatch(pattern, values[0]) if len(values) == 1 else None
+        if not match:
+            raise ValueError(f'Invalid/ambiguous firmware fingerprint {name} in {path}')
+        return match.group(1)
+    tried = ', '.join((key, *aliases, *fingerprint_keys))
+    raise ValueError(f'Missing package identifier in {path}; tried {tried}')
 
 
 def capture(workspace):
@@ -58,7 +86,9 @@ def capture(workspace):
             path = root / relative
             if not path.resolve().is_relative_to(root.resolve()):
                 raise ValueError('Unsafe firmware property path')
-            ids[f'{role}_{suffix}'] = read_prop(path, key)
+            aliases = ('ro.product.system.device', 'ro.product.device') if suffix == 'product' else ('ro.product.device',)
+            fingerprints = ('ro.system.build.fingerprint', 'ro.build.fingerprint') if suffix == 'product' else ('ro.vendor.build.fingerprint',)
+            ids[f'{role}_{suffix}'] = read_prop(path, key, aliases, fingerprints)
     target_model, target_csc, *_ = descriptors[1].split('/')
     metadata = workspace / 'out/fw' / f'{target_model}_{target_csc}' / 'os_partitions_metadata.txt'
     pairs = re.findall(r'^([a-z_]+)_size=([0-9]+)$', metadata.read_text(), re.M)
@@ -158,6 +188,7 @@ if __name__ == '__main__':
     elif args.command == 'verify':
         for key in ('source_product', 'source_vendor', 'target_product', 'target_vendor'):
             identifier(args.workspace, key)
+        print(json.dumps(load(args.workspace), indent=2))
     elif args.command == 'check-image':
         check_image(args.workspace, args.key, args.image)
     else:

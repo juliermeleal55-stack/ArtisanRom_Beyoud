@@ -28,3 +28,5 @@ jobs:
 # Retry: remove unsupported API36 services override; assemble using each DEX header and smoke-test real Smali before firmware download.
 
 # Retry: decode complete DEX magic so 040/041 map to API34/35, not compact DEX/ASCII digits.
+
+# Retry: resolve Android partition-scoped device identifiers and validate all packaging inputs before patch compilation.

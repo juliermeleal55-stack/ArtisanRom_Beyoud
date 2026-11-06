@@ -98,6 +98,8 @@ jobs:
         run: bash scripts/build_candidate.sh "$WORKSPACE" source
       - name: Download and extract selected S10 stock firmware
         run: bash scripts/build_candidate.sh "$WORKSPACE" target
+      - name: Verify package identifiers and stock image limits before patch compilation
+        run: python3 "$WORKSPACE/integration/package_inputs.py" verify "$WORKSPACE"
       - name: Preflight all modules, then apply patches and build pinned device kernel
         run: bash scripts/build_candidate.sh "$WORKSPACE" patch
       - name: Capture package inputs and retire verified firmware trees

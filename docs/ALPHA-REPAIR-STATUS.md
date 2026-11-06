@@ -92,3 +92,28 @@ confundindo o caractere ASCII final de 041 com compact DEX e não reconhecendo
 040 corretamente. Agora compara os oito bytes completos, preserva o caso
 compact DEX legado e rejeita headers desconhecidos. Testes reais de bytes
 035/037/038/039/040/041 foram adicionados. Total atualizado: 139 testes PASS.
+
+## Falha de preparação do ZIP: 42149777675
+
+A etapa patch terminou: services.jar, framework.jar, APKs e overlays foram
+reconstruídos. O job parou em retire ao tentar ler exclusivamente
+ro.build.product em system/system/build.prop do S926B. O relatório de erro
+anterior não distinguia ausência de valor duplicado; não há comprovação de
+boot e nenhum ZIP foi produzido.
+
+O leitor mantém a propriedade legada como preferencial, mas, se ausente,
+consulta ro.product.system.device e ro.product.device no mesmo arquivo.
+Na ausência das três, aceita somente o componente device de um fingerprint
+Android integralmente validado (ro.system.build.fingerprint/ro.build.fingerprint).
+Para o identificador de vendor, preserva ro.product.vendor.device e oferece
+os equivalentes no próprio vendor/build.prop. Propriedades existentes inválidas
+ou duplicadas continuam sendo erros, sem serem mascaradas por um fallback.
+Não se deriva um codename do modelo SM-S926B nem se altera a identidade do S10.
+
+A validação dos quatro identificadores e limites de imagens agora acontece
+logo após a extração do stock, ANTES da compilação dos patches, e é repetida
+antes da remoção dos firmwares. Testes cobrem Android moderno, firmware legado,
+fingerprint, ambiguidade, valores inválidos, preservação do cache após retirement
+e a proibição de apagar os firmwares se a captura falhar. Resultado local:
+145 testes PASS na cópia limpa com as alterações desta revisão. A validação
+com o firmware real cabe à nova execução, não aos fixtures locais.
