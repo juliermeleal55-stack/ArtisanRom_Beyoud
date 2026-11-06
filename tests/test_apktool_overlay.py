@@ -34,8 +34,8 @@ class ApktoolOverlayTests(unittest.TestCase):
         text = OVERLAY.read_text()
         worker = text[text.index('WAIT_FOR_DEX_WORKERS()\n'):text.index('BUILD()\n')]
         decode = worker + text[text.index('DECODE()\n'):text.index('DEX_TO_API()\n')]
-        for name, expected in [('other.jar', {'smali': '35', 'smali_classes2': '36'}),
-                               ('services.jar', {'smali': '36', 'smali_classes2': '36'})]:
+        for name, expected in [('other.jar', {'smali': '35', 'smali_classes2': '34'}),
+                               ('services.jar', {'smali': '35', 'smali_classes2': '34'})]:
             with tempfile.TemporaryDirectory() as tmp:
                 root = Path(tmp)
                 source = root / name
@@ -45,7 +45,7 @@ class ApktoolOverlayTests(unittest.TestCase):
 LOG() { :; }; LOGE() { echo "$*" >&2; }; READ_BYTES_AT() { echo 04034b50; }
 EVAL() { eval "$1"; }
 apktool() { mkdir -p "$OUTPUT_PATH"; touch "$OUTPUT_PATH/classes.dex" "$OUTPUT_PATH/classes2.dex"; }
-DEX_TO_API() { if [[ "$1" == */classes.dex ]]; then echo 35; else echo 36; fi; }
+DEX_TO_API() { if [[ "$1" == */classes.dex ]]; then echo 35; else echo 34; fi; }
 baksmali() {
  local output="" api=""
  while [ "$#" -gt 0 ]; do
@@ -90,3 +90,17 @@ smali() {
         worker = text[text.index('WAIT_FOR_DEX_WORKERS()\n'):text.index('BUILD()\n')]
         script = worker + '\nBEYOUD_DEX_PIDS=(); (exit 7) & BEYOUD_DEX_PIDS+=("$!"); (exit 0) & BEYOUD_DEX_PIDS+=("$!"); WAIT_FOR_DEX_WORKERS\n'
         self.assertNotEqual(subprocess.run(['bash','-c',script]).returncode,0)
+
+    def test_services_api_override_cannot_reintroduce_unsupported_api_36(self):
+        text=OVERLAY.read_text()
+        self.assertNotIn('&& DEX_API_LEVEL=36',text)
+        worker=text[text.index('WAIT_FOR_DEX_WORKERS()\n'):text.index('BUILD()\n')]
+        build=worker+text[text.index('BUILD()\n'):text.index('    # Copy original META-INF')]+'}\n'
+        with tempfile.TemporaryDirectory() as tmp:
+            output=Path(tmp);(output/'smali').mkdir()
+            (output/'dex_api_versions.tsv').write_text('smali\t36\n')
+            harness='LOG() { :; }; LOGE() { echo "$*" >&2; }; smali() { echo SHOULD_NOT_ASSEMBLE; };\n'
+            result=subprocess.run(['bash','-c',harness+build+'\nOUTPUT_PATH="$1"; INPUT_FILE=services.jar; THREAD_COUNT=1; BUILD','test',str(output)],capture_output=True,text=True)
+            self.assertNotEqual(result.returncode,0)
+            self.assertIn('Invalid DEX API level',result.stderr)
+            self.assertNotIn('SHOULD_NOT_ASSEMBLE',result.stdout)

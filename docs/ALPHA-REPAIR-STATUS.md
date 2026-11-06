@@ -61,3 +61,28 @@ módulo inteiro tenha passado com o doador real depois da correção.
 Não se exige perfeição funcional para uma alpha. Exige-se que os patches e o
 empacotamento terminem corretamente: desabilitar módulos, ignorar falhas ou
 empacotar uma árvore parcialmente alterada não produz uma alpha confiável.
+
+## Falha posterior da alpha experimental 42137760729
+
+O preflight chegou ao final em modo experimental (47 módulos, 46 tentativas,
+20 falhas registradas) e a execução avançou para a reconstrução dos JARs.
+O bloqueio fatal foi `services.jar`: `smali a -a 36` gerou
+`IllegalArgumentException: dexVersion must be within [0, 999]`.
+
+Causa confirmada no pin google/smali
+8be50d709f10d384f2adc9a6e15bd525067d75a3, classe VersionMap:
+mapApiToDexVersion(36) retorna NO_VERSION (-1); o maior mapeamento suportado
+é API35 -> DEX041. O overlay forçava API36 em todos os DEX de services.jar.
+
+Correção: remover o override por nome de JAR e preservar a API derivada do
+header de cada DEX. Rejeitar metadados de montagem acima de API35, em vez de
+invocar uma montagem impossível. Não altera o SDK declarado da ROM nem
+rebaixa todos os JARs para um formato fixo. Os testes exercitam services.jar
+com dois formatos distintos e impedem a regressão do override API36.
+
+Foi adicionado um smoke test com o Smali compilado de verdade, ANTES do
+download dos firmwares: monta uma classe mínima em cada formato suportado
+035/037/038/039/040/041 e verifica magic, tamanho, SHA1 e Adler32 do DEX.
+Os testes locais do smoke usam um mock do Java; só a etapa no runner prova
+a execução do JAR real. O resultado local desta revisão é 138 testes PASS.
+Ainda não equivale a sucesso de reconstrução dos JARs reais nem boot.

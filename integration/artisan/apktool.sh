@@ -84,7 +84,7 @@ BUILD()
                 # Compatibility with workspaces decoded by the previous script.
                 DEX_API_LEVEL="$(cat "$OUTPUT_PATH/dex_api_version" 2> /dev/null)"
             fi
-            if [[ ! "$DEX_API_LEVEL" =~ ^[0-9]+$ ]] || [[ "$DEX_API_LEVEL" -gt 36 ]]; then
+            if [[ ! "$DEX_API_LEVEL" =~ ^[0-9]+$ ]] || [[ "$DEX_API_LEVEL" -lt 1 || "$DEX_API_LEVEL" -gt 35 ]]; then
                 LOGE "Invalid DEX API level for $DEX_DIR: $DEX_API_LEVEL"
                 exit 1
             fi
@@ -186,9 +186,9 @@ DECODE()
         while IFS= read -r f; do
             DEX_API_LEVEL="$(DEX_TO_API "$f")"
             [ "$DEX_API_LEVEL" ] || exit 1
-            # Samsung's services.jar in this port is assembled against API 36.
-            # Apply the override in the single decode path, not in a racing second pass.
-            [[ "$INPUT_FILE" == *services.jar* ]] && DEX_API_LEVEL=36
+            # Preserve the API mapped from this DEX header, including services.jar.
+            # Pinned google/smali only maps assembly APIs through 35; API 36
+            # maps to NO_VERSION (-1) and cannot produce a valid DEX header.
             echo -n "$DEX_API_LEVEL" > "$OUTPUT_PATH/dex_api_version"
 
             if [[ "$f" == *"classes.dex" ]]; then

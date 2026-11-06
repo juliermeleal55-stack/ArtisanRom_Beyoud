@@ -79,7 +79,8 @@ class StageTests(unittest.TestCase):
         text = script.read_text()
         subprocess.run(['bash', '-n', str(script)], check=True)
         self.assertIn('dex_api_versions.tsv', text)
-        self.assertIn('DEX_API_LEVEL=36', text)
+        self.assertNotIn('DEX_API_LEVEL=36', text)
+        self.assertIn('DEX_API_LEVEL="$(DEX_TO_API "$f")"', text)
         self.assertIn('BEYOUD_JOBS', text)
         self.assertNotIn('baksmali d -a 36 --ac false --di false', text)
 

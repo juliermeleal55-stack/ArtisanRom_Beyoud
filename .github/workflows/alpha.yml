@@ -92,6 +92,8 @@ jobs:
         run: bash scripts/probe_firmware.sh "$WORKSPACE"
       - name: Compile build tools
         run: bash scripts/build_candidate.sh "$WORKSPACE" dependencies
+      - name: Verify actual Smali assembly before downloading firmware
+        run: python3 scripts/smoke_smali.py "$WORKSPACE"
       - name: Download and extract donor firmware
         run: bash scripts/build_candidate.sh "$WORKSPACE" source
       - name: Download and extract selected S10 stock firmware
