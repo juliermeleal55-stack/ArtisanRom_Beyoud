@@ -2,7 +2,7 @@ name: Collect donor repair inputs - no ROM build
 on:
   push:
     branches: [arena/0d47b1d6-artisanrom-beyoud]
-    paths: [.github/workflows/collect-donor-repair-inputs.yml]
+    paths: [.github/workflows/collect-donor-repair-inputs.yml, scripts/capture_donor_repair_inputs.py]
 permissions:
   contents: read
 concurrency:
