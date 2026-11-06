@@ -158,3 +158,41 @@ O job anterior consumiu aproximadamente 156 minutos antes das imagens finais.
 O orçamento do job foi aumentado de 180 para 360 minutos para não abortar a
 compressão/assinatura apenas por esse limite; não significa promessa de prazo
 ou sucesso. Total local atualizado: 150 testes PASS em cópia limpa.
+
+## Colisão ODM: 42236213796 e comparação OneROM
+
+A reconstrução dos APKs/JARs terminou novamente. A falha foi introduzida pelo
+normalizador Beyoud: tratava qualquer symlink em system/odm como colisão fatal.
+A anotação antiga não preservou o tipo/alvo exato desse nó; portanto os testes
+novos cobrem tanto aliases Android conhecidos quanto diretórios não vazios.
+
+Agora um alias Android conhecido é substituído SEM seguir/apagar seu destino,
+e seu valor anterior fica no relatório. Diretórios não vazios são mesclados,
+preservando arquivos e metadados; arquivos/links divergentes ou metadados
+conflitantes bloqueiam tudo antes de qualquer movimentação. Destinos externos
+não reconhecidos continuam rejeitados. A validação completa desse plano também
+roda no fim do preflight, antes da recompilação real, além da aplicação após
+make_rom; assim não se espera o fim da montagem real para descobrir colisões.
+Os tamanhos usam caminhos finais projetados para não contar duas vezes cópias
+idênticas que serão consolidadas; as verificações das imagens permanecem.
+
+Foi consultada novamente OneROM no pin já auditado
+644f0aacc49ad2410e566de8deb05e6c8211d83d. As três evidências originais e seus
+hashes Git estão em manifests/onerom-layout-review.json. O create_work_dir
+continua copiando as árvores auxiliares; simplesmente copiá-lo NÃO corrige
+nossa colisão. Seu layout user-repartition-20260913 declara explicitamente
+que vale só para o aparelho medido e installation_approved=false; system é
+7340032000 bytes, maior que os 5976883200 bytes do filesystem stock capturado
+para esta integração. Esses números não foram usados como caps do aparelho
+do usuário e não se importou uma repartição não aprovada para fingir sucesso.
+
+As adaptações OneROM de serviços anteriormente importadas permanecem. Não
+foram substituídos APKs/framework/kernel que já conseguiram recompilar por
+blobs de outro doador. A base continua Artisan S10 e o doador S926B.
+
+Nesta revisão: 154 testes PASS em cópia limpa e 60 evidências auditadas PASS.
+Os testes extras incluem aliases absolutos/relativos, diretório ODM não vazio,
+links externos rejeitados, preservação de vendor/odm, metadados conflitantes e
+contagem de duplicatas no tamanho projetado. Ainda falta aplicar o novo plano
+na árvore real do doador e concluir imagens/instalador. Nenhum ZIP é declarado
+pronto por esses testes de fonte.

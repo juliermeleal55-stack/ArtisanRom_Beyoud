@@ -267,6 +267,7 @@ def execute(workspace, stage, jobs=1):
                             accepted.add('experimental-with-failures')
                         if json.loads((logs / 'patch-preflight.json').read_text()).get('status') not in accepted:
                             raise ValueError('No successful donor patch preflight; real build blocked')
+                        normalize_static_layout(workspace, codename, check_only=True)
                         if env.get('BEYOUD_EXPERIMENTAL_ALLOW_PATCH_FAILURES') == '1':
                             shutil.copyfile(logs / 'patch-preflight.json', logs / 'diagnostic-preflight.json')
                             start_preflight(workspace)

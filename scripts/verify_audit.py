@@ -42,6 +42,15 @@ def verify():
                 raise ValueError('Unsafe service rebase evidence path')
             blob(path, entry if key == 'reference' else entry['installed_evidence'])
             count += 1
+    layout = json.loads((ROOT / 'manifests/onerom-layout-review.json').read_text())
+    if layout['commit'] != rebases['commit']:
+        raise ValueError('OneROM layout review differs from audited revision')
+    for entry in layout['files']:
+        path = ROOT / entry['reference']
+        if not path.resolve().is_relative_to((ROOT / 'reference/onerom-layout-review').resolve()):
+            raise ValueError('Unsafe OneROM layout evidence path')
+        blob(path, entry)
+        count += 1
     return count
 
 

@@ -32,3 +32,5 @@ jobs:
 # Retry: resolve Android partition-scoped device identifiers and validate all packaging inputs before patch compilation.
 
 # Retry: embed donor-only optics/prism/odm trees in system when absent from locked stock layout; keep real image-size checks.
+
+# Retry: support standard Android root aliases and lossless legacy ODM merges; validate layout before real APK compilation.

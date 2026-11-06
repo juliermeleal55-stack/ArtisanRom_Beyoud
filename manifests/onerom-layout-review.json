@@ -1,0 +1,25 @@
+{
+  "repository": "DaDevMikey/OneROM",
+  "commit": "644f0aacc49ad2410e566de8deb05e6c8211d83d",
+  "scope": "Read-only comparison. Do not import user-specific repartition sizes or install approval.",
+  "files": [
+    {
+      "path": "scripts/internal/create_work_dir.sh",
+      "reference": "reference/onerom-layout-review/scripts/internal/create_work_dir.sh",
+      "sha": "36bed119054f550d7883572f761b4ba0c315e3bd",
+      "size": 9202
+    },
+    {
+      "path": "target/beyond1lte/layouts/user-repartition-20260913.json",
+      "reference": "reference/onerom-layout-review/target/beyond1lte/layouts/user-repartition-20260913.json",
+      "sha": "e36912498c86c3031fa728eef9875e6101a0fbb5",
+      "size": 511
+    },
+    {
+      "path": "target/beyond1lte/layouts/measurement/s10-partition-bytes.txt",
+      "reference": "reference/onerom-layout-review/target/beyond1lte/layouts/measurement/s10-partition-bytes.txt",
+      "sha": "3bc9df73a921b4c79f9387bcb6a686307912dbe3",
+      "size": 191
+    }
+  ]
+}

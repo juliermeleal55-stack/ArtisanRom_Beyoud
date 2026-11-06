@@ -45,7 +45,8 @@ class StaticLayoutTests(unittest.TestCase):
     def test_collision_rejects_before_moving_any_payload(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);work=layout(root)
-            (work/'system/system/prism').mkdir()
+            (work/'system/system/prism/etc').mkdir(parents=True)
+            (work/'system/system/prism/etc/config.xml').write_text('conflicting content')
             with self.assertRaises(ValueError):normalize(root,'beyond2lte')
             self.assertTrue((work/'optics/etc/config.xml').exists())
             self.assertTrue((work/'odm/etc/config.xml').exists())
@@ -68,3 +69,58 @@ class StaticLayoutTests(unittest.TestCase):
             p.write_text(p.read_text()+'optics_size=1000000\n')
             self.assertEqual(normalize(root,'beyond2lte')['embedded'],[])
             self.assertTrue((work/'optics/etc/config.xml').is_file())
+
+    def test_standard_root_aliases_are_replaced_without_following_them(self):
+        for name in ('odm','prism','optics'):
+            for alias in (f'/vendor/{name}',f'/system/{name}',f'vendor/{name}'):
+                with self.subTest(name=name,alias=alias),tempfile.TemporaryDirectory() as tmp:
+                    root=Path(tmp);work=layout(root,(name,))
+                    link=work/'system'/name;link.rmdir();link.symlink_to(alias)
+                    before=normalize(root,'beyond2lte',check_only=True)
+                    self.assertEqual(link.readlink(),Path(alias))
+                    self.assertTrue((work/name/'etc/config.xml').exists())
+                    report=normalize(root,'beyond2lte')
+                    self.assertEqual(report['embedded'][0]['previous_root_link'],alias)
+                    self.assertEqual(link.readlink(),Path('/system/'+name))
+                    self.assertEqual((work/'system/system'/name/'etc/config.xml').read_text(),name)
+
+    def test_nonempty_root_directory_is_merged_and_keeps_legacy_metadata(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);work=layout(root,('odm',))
+            (work/'system/odm/legacy.conf').write_text('preserved')
+            with (work/'configs/fs_config-system').open('a') as stream:stream.write('odm/legacy.conf 1000 1000 644\n')
+            with (work/'configs/file_context-system').open('a') as stream:stream.write('/odm/legacy.conf u:object_r:vendor_file:s0\n')
+            normalize(root,'beyond2lte')
+            self.assertEqual((work/'system/system/odm/legacy.conf').read_text(),'preserved')
+            self.assertIn('system/odm/legacy.conf 1000 1000 644',(work/'configs/fs_config-system').read_text())
+            self.assertIn('/system/odm/legacy.conf u:object_r:vendor_file:s0',(work/'configs/file_context-system').read_text())
+
+    def test_unknown_alias_and_conflicting_legacy_files_fail_before_any_move(self):
+        for mode in ('link','file','metadata'):
+            with self.subTest(mode=mode),tempfile.TemporaryDirectory() as tmp:
+                root=Path(tmp);work=layout(root)
+                if mode=='link':
+                    (work/'system/odm').rmdir();(work/'system/odm').symlink_to('/home/user/private')
+                elif mode=='file':
+                    (work/'system/odm/etc').mkdir();(work/'system/odm/etc/config.xml').write_text('different')
+                else:
+                    with (work/'configs/fs_config-system').open('a') as stream:stream.write('system/odm/etc/config.xml 123 456 600\n')
+                with self.assertRaises(ValueError):normalize(root,'beyond2lte')
+                self.assertTrue((work/'odm/etc/config.xml').exists())
+                self.assertTrue((work/'optics/etc/config.xml').exists())
+
+    def test_duplicate_files_count_once_in_projected_image_and_preserve_vendor(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);work=layout(root,('odm',))
+            (work/'system/odm/etc').mkdir()
+            (work/'system/odm/etc/config.xml').write_text('odm')
+            (work/'vendor/odm').mkdir()
+            (work/'vendor/odm/stock.conf').write_text('stock must remain')
+            with (work/'configs/fs_config-system').open('a') as stream:stream.write('odm/etc/config.xml 1000 1000 644\n')
+            cap=root/'out/fw/SM-G975F_AUT/os_partitions_metadata.txt'
+            cap.write_text('system_size=3\nvendor_size=1000000\n')
+            report=normalize(root,'beyond2lte',check_only=True)
+            self.assertEqual(report['payload_bytes']['system'],3)
+            normalize(root,'beyond2lte')
+            self.assertEqual((work/'system/system/odm/etc/config.xml').read_text(),'odm')
+            self.assertEqual((work/'vendor/odm/stock.conf').read_text(),'stock must remain')
