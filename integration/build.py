@@ -20,6 +20,7 @@ from integration.patch_preflight import start as start_preflight
 from integration.samloader.metadata import configured_firmwares
 from integration.firmware_check import inspect as inspect_firmware
 from integration.package_inputs import atomic_json, retire
+from integration.static_layout import normalize as normalize_static_layout
 
 STAGES = ('dependencies', 'source', 'target', 'patch', 'retire', 'package')
 RESERVE = 2 * 1024**3
@@ -275,6 +276,8 @@ def execute(workspace, stage, jobs=1):
                     receipt['minimum_observed_free'] = run_command(command, workspace, env, telemetry)
                 if stage == 'target':
                     inspect_firmware(workspace)
+                if stage == 'patch':
+                    receipt['static_layout'] = normalize_static_layout(workspace, codename)
             receipt['outputs'] = output_proof(workspace, stage, codename)
             if identity(workspace) != source_id:
                 raise ValueError('Build recipes/configuration changed during stage')

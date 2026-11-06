@@ -117,3 +117,44 @@ fingerprint, ambiguidade, valores inválidos, preservação do cache após retir
 e a proibição de apagar os firmwares se a captura falhar. Resultado local:
 145 testes PASS na cópia limpa com as alterações desta revisão. A validação
 com o firmware real cabe à nova execução, não aos fixtures locais.
+
+## Falha de partições auxiliares: 42195819773
+
+A correção de identificadores passou no firmware real; patch e retire terminaram.
+Package falhou na primeira imagem, optics: o stock G973F AUT só registrou caps
+para system (5976883200), vendor (1153433600) e product (650117120).
+O create_work_dir Artisan copia optics/prism/odm do doador e o empacotador
+original tenta transformar toda árvore reconhecida em uma partição flashável.
+Não se deve aumentar/inventar caps nem usar o tamanho de uma partição do S926B
+como se fosse capacidade física do S10. A ausência de uma imagem no pacote
+stock por si só também não é prova absoluta de ausência física no PIT.
+
+A normalização de layout agora roda depois da montagem real, ANTES do checkpoint
+patch e de retirar os firmwares. Para optics/prism/odm que não constam nos caps
+do stock, preserva integralmente a árvore em system/system/<nome>, expõe o caminho
+raiz via symlink /<nome> -> /system/<nome>, remapeia fs_config/file_context mantendo
+UID/GID/modos/tipos SELinux e remove entradas fstab para esses pontos de montagem
+nas árvores de texto empacotadas. Não modifica o boot ramdisk compilado; não
+comprova que init e SELinux funcionarão no aparelho.
+
+Se uma partição auxiliar constar nos caps reais do stock, não é relocada.
+Colisões, metadados ausentes/inesperados e outras partições não suportadas geram
+falha, não descarte silencioso. Verifica-se ainda um limite inferior dos bytes
+do payload antes de construir imagens; overhead ext4 e tamanho lógico final
+continuam sendo verificados na construção e antes de compressão.
+
+O coletor final também confere payloads e block_image_update contra o conjunto
+de caps capturados e rejeita imagens super/init_boot/vendor_boot no pacote S10
+estático. Isso não certifica a tabela física de partições nem boot. A montagem
+usa somente imagens suportadas; o conteúdo auxiliar não é descartado para
+fingir sucesso. Relatório: out/beyoud-logs/static-layout.json.
+
+Testes acrescentados: conteúdo preservado, remapeamento de labels/permissões,
+fstab, idempotência, colisões verificadas antes das movimentações, metadados
+faltantes, partições desconhecidas, payload maior que cap, partição auxiliar
+realmente registrada no stock e rejeição de payload/escrita não suportada no ZIP.
+
+O job anterior consumiu aproximadamente 156 minutos antes das imagens finais.
+O orçamento do job foi aumentado de 180 para 360 minutos para não abortar a
+compressão/assinatura apenas por esse limite; não significa promessa de prazo
+ou sucesso. Total local atualizado: 150 testes PASS em cópia limpa.

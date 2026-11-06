@@ -4,6 +4,7 @@ from pathlib import Path
 import subprocess
 import tempfile
 import unittest
+from unittest.mock import patch
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -61,9 +62,28 @@ class AlphaTests(unittest.TestCase):
             (workspace / 'BEYOUD-WORKSPACE.json').write_text(json.dumps({'target': 'SM-G975F', 'flashable_release': False}))
             package(workspace / 'out/ArtisanROM_0.1.0-alpha1_beyond2lte.zip')
             dest = Path(tmp) / 'output'
-            alpha.collect(workspace, dest)
+            with patch.object(alpha, 'load_package_inputs', return_value={'stock_image_size_caps': {'system': 1000}}):
+                alpha.collect(workspace, dest)
             self.assertTrue((dest / 'SHA256SUMS').exists())
             self.assertIn('DO NOT prove boot', (dest / 'WARNING.txt').read_text())
+
+    def test_unsupported_partition_payload_or_write_is_rejected(self):
+        for mode in ('payload','script','boot'):
+            with self.subTest(mode=mode),tempfile.TemporaryDirectory() as tmp:
+                path=Path(tmp)/'rom.zip';package(path)
+                with zipfile.ZipFile(path,'a') as archive:
+                    if mode=='payload':archive.writestr('optics.new.dat.br',b'wrong-target')
+                    elif mode=='boot':archive.writestr('init_boot.img',b'wrong-target')
+                if mode=='script':
+                    other=Path(tmp)/'rewritten.zip'
+                    with zipfile.ZipFile(path) as source,zipfile.ZipFile(other,'w') as target:
+                        for name in source.namelist():
+                            data=source.read(name)
+                            if name.endswith('updater-script'):
+                                data+=b'\nblock_image_update("/dev/block/by-name/prism", "payload");'
+                            target.writestr(name,data)
+                    path=other
+                with self.assertRaises(ValueError):alpha.check_package(path,allowed_partitions={'system','vendor','product'})
 
     def test_wrapper_propagates_build_failure(self):
         with tempfile.TemporaryDirectory() as tmp:

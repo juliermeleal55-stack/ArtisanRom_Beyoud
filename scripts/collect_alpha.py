@@ -11,9 +11,10 @@ import re
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from integration.targets import from_marker
+from integration.package_inputs import load as load_package_inputs
 
 
-def check_package(path, model="SM-G975F"):
+def check_package(path, model="SM-G975F", allowed_partitions=None):
     with zipfile.ZipFile(path) as archive:
         if archive.testzip() is not None:
             raise ValueError('Corrupted ZIP')
@@ -28,7 +29,15 @@ def check_package(path, model="SM-G975F"):
             raise ValueError('Unexpected device assertions')
         if not any(name.startswith('system.') and '.dat' in name for name in names):
             raise ValueError('Missing system payload')
+        if allowed_partitions is not None:
+            payloads = {match.group(1) for name in names if (match := re.fullmatch(r'([a-z_]+)\.new\.dat(?:\.br)?', name))}
+            writes = set(re.findall(r'block_image_update\(\s*"[^"\n]*/([^/"\n]+)"', script))
+            if (payloads | writes) - set(allowed_partitions):
+                raise ValueError('Installer references unsupported target partitions')
+            if {'super.img','init_boot.img','vendor_boot.img'} & names:
+                raise ValueError('Unsupported static S10 boot/super payload')
         for image in ('boot.img', 'dtbo.img'):
+
             if archive.getinfo(image).file_size == 0:
                 raise ValueError(f'Empty {image}')
 
@@ -41,7 +50,7 @@ def collect(workspace, destination):
     if len(candidates) != 1:
         raise ValueError(f'Expected exactly one alpha ZIP, found {len(candidates)}')
     source = candidates[0]
-    check_package(source, model)
+    check_package(source, model, load_package_inputs(workspace)['stock_image_size_caps'])
     destination.mkdir(parents=True, exist_ok=False)
     filename = f'Beyoud-{model}-0.1.0-alpha1-UNTESTED.zip'
     output = destination / filename

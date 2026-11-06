@@ -225,7 +225,7 @@ EXTRACT_OS_PARTITIONS
                 elif 'build_flashable_zip' in str(cmd):
                     (root / 'out/ArtisanROM_alpha1_beyond2lte.zip').write_bytes(b'package')
                 return 100
-            with patch.object(build, 'environment', return_value={}), patch.object(build, 'run_command', side_effect=command), patch.object(build, 'package_budget', return_value={}):
+            with patch.object(build, 'environment', return_value={}), patch.object(build, 'run_command', side_effect=command), patch.object(build, 'package_budget', return_value={}), patch.object(build, 'normalize_static_layout', return_value={}):
                 with self.assertRaises(ValueError):
                     build.execute(root, 'patch')
                 for stage in ('dependencies', 'source', 'target', 'patch', 'retire', 'package'):

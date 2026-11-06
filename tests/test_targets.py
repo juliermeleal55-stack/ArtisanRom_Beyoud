@@ -70,6 +70,7 @@ class TargetTests(unittest.TestCase):
             (root / 'BEYOUD-WORKSPACE.json').write_text(json.dumps(dict(target='SM-G973F', codename='beyond1lte')))
             package(root / 'out/ArtisanROM_0.1.0-alpha1_beyond1lte.zip', model='SM-G973F')
             dest = Path(tmp) / 'result'
-            alpha.collect(root, dest)
+            with patch.object(alpha, 'load_package_inputs', return_value={'stock_image_size_caps': {'system': 1000}}):
+                alpha.collect(root, dest)
             self.assertTrue((dest / 'Beyoud-SM-G973F-0.1.0-alpha1-UNTESTED.zip').exists())
             self.assertIn('SM-G973F ONLY', (dest / 'WARNING.txt').read_text())
