@@ -10,8 +10,8 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from integration.samloader.metadata import configured_firmwares, get
 from integration.native_analysis import analyze
 
-NAMES=('libstagefright.so','services.jar','SecSettings.apk','SystemUI.apk','framework.jar')
-BUDGET=256*1024**2
+NAMES=('libstagefright.so','framework.jar','services.jar','knoxsdk.jar','SecSettings.apk','SecSettingsIntelligence.apk','StorageManager.apk','SystemUI.apk')
+BUDGET=512*1024**2
 
 
 def capture(workspace,destination):
