@@ -110,7 +110,7 @@ class SmaliAdaptationsTests(unittest.TestCase):
             product=(root/'unica/patches/product_feature/customize.sh').read_text()
             self.assertIn('smali_paths.py',product)
             camera=(root/'platform/exynos9820/patches/camera/customize.sh').read_text()
-            self.assertIn('da4a0594e0031a2a22feff17',camera)
+            self.assertIn('82fbffb042301f91c000805213f30594e0031a2a47feff17',camera)
             self.assertIn('HEX_PATCH',camera)
             self.assertNotIn('wait $(jobs -p)',camera)
             self.assertIn('overlay_resources.py',(root/'unica/patches/rro/customize.sh').read_text())
