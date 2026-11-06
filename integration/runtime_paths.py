@@ -6,6 +6,21 @@ import re
 ROOT=Path(__file__).resolve().parents[1]
 
 
+def rebase_camera_native_patches(text):
+    # S926BXXSIEZJ1 donor: configureSVC failure logs, then bypasses only the
+    # error-return path at ACodec::setupVideoEncoder (branch target 0xec8a4).
+    old_svc='HEX_PATCH "$WORK_DIR/system/system/lib64/libstagefright.so" "da4a0594e0031a2a22feff17" "da4a0594e0031a2a19000014"'
+    new_svc='HEX_PATCH "$WORK_DIR/system/system/lib64/libstagefright.so" "82fbffb042301f91c000805213f30594e0031a2a47feff17" "82fbffb042301f91c000805213f30594e0031a2a0e000014"'
+    # The relocated strcasecmp/CBZ pair gates the HDR10+ recording assert.
+    old_hdr='HEX_PATCH "$WORK_DIR/system/system/lib64/libstagefright.so" "010140f90a4d0594604d0034" "010140f90a4d05941f2003d5"'
+    new_hdr='HEX_PATCH "$WORK_DIR/system/system/lib64/libstagefright.so" "010140f935f5059400470034" "010140f935f505941f2003d5"'
+    for old, new, label in ((old_svc,new_svc,'Video SVC'),(old_hdr,new_hdr,'HDR10+')):
+        if text.count(old) != 1:
+            raise ValueError('Unexpected pinned '+label+' native patch command')
+        text=text.replace(old,new,1)
+    return text
+
+
 def install(workspace):
     relative=Path('scripts/utils/smali_utils.sh');path=workspace/relative
     if path.read_bytes()!=(ROOT/'reference/build'/relative).read_bytes():raise ValueError('Unexpected pinned SMALI_PATCH helper')
@@ -23,6 +38,7 @@ def install(workspace):
     # Preserve every required stock blob import and native check; only serialize
     # workers and treat an already-absent optional deletion as the desired state.
     camera=workspace/'platform/exynos9820/patches/camera/customize.sh';text=camera.read_text()
+    text=rebase_camera_native_patches(text)
     old='    DELETE_FROM_WORK_DIR "system" "$blob" &'
     if text.count(old)!=1:raise ValueError('Unexpected camera deletion loop')
     text=text.replace(old,'''    if [[ -e "$WORK_DIR/system/$blob" || -L "$WORK_DIR/system/$blob" ]]; then
