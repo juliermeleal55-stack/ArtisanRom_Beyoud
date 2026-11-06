@@ -171,6 +171,11 @@
       "path": "unica/mods/deknox/smali/system/framework/services.jar/0005-Nuke-HDMService.patch",
       "size": 1708,
       "sha": "8bc98f4faf65127b0514edbf2f96d8712ea794ce"
+    },
+    {
+      "path": "scripts/utils/build_utils.sh",
+      "size": 3850,
+      "sha": "1d5e91b4119d16f4c1015fe9ddb8310ff95a553a"
     }
   ]
 }

@@ -231,7 +231,9 @@ DEX_TO_API()
     local DEX_FILE="$1"
 
     local DEX_VERSION
-    DEX_VERSION="$(READ_BYTES_AT "$DEX_FILE" "0" "8")"
+    # The pinned READ_BYTES_AT reverses byte order (numeric little-endian).
+    # DEX magic is a byte string, not an integer: read in file order.
+    DEX_VERSION="$(od -An -v -tx1 -N 8 "$DEX_FILE" | tr -d ' \n')"
 
     local API
     case "$DEX_VERSION" in

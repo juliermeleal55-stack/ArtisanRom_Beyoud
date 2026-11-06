@@ -25,6 +25,12 @@ def verify(data, version):
 def smoke(workspace):
     jar=workspace/'out/tools/bin/android-smali.jar'
     if not jar.is_file():raise ValueError('Built Smali fat JAR missing')
+    overlay=(workspace/'scripts/apktool.sh').read_text()
+    mapper=overlay[overlay.index('DEX_TO_API()\n'):overlay.index('PREPARE_SCRIPT()\n')]
+    original=(workspace/'scripts/utils/build_utils.sh').read_text()
+    begin=original.index('READ_BYTES_AT()\n')
+    reader=original[begin:original.index('\n# [',begin)]
+    harness='LOGE() { echo "$*" >&2; }; _CHECK_NON_EMPTY_PARAM() { [[ -n "$2" ]]; };\n'+reader+'\n'+mapper+'\nDEX_TO_API "$1"\n'
     with tempfile.TemporaryDirectory(prefix='beyoud-smali-') as directory:
         root=Path(directory);source=root/'source';source.mkdir()
         (source/'Probe.smali').write_text('.class public Lbeyoud/Probe;\n.super Ljava/lang/Object;\n.method public static probe()I\n.locals 1\nconst/4 v0, 0x1\nreturn v0\n.end method\n')
@@ -32,7 +38,10 @@ def smoke(workspace):
             output=root/f'api-{api}.dex'
             subprocess.run(['java','-jar',str(jar),'a','-a',str(api),'-j','1','-o',str(output),str(source)],check=True)
             verify(output.read_bytes(),version)
-            print(f'Smali real assembly verified: API {api} -> DEX {version:03d}',flush=True)
+            mapped=subprocess.run(['bash','-c',harness,'smali-mapping-test',str(output)],check=True,capture_output=True,text=True)
+            if mapped.stdout.strip()!=str(api):
+                raise ValueError(f'Actual APKTool DEX mapping differs: API {api}, result {mapped.stdout!r}')
+            print(f'Smali real assembly and actual APKTool mapping verified: API {api} -> DEX {version:03d}',flush=True)
 
 
 if __name__=='__main__':

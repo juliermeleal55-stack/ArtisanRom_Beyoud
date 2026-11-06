@@ -33,25 +33,29 @@ def remap(text, old, new):
     return '\n'.join(result)+'\n'
 
 
-def check_merge(source, destination):
+def check_merge(source, destination, aliases=frozenset()):
     """Reject differing nodes BEFORE moving any payload; never follow symlinks."""
+    if source in aliases or destination in aliases:return
     if not exists(destination):return
     if source.is_symlink() or destination.is_symlink():
         if source.is_symlink() and destination.is_symlink() and source.readlink()==destination.readlink():return
     elif source.is_dir() and destination.is_dir():
-        for item in source.iterdir():check_merge(item,destination/item.name)
+        for item in source.iterdir():check_merge(item,destination/item.name,aliases)
         return
     elif source.is_file() and destination.is_file() and filecmp.cmp(source,destination,shallow=False):
         return
-    raise ValueError(f'Conflicting auxiliary payload: {source} -> {destination}')
+    details=lambda p: ('symlink -> '+str(p.readlink())) if p.is_symlink() else ('directory' if p.is_dir() else 'file')
+    raise ValueError(f'Conflicting auxiliary payload: {source} ({details(source)}) -> {destination} ({details(destination)})')
 
 
-def merge(source, destination):
+def merge(source, destination, aliases=frozenset()):
     # check_merge has already validated all source nodes and metadata.
     if not exists(destination):
         shutil.move(str(source),str(destination));return
+    if source in aliases:
+        source.unlink();return
     if source.is_dir() and not source.is_symlink():
-        for item in list(source.iterdir()):merge(item,destination/item.name)
+        for item in list(source.iterdir()):merge(item,destination/item.name,aliases)
         source.rmdir()
     else:
         source.unlink()  # Exact duplicate data/link, not a conflicting file.
@@ -95,9 +99,17 @@ def normalize(workspace, codename, check_only=False):
             allowed |= {value.lstrip('/') for value in allowed}
             if alias not in allowed:raise ValueError(f'Unexpected root alias: {link} -> {alias}')
         elif exists(link) and not link.is_dir():raise ValueError(f'Root mountpoint collision: {link}')
+        aliases=set();self_aliases=set()
         if not link.is_symlink() and link.is_dir():
-            check_merge(source,link)
-            if exists(dest):check_merge(link,dest)
+            for child in link.rglob('*'):
+                if not child.is_symlink():continue
+                relative=child.relative_to(link).as_posix()
+                permitted={f'/{base}/{name}/{relative}' for base in ('vendor','system/vendor','mnt/vendor')}
+                if str(child.readlink()) in permitted:aliases.add(child)
+                elif str(child.readlink())==f'/{name}/{relative}':
+                    aliases.add(child);self_aliases.add(child)
+            check_merge(source,link,aliases)
+            if exists(dest):check_merge(link,dest,aliases)
         check_merge(source,dest)
         for prefix,old,new in [('fs_config',name,'system/'+name),('file_context','/'+name,'/system/'+name)]:
             original=configs/(prefix+'-'+name)
@@ -109,14 +121,19 @@ def normalize(workspace, codename, check_only=False):
                 if parts and not line.lstrip().startswith('#') and matches(parts[0],old):
                     # Root row describes the old mountpoint/link, not new payload.
                     if parts[0]!=old and not link.is_symlink() and link.is_dir():
-                        legacy.append(line.replace(old,new,1))
+                        replaced=False
+                        for child in aliases:
+                            relative=child.relative_to(link)
+                            if (child in self_aliases or exists(source/relative) or exists(dest/relative)) and matches(parts[0],old+'/'+relative.as_posix()):
+                                replaced=True;break
+                        if not replaced:legacy.append(line.replace(old,new,1))
                 else:keep.append(line)
             current='\n'.join(keep)+'\n'
             current=metadata(current,'\n'.join(legacy))
             current=metadata(current,remap(original.read_text(),old,new))
             entry=f'{name} 0 0 777' if prefix=='fs_config' else f'/{name} u:object_r:system_file:s0'
             texts[prefix]=metadata(current,entry)
-        plans.append((name,source,dest,link,alias))
+        plans.append((name,source,dest,link,alias,aliases,self_aliases))
     report={'schema_version':1,'status':'layout-only-not-boot-validated',
             'check_only':check_only,'embedded':[],'fstab_edits':[],'payload_bytes':{}}
     # Count a conservative payload lower bound before deleting firmware. Aliases
@@ -139,13 +156,17 @@ def normalize(workspace, codename, check_only=False):
                 if key not in seen:size+=stat.st_size;seen.add(key)
         report['payload_bytes'][name]=size
         if size>caps[name]:raise ValueError(f'{name} payload lower bound {size} exceeds stock image cap {caps[name]}')
-    for name,source,dest,link,alias in plans:
+    for name,source,dest,link,alias,aliases,self_aliases in plans:
         report['embedded'].append({'partition':name,'destination':'system/system/'+name,
-                                   'root_link':'/system/'+name,'previous_root_link':alias})
+                                   'root_link':'/system/'+name,'previous_root_link':alias,
+                                   'legacy_aliases':[{'path':str(p.relative_to(system)),'target':str(p.readlink()),'self_forwarder':p in self_aliases} for p in sorted(aliases)]})
         if not check_only:
             merge(source,dest)
+            # These routing links would point back to themselves after embedding.
+            # Their target data comes from source; no target directory is removed.
+            for child in self_aliases:child.unlink()
             if link.is_symlink():link.unlink()  # Do not remove or traverse its target.
-            elif link.exists():merge(link,dest)
+            elif link.exists():merge(link,dest,aliases)
             link.symlink_to('/system/'+name)
     moved={item['partition'] for item in report['embedded']}
     fstab_changes=[]

@@ -34,3 +34,5 @@ jobs:
 # Retry: embed donor-only optics/prism/odm trees in system when absent from locked stock layout; keep real image-size checks.
 
 # Retry: support standard Android root aliases and lossless legacy ODM merges; validate layout before real APK compilation.
+
+# Retry: read DEX magic in file byte order, test actual Artisan helper, and resolve internal vendor ODM routing aliases without dropping payload.

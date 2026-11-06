@@ -124,3 +124,49 @@ class StaticLayoutTests(unittest.TestCase):
             normalize(root,'beyond2lte')
             self.assertEqual((work/'system/system/odm/etc/config.xml').read_text(),'odm')
             self.assertEqual((work/'vendor/odm/stock.conf').read_text(),'stock must remain')
+
+    def test_odm_internal_vendor_aliases_are_routing_nodes_not_payload_conflicts(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);work=layout(root,('odm',))
+            legacy=work/'system/odm'
+            (legacy/'etc').symlink_to('/vendor/odm/etc')
+            (legacy/'bin').symlink_to('/vendor/odm/bin')
+            (work/'vendor/odm/etc').mkdir(parents=True)
+            (work/'vendor/odm/etc/stock.conf').write_text('unchanged target')
+            with (work/'configs/fs_config-system').open('a') as stream:
+                stream.write('odm/etc 0 0 777\nodm/bin 0 0 777\n')
+            with (work/'configs/file_context-system').open('a') as stream:
+                stream.write('/odm/etc u:object_r:system_file:s0\n/odm/bin u:object_r:system_file:s0\n')
+            normalize(root,'beyond2lte',check_only=True)
+            self.assertTrue((legacy/'etc').is_symlink())
+            report=normalize(root,'beyond2lte')
+            embedded=work/'system/system/odm'
+            self.assertTrue((embedded/'etc').is_dir())
+            self.assertFalse((embedded/'etc').is_symlink())
+            self.assertEqual((embedded/'etc/config.xml').read_text(),'odm')
+            self.assertEqual((embedded/'bin').readlink(),Path('/vendor/odm/bin'))
+            self.assertEqual((work/'vendor/odm/etc/stock.conf').read_text(),'unchanged target')
+            self.assertEqual(len(report['embedded'][0]['legacy_aliases']),2)
+            self.assertNotIn('system/odm/etc 0 0 777',(work/'configs/fs_config-system').read_text())
+
+    def test_unknown_internal_alias_is_not_overwritten(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);work=layout(root,('odm',))
+            (work/'system/odm/etc').symlink_to('/unexpected/private')
+            with self.assertRaises(ValueError):normalize(root,'beyond2lte')
+            self.assertTrue((work/'odm/etc/config.xml').exists())
+            self.assertEqual((work/'system/odm/etc').readlink(),Path('/unexpected/private'))
+
+    def test_old_canonical_odm_forwarders_do_not_create_self_cycles(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);work=layout(root,('odm',))
+            (work/'system/odm/etc').symlink_to('/odm/etc')
+            (work/'system/odm/bin').symlink_to('/odm/bin')
+            with (work/'configs/fs_config-system').open('a') as stream:
+                stream.write('odm/etc 0 0 777\nodm/bin 0 0 777\n')
+            with (work/'configs/file_context-system').open('a') as stream:
+                stream.write('/odm/etc u:object_r:system_file:s0\n/odm/bin u:object_r:system_file:s0\n')
+            report=normalize(root,'beyond2lte')
+            self.assertEqual((work/'system/system/odm/etc/config.xml').read_text(),'odm')
+            self.assertFalse((work/'system/system/odm/bin').is_symlink())
+            self.assertTrue(all(a['self_forwarder'] for a in report['embedded'][0]['legacy_aliases']))

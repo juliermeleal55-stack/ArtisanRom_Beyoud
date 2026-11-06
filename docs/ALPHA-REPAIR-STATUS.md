@@ -196,3 +196,32 @@ links externos rejeitados, preservação de vendor/odm, metadados conflitantes e
 contagem de duplicatas no tamanho projetado. Ainda falta aplicar o novo plano
 na árvore real do doador e concluir imagens/instalador. Nenhum ZIP é declarado
 pronto por esses testes de fonte.
+
+## Regressões da tentativa 42308577685
+
+Esta tentativa falhou ainda no diagnóstico: apenas 9 patches foram tentados.
+O motivo de vários "class found 0" foi anterior: o header de samsungkeystoreutils
+foi lido como 003933300a786564. READ_BYTES_AT da base Artisan inverte a sequência
+para uso numérico little-endian. Meu teste anterior simulava essa função como
+um leitor em ordem de arquivo e não reproduziu a integração real.
+
+DEX_TO_API agora lê bytes em ordem de arquivo com od -tx1, sem a conversão
+numérica. A função original completa foi preservada/verificada como evidência
+e usada no harness de regressão. O smoke test no runner agora também testa o
+mapeador de scripts/apktool.sh com os DEX reais recém-montados, antes de baixar
+firmwares; não valida só o Java de forma isolada.
+
+O outro bloqueio era odm/etc: o diretório ODM legado pode conter encaminhadores
+para /vendor/odm/etc ou /odm/etc. Agora são classificados como aliases de
+roteamento apenas se o destino corresponder exatamente à mesma partição e ao
+mesmo caminho relativo. Quando substituídos por conteúdo real do doador, remove-se
+só o link, nunca o destino vendor. Aliases de vendor sem conteúdo substituto são
+preservados; encaminhadores canônicos /odm/* que virariam ciclos são retirados,
+com registro no relatório. Arquivos reais e diretórios divergentes continuam
+sendo conflitos, e aliases externos não reconhecidos não são sobrescritos.
+
+As checagens antes de qualquer movimento e os caps das imagens continuam ativas.
+Não foram copiados limites de repartição da OneROM nem substituídos JARs/APKs
+que já conseguiram recompilar na tentativa anterior. As adaptações OneROM de
+serviços permanecem. Resultado local: 157 testes PASS em cópia limpa; 61
+referências de auditoria PASS. Ainda não é prova de ZIP ou boot.
