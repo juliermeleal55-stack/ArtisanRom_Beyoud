@@ -63,12 +63,12 @@ BEYOUD_COMPRESS_PARTITION()
     for old, key in [(source, 'source_product'), (vendor, 'source_vendor'), (target, 'target_product'), (target_vendor, 'target_vendor')]:
         new = '$(python3 "$SRC_DIR/integration/package_inputs.py" get "$SRC_DIR" ' + key + ')'
         text = once(text, old, new)
-    # Guard the declared non-stock layout on the PHONE before writing images.
+    # Check physical capacity on the PHONE, not a fixed build ceiling, before writes.
     text = once(text, 'LOG "- Generating updater-script"\nGENERATE_UPDATER_SCRIPT',
                 'python3 "$SRC_DIR/integration/package_inputs.py" layout-check "$SRC_DIR" "$TMP_DIR/partition-layout-check.sh" || exit 1\nLOG "- Generating updater-script"\nGENERATE_UPDATER_SCRIPT')
     text = once(text, '        PRINT_HEADER\n', '''        PRINT_HEADER
         echo 'package_extract_file("partition-layout-check.sh", "/tmp/partition-layout-check.sh") || abort("Cannot extract partition layout check.");'
-        echo 'run_program("/sbin/sh", "/tmp/partition-layout-check.sh", "'"$TARGET_BOOT_DEVICE_PATH"'") == 0 || abort("Partition layout mismatch. Requires the declared repartition; no automatic repartition performed.");'
+        echo 'run_program("/sbin/sh", "/tmp/partition-layout-check.sh", "'"$TARGET_BOOT_DEVICE_PATH"'") == 0 || abort("Partition too small. Resize to required image/layout sizes; no automatic repartition performed.");'
 ''')
     return text
 

@@ -271,3 +271,31 @@ cache divergente, tamanho product anterior, overflow, partições auxiliares e
 sintaxe/ordem do verificador de instalação. A margem de product até 1500 MiB
 é só cerca de 32 MB antes de overhead: o sucesso das imagens ainda precisa
 ser observado. Não existe neste ponto ZIP concluído nem validação de boot.
+
+## Imagens dimensionadas pelo conteúdo, sem teto de repartição no build
+
+A tentativa 42329169455 encontrou system com payload mínimo de 8481766531
+bytes, maior que os 7340032000 bytes do perfil Default. O proprietário
+esclareceu que ExtremeROM era apenas referência e que cuidará da repartição
+DEPOIS de conhecer os tamanhos reais. A seleção do pedido de alpha passa para
+`content-sized`: nenhum teto stock/ExtremeROM é aplicado ao payload ou tamanho
+das seis imagens system/vendor/product/odm/prism/optics. Valores `null` em
+image_size_caps significam ausência explícita de limite, não um limite gigante
+inventado. O gerador Artisan continua dimensionando o filesystem pelo conteúdo.
+As verificações de caminhos, modelo, metadata, imagens vazias e destinos de
+escrita permanecem; não se ignoram falhas reais do gerador ou falta de disco.
+
+Cada imagem gerada registra seu tamanho lógico (expandido, no caso sparse) em
+`REQUIRED-IMAGE-SIZES.json`. O arquivo acompanha o ZIP e é exportado como
+sidecar. O nome inclui CUSTOM-REPARTITION-REQUIRED, não EXTREME-DEFAULT.
+Somente NA INSTALAÇÃO o script somente-leitura compara partições físicas com
+as imagens finais: não usa limites fixos de 7000/1500 MiB. O proprietário deve
+ajustar a repartição antes de instalar. Nenhuma repartição automática foi
+implementada. Alterar o perfil continua invalidando caches/identidade da receita.
+
+Validação limpa: 170 testes PASS; 69 Artisan, 37 OneROM e 64 evidências de
+auditoria PASS. Testes incluem o payload system que falhou anteriormente,
+um cabeçalho sparse sintético de 12 GiB, requisitos/instalador dimensionados
+pela imagem e rótulo/sidecar da coleta. Esses fixtures não são imagens reais
+nem prova de ZIP concluído ou boot. O resultado da nova execução ainda precisa
+ser acompanhado.

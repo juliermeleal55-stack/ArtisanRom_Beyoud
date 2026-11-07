@@ -176,7 +176,7 @@ def normalize(workspace, codename, check_only=False):
                 stat=path.stat();key=(stat.st_dev,stat.st_ino)
                 if key not in seen:size+=stat.st_size;seen.add(key)
         report['payload_bytes'][name]=size
-        if size>caps[name]:raise ValueError(f'{name} payload lower bound {size} exceeds selected image cap {caps[name]}')
+        if caps[name] is not None and size>caps[name]:raise ValueError(f'{name} payload lower bound {size} exceeds selected image cap {caps[name]}')
     for name,source,dest,link,alias,aliases,self_aliases in plans:
         report['embedded'].append({'partition':name,'destination':'system/system/'+name,
                                    'root_link':'/system/'+name,'previous_root_link':alias,

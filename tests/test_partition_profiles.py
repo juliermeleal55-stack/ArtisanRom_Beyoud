@@ -94,3 +94,64 @@ class PartitionProfileTests(unittest.TestCase):
         result=subprocess.run(['bash','-c','PRINT_HEADER() { :; }; TARGET_BOOT_DEVICE_PATH=/dev/block/by-name;\n'+snippet],check=True,capture_output=True,text=True)
         self.assertIn('run_program("/sbin/sh", "/tmp/partition-layout-check.sh", "/dev/block/by-name") == 0',result.stdout)
         self.assertLess(transformed.index('Cannot extract partition layout check.'),transformed.index('block_image_update('))
+
+    def test_content_sized_has_no_fixed_ceiling_and_records_real_image_requirements(self):
+        with tempfile.TemporaryDirectory() as tmp,patch.dict(os.environ,BEYOUD_PARTITION_LAYOUT='content-sized'):
+            root=Path(tmp);s10(root)
+            self.assertTrue(all(v is None for v in capture(root)['image_size_caps'].values()))
+            directory=root/'out/zip';directory.mkdir()
+            image=directory/'system.img'
+            # Synthetic sparse header: dimensions only, NOT an actual ROM image.
+            logical=12*1024**3
+            image.write_bytes(struct.pack('<I4H4I',0xed26ff3a,1,0,28,12,4096,logical//4096,1,0))
+            check_image(root,'system',image)
+            report=json.loads((directory/'REQUIRED-IMAGE-SIZES.json').read_text())
+            self.assertEqual(report['image_size_bytes'],{'system':logical})
+            script=directory/'partition-layout-check.sh';write_layout_check(root,script)
+            text=script.read_text()
+            self.assertIn(str(logical),text)
+            self.assertNotIn('7340032000',text)
+            subprocess.run(['sh','-n',str(script)],check=True)
+            with self.assertRaises(ValueError):check_image(root,'super',image)
+            image.write_bytes(b'')
+            with self.assertRaises(ValueError):check_image(root,'system',image)
+
+    def test_content_sized_preflight_does_not_reject_payload_over_extreme_system_size(self):
+        with tempfile.TemporaryDirectory() as tmp,patch.dict(os.environ,BEYOUD_PARTITION_LAYOUT='content-sized'):
+            root=Path(tmp);s10(root)
+            work=root/'out/target/beyond1lte/work_dir'
+            for p in ('system/system','configs','vendor','product','optics','prism','odm'):(work/p).mkdir(parents=True,exist_ok=True)
+            (work/'configs/fs_config-system').write_text(' 0 0 755 capabilities=0x0\n')
+            (work/'configs/file_context-system').write_text('/ u:object_r:rootfs:s0\n')
+            (root/'out/beyoud-logs').mkdir()
+            with (work/'system/system/large-test-payload').open('wb') as stream:stream.truncate(8481766531)
+            report=normalize(root,'beyond1lte')
+            self.assertGreaterEqual(report['payload_bytes']['system'],8481766531)
+            self.assertEqual(report['embedded'],[])
+
+    def test_content_sized_cache_and_missing_requirements_fail_closed(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);s10(root)
+            with patch.dict(os.environ,BEYOUD_PARTITION_LAYOUT='content-sized'):
+                retire(root);self.assertIsNone(load(root)['image_size_caps']['system'])
+                directory=root/'out/zip';directory.mkdir()
+                with self.assertRaises(FileNotFoundError):write_layout_check(root,directory/'partition-layout-check.sh')
+            with patch.dict(os.environ,BEYOUD_PARTITION_LAYOUT='extreme-default'):
+                with self.assertRaises(ValueError):load(root)
+
+    def test_content_sized_collection_labels_custom_repartition_and_exports_requirements(self):
+        from test_alpha import alpha,package
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);s10(root)
+            archive=root/'out/ArtisanROM_0.1.0-alpha1_beyond1lte.zip'
+            package(archive,model='SM-G973F')
+            import zipfile
+            requirements={'layout':'content-sized','model':'SM-G973F','image_size_bytes':{'system':12*1024**3}}
+            with zipfile.ZipFile(archive,'a') as z:z.writestr('REQUIRED-IMAGE-SIZES.json',json.dumps(requirements))
+            dest=root/'collected'
+            inputs=dict(stock_image_size_caps={'system':5976883200},image_size_caps={'system':None},partition_layout={'id':'content-sized'})
+            with patch.object(alpha,'load_package_inputs',return_value=inputs):alpha.collect(root,dest)
+            self.assertEqual(json.loads((dest/'REQUIRED-IMAGE-SIZES.json').read_text()),requirements)
+            self.assertTrue(list(dest.glob('*CUSTOM-REPARTITION-REQUIRED-UNTESTED.zip')))
+            self.assertIn('CUSTOM REPARTITION REQUIRED',(dest/'WARNING.txt').read_text())
+            self.assertNotIn('REQUIRES DEFAULT EXTREMEROM',(dest/'WARNING.txt').read_text())

@@ -18,6 +18,12 @@ from integration.targets import from_marker
 def selected_layout(workspace):
     name=os.environ.get('BEYOUD_PARTITION_LAYOUT','stock')
     if name=='stock':return dict(id='stock',sha256=None)
+    if name=='content-sized':
+        codename,device=from_marker(json.loads((workspace/'BEYOUD-WORKSPACE.json').read_text()))
+        if device['model']!='SM-G973F' or codename!='beyond1lte':
+            raise ValueError('Content-sized layout is scoped to SM-G973F')
+        return dict(id=name,sha256=None,requires='Owner-managed repartition sized AFTER image generation; no fixed capacity promise.',
+                    image_size_caps=dict.fromkeys(('system','vendor','product','odm','prism','optics')))
     if name!='extreme-default':raise ValueError('Unknown explicit partition layout')
     path=Path(__file__).resolve().parent/'partition_layouts/extreme-default.json'
     raw=path.read_bytes();profile=json.loads(raw)
@@ -144,12 +150,18 @@ def write_layout_check(workspace, destination):
     script='#!/sbin/sh\n# Read-only capacity check; never repartition or format.\n'
     if data.get('partition_layout',{}).get('id','stock')!='stock':
         script+='base=${1:-/dev/block/by-name}\n'
-        for name,cap in sorted(image_caps(data).items()):
+        caps=image_caps(data)
+        if data['partition_layout']['id']=='content-sized':
+            report=json.loads((workspace/'out/zip/REQUIRED-IMAGE-SIZES.json').read_text())
+            caps=report['image_size_bytes']
+            if report.get('layout')!='content-sized' or report.get('model')!=data['model'] or 'system' not in caps or set(caps)-set(image_caps(data)) or any(type(v) is not int or v<=0 for v in caps.values()):
+                raise ValueError('Invalid generated image requirements')
+        for name,cap in sorted(caps.items()):
             script+=f'part="$base/{name}"\n'
             script+='[ -b "$part" ] || { echo "Missing required partition: $part"; exit 1; }\n'
             script+='size=$(blockdev --getsize64 "$part" 2>/dev/null) || { echo "Cannot read partition capacity: $part"; exit 1; }\n'
             script+='case "$size" in ""|*[!0-9]*) exit 1;; esac\n'
-            script+=f'[ "$size" -ge {cap} ] || {{ echo "Partition too small for ExtremeROM default: $part"; exit 1; }}\n'
+            script+=f'[ "$size" -ge {cap} ] || {{ echo "Partition too small for required image/layout: $part"; exit 1; }}\n'
     script+='exit 0\n'
     destination.write_text(script)
 
@@ -164,7 +176,8 @@ def identifier(workspace, key):
 def check_image(workspace, partition, image):
     data = load(workspace)
     cap = image_caps(data).get(partition)
-    if type(cap) is not int or cap <= 0:
+    unbounded=data.get('partition_layout',{}).get('id')=='content-sized'
+    if partition not in image_caps(data) or (not unbounded and (type(cap) is not int or cap <= 0)):
         raise ValueError(f'No selected image size cap for {partition}')
     with image.open('rb') as stream:
         header = stream.read(28)
@@ -177,9 +190,17 @@ def check_image(workspace, partition, image):
         logical = block * blocks
     else:
         logical = image.stat().st_size
-    if logical <= 0 or logical > cap:
+    if logical <= 0 or (not unbounded and logical > cap):
         raise ValueError(f'{partition} logical image size={logical} exceeds selected image cap={cap}; revise payload, do not bypass')
-    print(f'{partition}: logical bytes={logical}, selected image cap={cap} (declared profile, not a device measurement)', flush=True)
+    if unbounded:
+        directory=workspace/'out/zip'
+        if directory.is_symlink():raise ValueError('Unsafe image requirements directory')
+        directory.mkdir(parents=True,exist_ok=True)
+        path=directory/'REQUIRED-IMAGE-SIZES.json'
+        report=json.loads(path.read_text()) if path.is_file() else dict(layout='content-sized',model=data['model'],image_size_bytes={})
+        report['image_size_bytes'][partition]=logical
+        atomic_json(path,report)
+    print(f'{partition}: logical bytes={logical}, selected image cap={cap} (None means content-sized; not a device measurement)', flush=True)
 
 
 def retire(workspace):

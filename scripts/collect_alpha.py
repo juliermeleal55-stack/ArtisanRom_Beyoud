@@ -53,7 +53,8 @@ def collect(workspace, destination):
     inputs=load_package_inputs(workspace)
     check_package(source, model, image_caps(inputs))
     destination.mkdir(parents=True, exist_ok=False)
-    suffix='-EXTREME-DEFAULT-REPARTITION' if inputs.get('partition_layout',{}).get('id','stock')!='stock' else ''
+    layout=inputs.get('partition_layout',{}).get('id','stock')
+    suffix={'stock':'','extreme-default':'-EXTREME-DEFAULT-REPARTITION','content-sized':'-CUSTOM-REPARTITION-REQUIRED'}[layout]
     filename = f'Beyoud-{model}-0.1.0-alpha1{suffix}-UNTESTED.zip'
     output = destination / filename
     try:
@@ -71,7 +72,13 @@ def collect(workspace, destination):
         'May erase data, fail to boot or break calls, camera, encryption and other features.\n'
         'Not for a primary phone. No hardware validation has been performed.\n'
         'Have an independently verified stock recovery procedure and backups before any test.\n')
-    if inputs.get('partition_layout',{}).get('id','stock')!='stock':
+    if layout=='content-sized':
+        with zipfile.ZipFile(source) as archive:
+            requirements=archive.read('REQUIRED-IMAGE-SIZES.json')
+        (destination/'REQUIRED-IMAGE-SIZES.json').write_bytes(requirements)
+        with (destination/'WARNING.txt').open('a') as stream:
+            stream.write('CUSTOM REPARTITION REQUIRED: size physical partitions to REQUIRED-IMAGE-SIZES.json before flashing. No fixed stock/ExtremeROM sizes were enforced at build time. The ZIP does NOT repartition automatically.\n')
+    elif layout!='stock':
         (destination/'REQUIRED-PARTITION-LAYOUT.json').write_text(json.dumps(inputs['partition_layout'],indent=2)+'\n')
         with (destination/'WARNING.txt').open('a') as stream:
             stream.write('REQUIRES DEFAULT EXTREMEROM REPARTITION: system 7000 MiB, vendor/product 1500 MiB; ODM 4 MiB, prism 600 MiB, optics 30 MiB. NOT FOR STOCK LAYOUT.\n')

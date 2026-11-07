@@ -3,7 +3,7 @@ on:
   workflow_call:
     inputs:
       partition_layout:
-        description: Explicit partition profile, stock or extreme-default for SM-G973F
+        description: Explicit partition profile, stock, extreme-default or content-sized for SM-G973F
         type: string
         default: stock
       experimental_patch_failures:
@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
     inputs:
       partition_layout:
-        description: Explicit partition profile, stock or extreme-default for SM-G973F
+        description: Explicit partition profile, stock, extreme-default or content-sized for SM-G973F
         type: string
         default: stock
       experimental_patch_failures:

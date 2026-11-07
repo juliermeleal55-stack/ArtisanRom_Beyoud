@@ -13,7 +13,7 @@ jobs:
     with:
       target: beyond1lte
       experimental_patch_failures: true
-      partition_layout: extreme-default
+      partition_layout: content-sized
 
 # Attempt: guarded Freecess adaptation and additional build checks (2026-11-05).
 
@@ -41,3 +41,5 @@ jobs:
 # Retry: accept actual Artisan fs_config root rows and semantically equivalent modes/capabilities; remove false metadata-format blockage.
 
 # Owner confirmed default ExtremeROM repartition, 7000/1500/1500 MiB; require that layout, not stock caps.
+
+# Retry: owner manages repartition AFTER build; content-sized images, no fixed capacity ceiling.
