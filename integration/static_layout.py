@@ -8,7 +8,7 @@ import json
 import re
 from pathlib import Path
 import shutil
-from integration.package_inputs import capture, atomic_json
+from integration.package_inputs import capture, atomic_json, image_caps
 
 PARTITIONS = {'system','vendor','product','system_ext','odm','prism','optics',
               'vendor_dlkm','odm_dlkm','system_dlkm'}
@@ -96,7 +96,7 @@ def metadata(current, incoming):
 def normalize(workspace, codename, check_only=False):
     data=capture(workspace)
     if data['codename']!=codename:raise ValueError('Static layout target mismatch')
-    caps=data['stock_image_size_caps']
+    caps=image_caps(data)
     work=workspace/'out/target'/codename/'work_dir'
     system=work/'system';inside=system/'system';configs=work/'configs'
     if any(p.is_symlink() or not p.is_dir() for p in (work,system,inside,configs)):
@@ -176,7 +176,7 @@ def normalize(workspace, codename, check_only=False):
                 stat=path.stat();key=(stat.st_dev,stat.st_ino)
                 if key not in seen:size+=stat.st_size;seen.add(key)
         report['payload_bytes'][name]=size
-        if size>caps[name]:raise ValueError(f'{name} payload lower bound {size} exceeds stock image cap {caps[name]}')
+        if size>caps[name]:raise ValueError(f'{name} payload lower bound {size} exceeds selected image cap {caps[name]}')
     for name,source,dest,link,alias,aliases,self_aliases in plans:
         report['embedded'].append({'partition':name,'destination':'system/system/'+name,
                                    'root_link':'/system/'+name,'previous_root_link':alias,

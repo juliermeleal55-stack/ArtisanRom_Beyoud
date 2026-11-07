@@ -59,6 +59,7 @@ def identity(workspace):
               'out/firmware-lock.json', 'out/config.sh']
     # Missing optional scopes are represented, never silently confused with data.
     entries = {name: digest_path(workspace / name) if (workspace / name).exists() else None for name in scopes}
+    entries['partition_layout'] = os.environ.get('BEYOUD_PARTITION_LAYOUT','stock')
     entries['experimental_patch_failures'] = os.environ.get('BEYOUD_EXPERIMENTAL_ALLOW_PATCH_FAILURES') == '1'
     return hashlib.sha256(json.dumps(entries, sort_keys=True).encode()).hexdigest()
 

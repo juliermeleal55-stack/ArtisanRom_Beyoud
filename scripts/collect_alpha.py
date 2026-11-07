@@ -11,7 +11,7 @@ import re
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from integration.targets import from_marker
-from integration.package_inputs import load as load_package_inputs
+from integration.package_inputs import load as load_package_inputs, image_caps
 
 
 def check_package(path, model="SM-G975F", allowed_partitions=None):
@@ -50,9 +50,11 @@ def collect(workspace, destination):
     if len(candidates) != 1:
         raise ValueError(f'Expected exactly one alpha ZIP, found {len(candidates)}')
     source = candidates[0]
-    check_package(source, model, load_package_inputs(workspace)['stock_image_size_caps'])
+    inputs=load_package_inputs(workspace)
+    check_package(source, model, image_caps(inputs))
     destination.mkdir(parents=True, exist_ok=False)
-    filename = f'Beyoud-{model}-0.1.0-alpha1-UNTESTED.zip'
+    suffix='-EXTREME-DEFAULT-REPARTITION' if inputs.get('partition_layout',{}).get('id','stock')!='stock' else ''
+    filename = f'Beyoud-{model}-0.1.0-alpha1{suffix}-UNTESTED.zip'
     output = destination / filename
     try:
         os.link(source, output)  # Avoid doubling a multi-GB package on the same filesystem.
@@ -69,6 +71,10 @@ def collect(workspace, destination):
         'May erase data, fail to boot or break calls, camera, encryption and other features.\n'
         'Not for a primary phone. No hardware validation has been performed.\n'
         'Have an independently verified stock recovery procedure and backups before any test.\n')
+    if inputs.get('partition_layout',{}).get('id','stock')!='stock':
+        (destination/'REQUIRED-PARTITION-LAYOUT.json').write_text(json.dumps(inputs['partition_layout'],indent=2)+'\n')
+        with (destination/'WARNING.txt').open('a') as stream:
+            stream.write('REQUIRES DEFAULT EXTREMEROM REPARTITION: system 7000 MiB, vendor/product 1500 MiB; ODM 4 MiB, prism 600 MiB, optics 30 MiB. NOT FOR STOCK LAYOUT.\n')
     lock = workspace / 'out/firmware-lock.json'
     if lock.is_file():
         shutil.copyfile(lock, destination / 'firmware-lock.json')

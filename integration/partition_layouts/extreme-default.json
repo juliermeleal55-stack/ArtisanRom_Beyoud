@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "id": "extreme-default",
+  "model": "SM-G973F",
+  "codename": "beyond1lte",
+  "unit": "bytes",
+  "repository": "emadhamid7/exynos9820-repartitioner",
+  "commit": "5fca1faafdf1e7ef54b285282412089728256372",
+  "requires": "Owner-confirmed default ExtremeROM Exynos9820 repartition already installed; NOT a stock layout or a device measurement.",
+  "image_size_caps": {
+    "system": 7340032000,
+    "vendor": 1572864000,
+    "product": 1572864000,
+    "odm": 4194304,
+    "prism": 629145600,
+    "optics": 31457280
+  }
+}

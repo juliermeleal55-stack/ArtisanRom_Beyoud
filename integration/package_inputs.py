@@ -15,6 +15,26 @@ from integration.samloader.metadata import configured_firmwares, get
 from integration.targets import from_marker
 
 
+def selected_layout(workspace):
+    name=os.environ.get('BEYOUD_PARTITION_LAYOUT','stock')
+    if name=='stock':return dict(id='stock',sha256=None)
+    if name!='extreme-default':raise ValueError('Unknown explicit partition layout')
+    path=Path(__file__).resolve().parent/'partition_layouts/extreme-default.json'
+    raw=path.read_bytes();profile=json.loads(raw)
+    codename,device=from_marker(json.loads((workspace/'BEYOUD-WORKSPACE.json').read_text()))
+    if (profile.get('schema_version')!=1 or profile.get('id')!=name or profile.get('unit')!='bytes'
+            or profile.get('model')!=device['model'] or profile.get('codename')!=codename):
+        raise ValueError('Partition profile does not match selected S10 model')
+    caps=profile['image_size_caps']
+    if set(caps)!={'system','vendor','product','odm','prism','optics'} or any(type(v) is not int or v<=0 or v%1048576 for v in caps.values()):
+        raise ValueError('Invalid declared partition profile capacities')
+    return dict(id=name,sha256=hashlib.sha256(raw).hexdigest(),requires=profile['requires'],image_size_caps=caps)
+
+
+def image_caps(data):
+    return data.get('image_size_caps',data['stock_image_size_caps'])
+
+
 def lock_digest(workspace):
     return hashlib.sha256((workspace / 'out/firmware-lock.json').read_bytes()).hexdigest()
 
@@ -95,7 +115,9 @@ def capture(workspace):
     limits = {name: int(size) for name, size in pairs}
     if len(limits) != len(pairs) or any(size <= 0 for size in limits.values()) or not {'system', 'vendor'} <= limits.keys():
         raise ValueError('Missing/ambiguous stock image size limits')
+    layout=selected_layout(workspace)
     return dict(schema_version=1, codename=codename, model=device['model'],
+                partition_layout=layout, image_size_caps=layout.get('image_size_caps',limits),
                 firmware_lock_sha256=lock_digest(workspace), identifiers=ids,
                 stock_image_size_caps=limits)
 
@@ -107,7 +129,29 @@ def load(workspace):
     if (data.get('schema_version') != 1 or data.get('codename') != codename or data.get('model') != device['model']
             or data.get('firmware_lock_sha256') != lock_digest(workspace)):
         raise ValueError('Package identifiers do not match workspace/firmware lock')
+    if data.get('partition_layout',{'id':'stock','sha256':None}) != selected_layout(workspace):
+        raise ValueError('Cached package inputs do not match selected partition layout')
+    layout=selected_layout(workspace)
+    if image_caps(data)!=layout.get('image_size_caps',data['stock_image_size_caps']):
+        raise ValueError('Cached image capacities differ from selected layout')
     return data
+
+
+def write_layout_check(workspace, destination):
+    data=load(workspace)
+    if destination.is_symlink() or destination.parent.resolve()!=(workspace/'out/zip').resolve():
+        raise ValueError('Unsafe recovery layout-check destination')
+    script='#!/sbin/sh\n# Read-only capacity check; never repartition or format.\n'
+    if data.get('partition_layout',{}).get('id','stock')!='stock':
+        script+='base=${1:-/dev/block/by-name}\n'
+        for name,cap in sorted(image_caps(data).items()):
+            script+=f'part="$base/{name}"\n'
+            script+='[ -b "$part" ] || { echo "Missing required partition: $part"; exit 1; }\n'
+            script+='size=$(blockdev --getsize64 "$part" 2>/dev/null) || { echo "Cannot read partition capacity: $part"; exit 1; }\n'
+            script+='case "$size" in ""|*[!0-9]*) exit 1;; esac\n'
+            script+=f'[ "$size" -ge {cap} ] || {{ echo "Partition too small for ExtremeROM default: $part"; exit 1; }}\n'
+    script+='exit 0\n'
+    destination.write_text(script)
 
 
 def identifier(workspace, key):
@@ -119,9 +163,9 @@ def identifier(workspace, key):
 
 def check_image(workspace, partition, image):
     data = load(workspace)
-    cap = data['stock_image_size_caps'].get(partition)
+    cap = image_caps(data).get(partition)
     if type(cap) is not int or cap <= 0:
-        raise ValueError(f'No verified stock image size cap for {partition}')
+        raise ValueError(f'No selected image size cap for {partition}')
     with image.open('rb') as stream:
         header = stream.read(28)
     if len(header) >= 4 and struct.unpack('<I', header[:4])[0] == 0xED26FF3A:
@@ -134,8 +178,8 @@ def check_image(workspace, partition, image):
     else:
         logical = image.stat().st_size
     if logical <= 0 or logical > cap:
-        raise ValueError(f'{partition} logical image size={logical} exceeds stock image cap={cap}; revise payload, do not bypass')
-    print(f'{partition}: logical bytes={logical}, stock image cap={cap} (not a physical partition-table certification)', flush=True)
+        raise ValueError(f'{partition} logical image size={logical} exceeds selected image cap={cap}; revise payload, do not bypass')
+    print(f'{partition}: logical bytes={logical}, selected image cap={cap} (declared profile, not a device measurement)', flush=True)
 
 
 def retire(workspace):
@@ -178,7 +222,7 @@ def retire(workspace):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('command', choices=('get', 'verify', 'check-image', 'retire'))
+    parser.add_argument('command', choices=('get', 'verify', 'check-image', 'retire', 'layout-check'))
     parser.add_argument('workspace', type=Path)
     parser.add_argument('key', nargs='?')
     parser.add_argument('image', type=Path, nargs='?')
@@ -189,6 +233,8 @@ if __name__ == '__main__':
         for key in ('source_product', 'source_vendor', 'target_product', 'target_vendor'):
             identifier(args.workspace, key)
         print(json.dumps(load(args.workspace), indent=2))
+    elif args.command == 'layout-check':
+        write_layout_check(args.workspace, Path(args.key))
     elif args.command == 'check-image':
         check_image(args.workspace, args.key, args.image)
     else:

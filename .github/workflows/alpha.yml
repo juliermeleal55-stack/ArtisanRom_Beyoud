@@ -2,6 +2,10 @@ name: Galaxy S10 Exynos experimental alpha build
 on:
   workflow_call:
     inputs:
+      partition_layout:
+        description: Explicit partition profile, stock or extreme-default for SM-G973F
+        type: string
+        default: stock
       experimental_patch_failures:
         description: Continue despite patch/module failures; boot NOT validated
         type: boolean
@@ -12,6 +16,10 @@ on:
         required: true
   workflow_dispatch:
     inputs:
+      partition_layout:
+        description: Explicit partition profile, stock or extreme-default for SM-G973F
+        type: string
+        default: stock
       experimental_patch_failures:
         description: Continue despite patch/module failures; boot NOT validated
         type: boolean
@@ -35,6 +43,7 @@ jobs:
     timeout-minutes: 360
     env:
       BEYOUD_EXPERIMENTAL_ALLOW_PATCH_FAILURES: ${{ inputs.experimental_patch_failures && '1' || '0' }}
+      BEYOUD_PARTITION_LAYOUT: ${{ inputs.partition_layout }}
       BEYOUD_JOBS: '1'
       CARGO_BUILD_JOBS: '1'
       BEYOUD_TARGET: ${{ inputs.target }}
@@ -54,6 +63,7 @@ jobs:
           git config --global user.email "beyoud-build@users.noreply.github.com"
       - name: Validate integration
         env:
+          BEYOUD_PARTITION_LAYOUT: stock
           BEYOUD_EXPERIMENTAL_ALLOW_PATCH_FAILURES: '0'
         run: |
           python3 -m unittest discover -s tests -v

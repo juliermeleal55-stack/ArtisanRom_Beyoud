@@ -1,0 +1,24 @@
+{
+  "repository": "emadhamid7/exynos9820-repartitioner",
+  "commit": "5fca1faafdf1e7ef54b285282412089728256372",
+  "files": [
+    {
+      "path": "README.md",
+      "reference": "reference/extreme-repartition/README.md",
+      "sha": "f7443fd81dc21ea5803d7e2f26119436c460a880",
+      "size": 4934
+    },
+    {
+      "path": "repartitioner/extreme/repartition.sh",
+      "reference": "reference/extreme-repartition/repartitioner/extreme/repartition.sh",
+      "sha": "67b35297c589b88ddb9f17689ce84d6cb7147001",
+      "size": 5313
+    },
+    {
+      "path": ".github/workflows/build.yml",
+      "reference": "reference/extreme-repartition/.github/workflows/build.yml",
+      "sha": "f75a2a8ee7eda01e617b90bfb886980bb47cefb4",
+      "size": 2720
+    }
+  ]
+}

@@ -13,6 +13,7 @@ jobs:
     with:
       target: beyond1lte
       experimental_patch_failures: true
+      partition_layout: extreme-default
 
 # Attempt: guarded Freecess adaptation and additional build checks (2026-11-05).
 
@@ -38,3 +39,5 @@ jobs:
 # Retry: read DEX magic in file byte order, test actual Artisan helper, and resolve internal vendor ODM routing aliases without dropping payload.
 
 # Retry: accept actual Artisan fs_config root rows and semantically equivalent modes/capabilities; remove false metadata-format blockage.
+
+# Owner confirmed default ExtremeROM repartition, 7000/1500/1500 MiB; require that layout, not stock caps.

@@ -1,0 +1,101 @@
+name: Build flashable ZIPs
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['**.md']
+  workflow_dispatch:
+    inputs:
+      publish_release:
+        description: Publish a GitHub release
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check required files
+        run: |
+          missing=0
+          for f in \
+            repartitioner/extreme/jq \
+            repartitioner/extreme/parted \
+            repartitioner/META-INF/com/google/android/update-binary \
+            cleaner/META-INF/com/google/android/update-binary; do
+            if [ ! -f "$f" ]; then
+              echo "::error::Missing required file: $f"
+              missing=1
+            fi
+          done
+          exit $missing
+
+      - name: Build ZIPs
+        run: |
+          set -euo pipefail
+          mkdir -p out
+          (cd repartitioner && zip -r9 -X ../out/Exynos9820_Repartitioner.zip META-INF extreme)
+          (cd cleaner && zip -r9 -X ../out/Exynos9820_cleaner.zip META-INF extreme)
+
+          {
+            echo "Mode: Default"
+            echo
+            echo "Partition sizes used by the repartitioner (MiB):"
+            echo
+            echo '```'
+            grep -E '^(system|vendor|product)size=' repartitioner/extreme/repartition.sh
+            echo '```'
+            echo
+            echo "Flash the Repartitioner ZIP first, then the cleaner ZIP."
+          } > out/RELEASE_NOTES.md
+
+          cat out/RELEASE_NOTES.md >> "$GITHUB_STEP_SUMMARY"
+          ls -lh out
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Exynos9820-Repartitioner-Cleaner
+          path: out/*
+          if-no-files-found: error
+
+  release:
+    name: Publish release
+    needs: build
+    if: github.event_name == 'push' || inputs.publish_release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: Exynos9820-Repartitioner-Cleaner
+          path: dist
+
+      - name: Generate checksums
+        run: |
+          cd dist
+          sha256sum *.zip > SHA256SUMS.txt
+          ls -lh
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: Exynos-9820-Repartitioner
+          target_commitish: ${{ github.sha }}
+          name: Exynos 9820/9825 Repartitioner
+          body_path: dist/RELEASE_NOTES.md
+          files: |
+            dist/*.zip
+            dist/SHA256SUMS.txt

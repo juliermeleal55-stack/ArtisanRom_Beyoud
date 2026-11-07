@@ -51,6 +51,18 @@ def verify():
             raise ValueError('Unsafe OneROM layout evidence path')
         blob(path, entry)
         count += 1
+    repart = json.loads((ROOT / 'manifests/extreme-repartition.json').read_text())
+    if not re.fullmatch('[0-9a-f]{40}',repart['commit']):raise ValueError('Unpinned repartition evidence')
+    for entry in repart['files']:
+        path = ROOT / entry['reference']
+        if not path.resolve().is_relative_to((ROOT / 'reference/extreme-repartition').resolve()):raise ValueError('Unsafe repartition evidence')
+        blob(path,entry);count+=1
+    profile=json.loads((ROOT/'integration/partition_layouts/extreme-default.json').read_text())
+    if profile['commit']!=repart['commit']:raise ValueError('Repartition profile provenance mismatch')
+    script=(ROOT/'reference/extreme-repartition/repartitioner/extreme/repartition.sh').read_text()
+    for partition,size in profile['image_size_caps'].items():
+        matches=re.findall(r'^'+partition+r'size=([0-9]+)$',script,re.M)
+        if len(matches)!=1 or int(matches[0])*1048576!=size:raise ValueError('Profile differs from upstream default partition sizes')
     return count
 
 

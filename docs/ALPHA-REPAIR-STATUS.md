@@ -241,3 +241,33 @@ conflitos. A regressão foi reproduzida executando o comando sed do extrator
 pinned, não só criando um fixture imaginado. Total local: 160 testes PASS em
 cópia limpa, 61 evidências auditadas PASS. Não se removeram limites de imagens
 ou validação dos destinos de gravação para fabricar um resultado verde.
+
+## Perfil padrão ExtremeROM confirmado pelo proprietário
+
+A tentativa 42322185318 parou antes de gerar imagens: product tinha limite
+inferior de payload de 1540771963 bytes, acima do limite stock de 650117120.
+O proprietário confirmou explicitamente já usar a repartição **Default**, não
+Custom. O pedido de alpha agora seleciona `BEYOUD_PARTITION_LAYOUT=extreme-default`
+para SM-G973F/beyond1lte. Stock continua sendo o padrão das outras execuções.
+
+Capacidades declaradas em MiB: system 7000, vendor 1500, product 1500, odm 4,
+prism 600, optics 30. Proveniência: emadhamid7/exynos9820-repartitioner,
+commit 5fca1faafdf1e7ef54b285282412089728256372, script Default preservado
+com manifesto de blobs e verificação dos valores. Isso é declaração do dono,
+não medição independente do aparelho. Não executamos nem incluímos no ZIP
+operações de reparticionamento, formatação ou limpeza desse projeto.
+
+Os limites stock extraídos ficam preservados separadamente. Identidade de
+pipeline e cache de empacotamento incluem o perfil; trocar perfil invalida o
+cache. Os limites efetivos valem para layout, imagens raw/sparse e coleta.
+O instalador faz uma verificação somente de leitura das seis capacidades
+físicas via blockdev antes das gravações de imagens. Uma partição ausente,
+ilegível ou menor aborta a instalação; não há repartição automática.
+O nome do ZIP e os avisos identificam EXTREME-DEFAULT-REPARTITION e UNTESTED.
+
+Validação em cópia limpa: 166 testes PASS, 69 referências Artisan, 37 OneROM
+e 64 evidências de auditoria PASS. Inclui modelo errado, perfil desconhecido,
+cache divergente, tamanho product anterior, overflow, partições auxiliares e
+sintaxe/ordem do verificador de instalação. A margem de product até 1500 MiB
+é só cerca de 32 MB antes de overhead: o sucesso das imagens ainda precisa
+ser observado. Não existe neste ponto ZIP concluído nem validação de boot.
