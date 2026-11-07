@@ -5,6 +5,7 @@ Layout adaptation only: neither this module nor its report certifies boot.
 """
 import filecmp
 import json
+import re
 from pathlib import Path
 import shutil
 from integration.package_inputs import capture, atomic_json
@@ -27,6 +28,10 @@ def remap(text, old, new):
     for line in text.splitlines():
         if not line.strip() or line.lstrip().startswith('#'):
             result.append(line);continue
+        # Artisan's extractor removes the mount path from the root stat row:
+        # ' / 0 0 755' becomes ' 0 0 755 capabilities=0x0', not '<part> ...'.
+        if not old.startswith('/') and re.fullmatch(r'\s*[0-9]+\s+[0-9]+\s+[0-7]{3,4}(?:\s+capabilities=0x[0-9a-fA-F]+)?\s*',line):
+            result.append(new+' '+line.strip());continue
         first=line.split()[0]
         if not matches(first,old):raise ValueError(f'Unexpected metadata path: {first}')
         result.append(line.replace(old,new,1))
@@ -61,13 +66,29 @@ def merge(source, destination, aliases=frozenset()):
         source.unlink()  # Exact duplicate data/link, not a conflicting file.
 
 
+def equivalent_metadata(left, right):
+    if left==right:return True
+    if not left or not right or left[0]!=right[0] or left[0].startswith('/'):
+        return False
+    def fields(parts):
+        if len(parts) not in (4,5) or not all(p.isdecimal() for p in parts[1:3]) or not re.fullmatch(r'[0-7]{3,4}',parts[3]):return None
+        cap=0
+        if len(parts)==5:
+            match=re.fullmatch(r'capabilities=0x([0-9a-fA-F]+)',parts[4])
+            if not match:return None
+            cap=int(match.group(1),16)
+        return int(parts[1]),int(parts[2]),int(parts[3],8),cap
+    a,b=fields(left),fields(right)
+    return a is not None and a==b
+
+
 def metadata(current, incoming):
     lines=current.splitlines()
     for line in incoming.splitlines():
         if not line.strip() or line.lstrip().startswith('#'):continue
         parts=line.split();key=parts[0]
         previous=[l.split() for l in lines if l.strip() and not l.lstrip().startswith('#') and l.split()[0]==key]
-        if any(old!=parts for old in previous):raise ValueError(f'Conflicting auxiliary metadata: {key}')
+        if any(not equivalent_metadata(old,parts) for old in previous):raise ValueError(f'Conflicting auxiliary metadata: {key}')
         if not previous:lines.append(line)
     return '\n'.join(lines)+'\n'
 

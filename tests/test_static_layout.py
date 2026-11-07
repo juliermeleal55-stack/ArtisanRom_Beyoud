@@ -170,3 +170,36 @@ class StaticLayoutTests(unittest.TestCase):
             self.assertEqual((work/'system/system/odm/etc/config.xml').read_text(),'odm')
             self.assertFalse((work/'system/system/odm/bin').is_symlink())
             self.assertTrue(all(a['self_forwarder'] for a in report['embedded'][0]['legacy_aliases']))
+
+    def test_artisan_extractor_real_sed_root_rows_are_valid_metadata(self):
+        import os,subprocess
+        from integration.static_layout import remap
+        repo=Path(__file__).resolve().parents[1]
+        extractor=(repo/'reference/build/scripts/extract_fw.sh').read_text()
+        command=next(line for line in extractor.splitlines() if 'sed -i -e "s|$TMP_DIR | |g" -e "s|$TMP_DIR|$PARTITION|g"' in line)
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);folder=root/'MODEL_CSC';folder.mkdir()
+            path=folder/'fs_config-odm'
+            path.write_text('/mounted 0 0 755 capabilities=0x0\n/mounted/etc 0 0 755 capabilities=0x0\n')
+            env=dict(os.environ,TMP_DIR='/mounted',FW_DIR=str(root),MODEL='MODEL',CSC='CSC',PARTITION='odm')
+            subprocess.run(['bash','-c',command],env=env,check=True)
+            self.assertTrue(path.read_text().startswith(' 0 0 755'))
+            result=remap(path.read_text(),'odm','system/odm')
+            self.assertEqual(result,'system/odm 0 0 755 capabilities=0x0\nsystem/odm/etc 0 0 755 capabilities=0x0\n')
+
+    def test_empty_root_path_and_equivalent_duplicate_metadata_do_not_block(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);work=layout(root,('odm',))
+            path=work/'configs/fs_config-odm'
+            path.write_text(' 0 0 0755 capabilities=0x0\nodm 0 0 755\nodm/etc/config.xml 1000 1000 644\n')
+            normalize(root,'beyond2lte',check_only=True)
+            normalize(root,'beyond2lte')
+            rows=[line for line in (work/'configs/fs_config-system').read_text().splitlines() if line.split() and line.split()[0]=='system/odm']
+            self.assertEqual(len(rows),1)
+            self.assertTrue((work/'system/system/odm/etc/config.xml').is_file())
+
+    def test_real_permission_or_capability_changes_remain_conflicts(self):
+        from integration.static_layout import metadata
+        for row in ('p 1000 0 755','p 0 0 700','p 0 0 755 capabilities=0xc0'):
+            with self.subTest(row=row),self.assertRaises(ValueError):metadata('p 0 0 755\n',row+'\n')
+        self.assertEqual(metadata('p 0 0 755\n','p 0 0 0755 capabilities=0x0\n'),'p 0 0 755\n')

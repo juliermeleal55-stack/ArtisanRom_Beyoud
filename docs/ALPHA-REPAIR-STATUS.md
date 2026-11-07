@@ -225,3 +225,19 @@ Não foram copiados limites de repartição da OneROM nem substituídos JARs/APK
 que já conseguiram recompilar na tentativa anterior. As adaptações OneROM de
 serviços permanecem. Resultado local: 157 testes PASS em cópia limpa; 61
 referências de auditoria PASS. Ainda não é prova de ZIP ou boot.
+
+## Falso bloqueio do registro raiz: 42315166635
+
+O erro "Unexpected metadata path: 0" foi causado pelo leitor Beyoud. O comando
+sed real de extract_fw.sh remove o prefixo de montagem da linha de stat da
+raiz: resulta em " 0 0 755 capabilities=0x0", enquanto os filhos ficam com o
+prefixo da partição. A linha é válida, não uma falta de caminho a ser tratada
+como corrupção. O remapeamento agora converte esse registro em metadata da
+raiz do diretório embutido e preserva UID/GID/mode/capabilities.
+
+Duplicatas semanticamente iguais (755/0755, capabilities omitido/0x0) não
+bloqueiam mais. UID/GID/modos/capabilities realmente divergentes continuam sendo
+conflitos. A regressão foi reproduzida executando o comando sed do extrator
+pinned, não só criando um fixture imaginado. Total local: 160 testes PASS em
+cópia limpa, 61 evidências auditadas PASS. Não se removeram limites de imagens
+ou validação dos destinos de gravação para fabricar um resultado verde.
